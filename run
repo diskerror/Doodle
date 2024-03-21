@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+
+use Library\App;
+
+require 'vendor/autoload.php';
+require 'lib/App.php';
+
+
+try {
+	App::init(__DIR__);
+	$exitCode = App::run($argv);
+}
+catch (Throwable $e) {
+	fprintf(STDERR, PHP_EOL . $e->getMessage());
+	fprintf(STDERR, PHP_EOL . $e->getTraceAsString());
+	exit(1);
+}
+exit($exitCode);
