@@ -6,19 +6,19 @@ class Ddl2DataDict extends Commands
 {
 	public static function main(): int
 	{
-		$argv = self::$opts->getArguments();
+		$fileStr = self::$opts->arguments[1]->arg;
 
-		if (!file_exists($argv[1])) {
-			echo "File not found: $argv[1]\n";
+		if (!file_exists($fileStr)) {
+			echo "File not found: $fileStr\n";
 			return 1;
 		}
 
-		if (!is_file($argv[1])) {
-			echo "Not a file: $argv[1]\n";
+		if (!is_file($fileStr)) {
+			echo "Not a file: $fileStr\n";
 			return 1;
 		}
 
-		$ddlLines = preg_split('/[\r\n]+/', file_get_contents($argv[1]));
+		$ddlLines = preg_split('/[\r\n]+/', file_get_contents($fileStr));
 
 		$tableMatches = [];
 		while (($line = array_shift($ddlLines)) !== null) {

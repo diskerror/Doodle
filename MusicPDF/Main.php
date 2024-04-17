@@ -2,7 +2,6 @@
 
 namespace MusicPDF;
 
-use GetOptionKit\OptionResult;
 use Library\Commands;
 
 class Main extends Commands

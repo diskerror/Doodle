@@ -117,7 +117,7 @@ final class App
 			//	the second arg can be another class/file
 			//	in the same working directory or namespace
 
-			$cmdObj = self::$commands[self::$opts->getArguments()[0]];
+			$cmdObj = self::$commands[self::$opts->arguments[0]->arg];
 			$cmdObj::init(self::$opts);
 			$exitCode = $cmdObj::main();
 

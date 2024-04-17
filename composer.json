@@ -4,10 +4,17 @@
     "license": "MIT",
     "type": "project",
     "homepage": "https://rawsound.com",
+	"repositories": [
+		{
+			"type": "path",
+			"url": "/Users/reid/Documents/Diskerror/Typed"
+		}
+	],
     "require": {
         "php": "^8.2",
         "corneltek/getoptionkit": "^2.7",
-        "laminas/laminas-server": "^2.17"
+        "laminas/laminas-server": "^2.17",
+        "php-ffmpeg/php-ffmpeg": "^1.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.1"
