@@ -1,0 +1,29 @@
+<?php
+
+return [
+
+	'process' => [
+		'name'    => 'thoth_dev',
+		'path'    => '/var/run/thoth_dev',
+	],
+
+	'caches' => [
+		'index' => [
+			'back'  => [
+				'cacheDir' => '/dev/shm/thoth_dev/',
+			],
+		],
+
+		'tag_cloud' => [
+			'back'  => [
+				'cacheDir' => '/dev/shm/thoth_dev/',
+			],
+		],
+
+		'summary' => [
+			'back'  => [
+				'cacheDir' => '/dev/shm/thoth_dev/',
+			],
+		],
+	],
+];

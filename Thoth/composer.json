@@ -1,0 +1,43 @@
+{
+	"name": "diskerror/thoth",
+	"description": "Code source file forensics utility",
+	"minimum-stability": "stable",
+	"license": "proprietary",
+	"authors": [
+		{
+			"name": "reid",
+			"email": "reid@rawsound.com"
+		}
+	],
+	"require": {
+		"php": "^7.4",
+		"ext-intl": "*",
+		"ext-json": "*",
+		"ext-mbstring": "*",
+		"ext-phalcon": "^4.1",
+		"ext-simplexml": "*",
+		"ext-sqlite3": "^7.4",
+		"ext-xml": "*",
+		"corneltek/getoptionkit": "^2.6",
+		"diskerror/autoload": "dev-main",
+		"diskerror/typed": "dev-php73",
+		"laminas/laminas-server": "^2.10",
+		"php-ds/php-ds": "^1.3",
+		"rodneyrehm/plist": "^2.0"
+	},
+	"suggest": {
+		"ext-ds": "*"
+	},
+	"require-dev": {
+		"phalcon/ide-stubs": "^4.1"
+	},
+	"autoload": {
+		"classmap": ["tasks"],
+		"psr-4": {
+			"Logic\\": "models/logic",
+			"Resource\\": "models/resource",
+			"Service\\": "models/service",
+			"Structure\\": "models/struct"
+		}
+	}
+}
