@@ -3,7 +3,7 @@
         'name' => 'diskerror/doodle',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'ae7cc5a4b00a640467f4bb418f268dace8499ab7',
+        'reference' => '984ca869464cfb775280ed002de4df2404349448',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'diskerror/doodle' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'ae7cc5a4b00a640467f4bb418f268dace8499ab7',
+            'reference' => '984ca869464cfb775280ed002de4df2404349448',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

@@ -1,6 +1,6 @@
 <?php
 
-use Library\Application\Commands;
+use Library\app\Commands;
 use Library\DomDocParser;
 
 class Html2Ddl extends Commands

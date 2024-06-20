@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Library\Application\App;
+use Application\App;
 
 ini_set('display_errors', '1');
 error_reporting(E_ALL);

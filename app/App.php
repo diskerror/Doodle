@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Application;
+namespace Library\app;
 
 use GetOptionKit\Option;
 use GetOptionKit\OptionCollection;
@@ -10,7 +10,7 @@ use GetOptionKit\OptionResult;
 
 final class App
 {
-	private static array $skipDirectories = ['vendor', 'tests', 'lib'];
+	private static array $skipDirectories = ['app', 'lib', 'tests', 'vendor'];
 	private const APP_OPTIONS = '/lib/Application/app_options.php';
 
 	private static string $appRoot;

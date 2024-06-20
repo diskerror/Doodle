@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Application;
+namespace Library\app;
 
 use GetOptionKit\OptionResult;
 

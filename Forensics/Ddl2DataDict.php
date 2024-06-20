@@ -1,6 +1,6 @@
 <?php
 
-use Library\Application\Commands;
+use Library\app\Commands;
 
 class Ddl2DataDict extends Commands
 {

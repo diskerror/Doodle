@@ -19,7 +19,6 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
         'L' => 
         array (
             'Library\\Exception\\' => 18,
-            'Library\\Application\\' => 20,
             'Library\\' => 8,
             'Laminas\\Stdlib\\' => 15,
             'Laminas\\Server\\' => 15,
@@ -35,6 +34,10 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
             'Diskerror\\Typed\\' => 16,
             'DeepCopy\\' => 9,
         ),
+        'A' => 
+        array (
+            'Application\\' => 12,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -45,10 +48,6 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
         'Library\\Exception\\' => 
         array (
             0 => __DIR__ . '/../..' . '/lib/Exception',
-        ),
-        'Library\\Application\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/lib/Application',
         ),
         'Library\\' => 
         array (
@@ -81,6 +80,10 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+        'Application\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app',
         ),
     );
 
@@ -317,9 +320,6 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
         'Laminas\\Stdlib\\StringWrapper\\MbString' => __DIR__ . '/..' . '/laminas/laminas-stdlib/src/StringWrapper/MbString.php',
         'Laminas\\Stdlib\\StringWrapper\\Native' => __DIR__ . '/..' . '/laminas/laminas-stdlib/src/StringWrapper/Native.php',
         'Laminas\\Stdlib\\StringWrapper\\StringWrapperInterface' => __DIR__ . '/..' . '/laminas/laminas-stdlib/src/StringWrapper/StringWrapperInterface.php',
-        'Library\\Application\\App' => __DIR__ . '/../..' . '/lib/Application/App.php',
-        'Library\\Application\\Reflector' => __DIR__ . '/../..' . '/lib/Application/Reflector.php',
-        'Library\\Application\\StdIo' => __DIR__ . '/../..' . '/lib/Application/StdIo.php',
         'Library\\DirectoryFiles' => __DIR__ . '/../..' . '/lib/DirectoryFiles.php',
         'Library\\DomDocParser' => __DIR__ . '/../..' . '/lib/DomDocParser.php',
         'Library\\Exception\\RuntimeException' => __DIR__ . '/../..' . '/lib/Exception/RuntimeException.php',

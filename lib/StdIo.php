@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Application;
+namespace Library\app;
 
 use Library\Exception\RuntimeException;
 
@@ -16,9 +16,11 @@ class StdIo
 		return $in;
 	}
 
-	static function jsonOut($o)
+	static function out($s)
 	{
-		self::outln(json_encode($o, JSON_PRETTY_PRINT));
+		if (fwrite(STDOUT, $s) === false) {
+			throw new RuntimeException('fwrite to STDOUT returned false');
+		}
 	}
 
 	static function outln($s = '')
@@ -26,11 +28,9 @@ class StdIo
 		self::out($s . PHP_EOL);
 	}
 
-	static function out($s)
+	static function jsonOut($o)
 	{
-		if (fwrite(STDOUT, $s) === false) {
-			throw new RuntimeException('fwrite to STDOUT returned false');
-		}
+		self::outln(json_encode($o, JSON_PRETTY_PRINT));
 	}
 
 	static function err($s)
@@ -43,6 +43,7 @@ class StdIo
 	/**
 	 * The goal is to have this output look like a modernized "var_export" without class types,
 	 *      just the data structure.
+	 * The function "var_representation" is not a standard function in PHP.
 	 * Four things are changed:
 	 * 1) Objects are changed to an array;
 	 * 2) Usage of array() is changed to [];

@@ -1,7 +1,7 @@
 <?php
 
 use GetOptionKit\OptionResult;
-use Library\Application\Commands;
+use Library\app\Commands;
 
 class FileForensics extends Commands
 {

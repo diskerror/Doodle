@@ -30,7 +30,7 @@
     "autoload": {
         "psr-4": {
             "Library\\": "lib/",
-            "Library\\Application\\": "lib/Application/",
+            "Application\\": "app/",
             "Library\\Exception\\": "lib/Exception/"
         }
     },
