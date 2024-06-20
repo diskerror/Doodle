@@ -1,5 +1,6 @@
 <?php
 
+namespace Library;
 
 use Diskerror\Typed\Scalar\TString;
 use Diskerror\Typed\Scalar\TStringTrim;

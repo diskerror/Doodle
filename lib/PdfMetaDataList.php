@@ -1,5 +1,7 @@
 <?php
 
+namespace Library;
+
 use Diskerror\Typed\TypedArray;
 
 class PdfMetaDataList extends TypedArray

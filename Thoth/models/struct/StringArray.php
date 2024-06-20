@@ -6,5 +6,5 @@ use Diskerror\Typed\TypedArray;
 
 class StringArray extends TypedArray
 {
-	protected $_type = '';
+	protected string $_type = '';
 }

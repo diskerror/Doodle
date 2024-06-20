@@ -22,8 +22,6 @@ fi
 # Get directory of this file for finding support files.
 #CMD_DIR=$(dirname $0)
 
-#source "$CMD_DIR/migrate714.cfg"
-
 if [ $# -ne 1 ] || [ $1 == '' ]
 then
     echo 'Need hostname input.'

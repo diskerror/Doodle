@@ -7,14 +7,17 @@
 	"repositories": [
 		{
 			"type": "path",
-			"url": "/Users/reid/Documents/Diskerror/Typed"
+			"url": "../Typed"
 		}
 	],
     "require": {
         "php": "^8.2",
+        "ext-imagick": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
         "corneltek/getoptionkit": "^2.7",
         "laminas/laminas-server": "^2.17",
-        "php-ffmpeg/php-ffmpeg": "^1.2"
+        "diskerror/typed": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.1"
@@ -26,7 +29,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Library\\": "lib/"
+            "Library\\": "lib/",
+            "Library\\Application\\": "lib/Application/",
+            "Library\\Exception\\": "lib/Exception/"
         }
     },
     "scripts": {
