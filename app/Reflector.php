@@ -6,7 +6,7 @@
  * Time: 10:59 AM
  */
 
-namespace Library\app;
+namespace Application;
 
 use Laminas\Server\Reflection;
 

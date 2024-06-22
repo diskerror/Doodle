@@ -1,9 +1,9 @@
 <?php
 
 use GetOptionKit\OptionResult;
-use Library\app\Commands;
+use Application\Command;
 
-class FileForensics extends Commands
+class FileForensics extends Command
 {
 	public static $options = [
 		[

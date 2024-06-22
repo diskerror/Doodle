@@ -88,6 +88,9 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
     );
 
     public static $classMap = array (
+        'Application\\App' => __DIR__ . '/../..' . '/app/App.php',
+        'Application\\Command' => __DIR__ . '/../..' . '/app/Command.php',
+        'Application\\Reflector' => __DIR__ . '/../..' . '/app/Reflector.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'DeepCopy\\DeepCopy' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
         'DeepCopy\\Exception\\CloneException' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Exception/CloneException.php',
@@ -325,6 +328,7 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
         'Library\\Exception\\RuntimeException' => __DIR__ . '/../..' . '/lib/Exception/RuntimeException.php',
         'Library\\PdfMetaData' => __DIR__ . '/../..' . '/lib/PdfMetaData.php',
         'Library\\PdfMetaDataList' => __DIR__ . '/../..' . '/lib/PdfMetaDataList.php',
+        'Library\\StdIo' => __DIR__ . '/../..' . '/lib/StdIo.php',
         'Library\\Xml2Array' => __DIR__ . '/../..' . '/lib/Xml2Array.php',
         'Library\\XmlParser' => __DIR__ . '/../..' . '/lib/XmlParser.php',
         'PHPUnit\\Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Exception.php',

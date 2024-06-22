@@ -1,17 +1,19 @@
 <?php
 
-namespace Library\app;
+namespace Application;
 
 use GetOptionKit\Option;
 use GetOptionKit\OptionCollection;
 use GetOptionKit\OptionParser;
 use GetOptionKit\OptionPrinter\ConsoleOptionPrinter;
 use GetOptionKit\OptionResult;
+use Library\StdIo;
 
 final class App
 {
-	private static array $skipDirectories = ['app', 'lib', 'tests', 'vendor'];
-	private const APP_OPTIONS = '/lib/Application/app_options.php';
+	//	These directories will be skipped, including some extras for now.
+	private static array $skipDirectories = ['app', 'lib', 'tests', 'vendor', 'Forensics', 'MusicPDF'];
+	private const APP_OPTIONS = '/app/app_options.php';
 
 	private static string $appRoot;
 	private static array $commands = [];
@@ -26,7 +28,7 @@ final class App
 		self::$specs = new OptionCollection();
 
 		//  The global_options.php file must return an indexed array of associative arrays.
-		self::setOptions(include self::$appRoot . self::APP_OPTIONS);
+		self::addOptions(include self::$appRoot . self::APP_OPTIONS);
 
 		//  Add options from each working file or directory at the top level.
 		//  Each file must have the variable $options that is an array of associative arrays.
@@ -34,6 +36,7 @@ final class App
 		$dirIter = new \DirectoryIterator(self::$appRoot);
 		foreach ($dirIter as $itm) {
 			$basename = $itm->getBasename('.php');
+			$bnLower = strtolower($basename);
 
 			if (substr($basename, 0, 1) === '.' || in_array($basename, self::$skipDirectories)) {
 				continue;
@@ -41,20 +44,46 @@ final class App
 
 			$options = [];
 
-			if ($itm->isDir() && file_exists($itm->getPathname() . '/Main.php')) {
-				$mainClass = $basename . '\\Main';
-				self::$commands[strtolower($basename)] = $mainClass;
-				include $itm->getPathname() . '/Main.php';
-				$options = $mainClass::$options;
-			} elseif ($itm->isFile() && $itm->getExtension() === 'php') {
-				self::$commands[strtolower($basename)] = $basename;
-				include $itm->getPathname();
-				$options = $basename::$options;
-			}
+			switch (true) {
+				case ($itm->isFile() && $itm->getExtension() === 'php'):
+					self::$commands[$bnLower] = $basename;
 
-			if (!empty($options)) {
-				self::setOptions($options);
-				unset($options);
+					include $itm->getPathname();
+
+					if (
+						class_exists($basename) &&
+						$basename instanceof Command &&
+						!empty($basename::$options)
+					) {
+						self::addOptions($basename::$options);
+					}
+					break;
+
+				case $itm->isDir():
+					$subIter = new \DirectoryIterator($itm->getPathname());
+					self::$commands[$bnLower] = [];
+
+					foreach ($subIter as $subItm) {
+						if ($subItm->isFile() && $subItm->getExtension() === 'php') {
+							$subBasename = $subItm->getBasename('.php');
+							$fullClassName = $basename . '\\' . $subBasename;
+
+							self::$commands[$bnLower][strtolower($subBasename)] = $fullClassName;
+
+							include $subItm->getPathname();
+
+							if (
+								class_exists($fullClassName) &&
+								$fullClassName instanceof Command &&
+								!empty($fullClassName::$options)
+							) {
+								self::addOptions($fullClassName::$options);
+							}
+						}
+					}
+					break;
+
+				default:
 			}
 		}
 
@@ -63,12 +92,15 @@ final class App
 
 	/**
 	 * Set an option based on the provided indexed array of associative arrays.
+	 * Each associative array contains the keys: spec, desc, type, default, and inc.
+	 * The only required key is spec.
 	 *
 	 * @param array $opts The array containing the keys: spec, desc, type, default, and inc.
 	 */
-	protected static function setOptions(array $opts)
+	protected static function addOptions(array $opts)
 	{
 		foreach ($opts as $opt) {
+			//	The following statement will cause an exception if the key is missing or invalid.
 			$option = new Option($opt['spec']);
 
 			if (isset($opt['desc'])) {
@@ -83,7 +115,7 @@ final class App
 				$option->defaultValue = $opt['default'];
 			}
 
-			if (isset($opt['incremental']) && $opt['incremental'] === true) {
+			if (isset($opt['inc']) && $opt['inc'] === true) {
 				$option->incremental = true;
 			}
 
@@ -102,7 +134,7 @@ final class App
 			//  If no arguments then display help and exit
 			//  If -h then display help and exit
 
-			if (isset(self::$opts->help)) {
+			if (isset(self::$opts->help) || self::$opts->arguments === []) {
 				fprintf(STDOUT, App . php(new ConsoleOptionPrinter())->render(self::$specs) . PHP_EOL);
 
 				if (count(self::$opts->arguments) > 0) {
@@ -111,7 +143,7 @@ final class App
 
 				return 0;
 			}
-
+return 0;
 			//	the first arg is the command name
 			//  and corrisponds to a working directory
 			//  and namespacewith a file/class named 'Main.php'
@@ -122,7 +154,6 @@ final class App
 			$cmdObj = self::$commands[self::$opts->arguments[0]->arg];
 			$cmdObj::init(self::$opts);
 			$exitCode = $cmdObj::main();
-
 		}
 		catch (InvalidOptionException $e) {
 			StdIo::err('Invalid option.');

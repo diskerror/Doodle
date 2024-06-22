@@ -1,9 +1,9 @@
 <?php
 
-use Library\app\Commands;
+use Application\Command;
 use Library\DomDocParser;
 
-class Html2Ddl extends Commands
+class Html2Ddl extends Command
 {
 	public static function main(): int
 	{

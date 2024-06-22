@@ -1,8 +1,8 @@
 <?php
 
-use Library\app\Commands;
+use Application\Command;
 
-class Ddl2DataDict extends Commands
+class Ddl2DataDict extends Command
 {
 	public static function main(): int
 	{

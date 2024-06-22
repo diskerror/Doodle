@@ -5,7 +5,7 @@ namespace MusicPDF;
 use Library\Commands;
 use Library\PdfMetaDataList;
 
-class Main extends Commands
+class Main extends Command
 {
 
 	public static function main(): int

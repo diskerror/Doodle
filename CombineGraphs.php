@@ -1,8 +1,8 @@
 <?php
 
-use Library\app\Commands;
+use Application\Command;
 
-class CombineGraphs extends Commands
+class CombineGraphs extends Command
 {
 	private static $map = ['Microsoft.Azure.Devices' => 'MAD'];
 

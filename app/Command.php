@@ -1,13 +1,13 @@
 <?php
 
-namespace Library\app;
+namespace Application;
 
 use GetOptionKit\OptionResult;
 
 /**
  * Abstract class for command classes.
  */
-abstract class Commands
+abstract class Command
 {
 	public static $options = [];
 

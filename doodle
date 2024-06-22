@@ -10,7 +10,7 @@ require 'vendor/autoload.php';
 
 try {
 	App::init(__DIR__);
-	$exitCode = App::run($argv);
+	$exitCode = App::run([]);
 }
 catch (Throwable $e) {
 	fprintf(STDERR, PHP_EOL . $e->getMessage());

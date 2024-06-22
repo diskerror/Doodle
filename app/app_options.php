@@ -1,6 +1,6 @@
 <?php
 
-//	See lib/Application/App.php setOptions() for the full list of option members
+//	See app/App.php addOptions() for the full list of option members
 
 return [
 	[
@@ -10,6 +10,6 @@ return [
 	[
 		"spec" => "v|verbose",
 		"desc" => "Verbose output",
-		"incremental" => true,
+		"inc" => true,
 	],
 ];

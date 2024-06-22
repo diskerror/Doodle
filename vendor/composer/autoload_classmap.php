@@ -6,6 +6,9 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Application\\App' => $baseDir . '/app/App.php',
+    'Application\\Command' => $baseDir . '/app/Command.php',
+    'Application\\Reflector' => $baseDir . '/app/Reflector.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'DeepCopy\\DeepCopy' => $vendorDir . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
     'DeepCopy\\Exception\\CloneException' => $vendorDir . '/myclabs/deep-copy/src/DeepCopy/Exception/CloneException.php',
@@ -243,6 +246,7 @@ return array(
     'Library\\Exception\\RuntimeException' => $baseDir . '/lib/Exception/RuntimeException.php',
     'Library\\PdfMetaData' => $baseDir . '/lib/PdfMetaData.php',
     'Library\\PdfMetaDataList' => $baseDir . '/lib/PdfMetaDataList.php',
+    'Library\\StdIo' => $baseDir . '/lib/StdIo.php',
     'Library\\Xml2Array' => $baseDir . '/lib/Xml2Array.php',
     'Library\\XmlParser' => $baseDir . '/lib/XmlParser.php',
     'PHPUnit\\Exception' => $vendorDir . '/phpunit/phpunit/src/Exception.php',

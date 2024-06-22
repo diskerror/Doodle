@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\app;
+namespace Library;
 
 use Library\Exception\RuntimeException;
 
@@ -57,9 +57,9 @@ class StdIo
 	static function phpOut($o)
 	{
 		if (is_object($o)) {
-			$o = (method_exists($o, '_toArray')) ?
+			$o = (method_exists($o, '_toArray') || method_exists($o, 'toArray')) ?
 				$o->toArray() :
-				(array) $o;
+				(array)$o;
 		}
 
 		$out = var_export($o, true);
@@ -74,7 +74,7 @@ class StdIo
 		 * (This only works when there are no nested indexed arrays.)
 		 */
 		$arr = explode("\n", $out);
-		$i   = 0;
+		$i = 0;
 		$cnt = 0;
 		foreach ($arr as &$a) {
 			if (preg_match('/  +0 => /', $a) === 1) {
