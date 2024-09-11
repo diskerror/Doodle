@@ -38,7 +38,6 @@ return array(
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
     'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
-    'MusicPDF\\' => array($baseDir . '/MusicPDF'),
     'Library\\' => array($baseDir . '/lib'),
     'Laminas\\Stdlib\\' => array($vendorDir . '/laminas/laminas-stdlib/src'),
     'Laminas\\Server\\' => array($vendorDir . '/laminas/laminas-server/src'),

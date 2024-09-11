@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'eb9cdf98763f1572e77221db551c8ffd2abac3c6',
+        'reference' => '6a226e529cb90d30675dc56647f6b07634eeeac2',
         'name' => 'diskerror/doodle',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'eb9cdf98763f1572e77221db551c8ffd2abac3c6',
+            'reference' => '6a226e529cb90d30675dc56647f6b07634eeeac2',
             'dev_requirement' => false,
         ),
         'diskerror/typed' => array(

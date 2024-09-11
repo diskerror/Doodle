@@ -78,7 +78,7 @@ date +%r
 if [[ -f $SRC && -d $DEST_DIR ]]; then
 	BNAME="$(basename "$SRC")"
 	time doConvert "$SRC" "$DEST_DIR/$BNAME"
-	./apply.php "$DEST_DIR/$BNAME"
+	"$THIS_DIR/Apply.php" "$DEST_DIR/$BNAME"
 elif [[ -d $SRC && -d $DEST_DIR ]]; then
 	find "$SRC" -iname '*.pdf' | while read file; do
 		BNAME="$(basename "$file")"

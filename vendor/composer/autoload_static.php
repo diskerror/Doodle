@@ -57,10 +57,6 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
             'Psr\\Cache\\' => 10,
             'PhpParser\\' => 10,
         ),
-        'M' => 
-        array (
-            'MusicPDF\\' => 9,
-        ),
         'L' => 
         array (
             'Library\\' => 8,
@@ -209,10 +205,6 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
-        ),
-        'MusicPDF\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/MusicPDF',
         ),
         'Library\\' => 
         array (
@@ -471,9 +463,6 @@ class ComposerStaticInitc927a4ca304bc47d7f3fe3f335c8f124
         'Library\\StdIo' => __DIR__ . '/../..' . '/lib/StdIo.php',
         'Library\\Xml2Array' => __DIR__ . '/../..' . '/lib/Xml2Array.php',
         'Library\\XmlParser' => __DIR__ . '/../..' . '/lib/XmlParser.php',
-        'MusicPDF\\Main' => __DIR__ . '/../..' . '/MusicPDF/Main.php',
-        'MusicPDF\\PdfMetaData' => __DIR__ . '/../..' . '/MusicPDF/PdfMetaData.php',
-        'MusicPDF\\PdfMetaDataList' => __DIR__ . '/../..' . '/MusicPDF/PdfMetaDataList.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
         'Override' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/Override.php',
         'PHPUnit\\Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Exception.php',
