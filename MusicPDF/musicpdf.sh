@@ -18,6 +18,8 @@ if  [ ! -d "$2" ]; then
 	exit
 fi
 
+THIS_DIR=$(dirname $0)
+
 function kill_subprocesses() {
 	#  local PID
 	#  for PID in $CHILD_PID; do
@@ -82,7 +84,7 @@ elif [[ -d $SRC && -d $DEST_DIR ]]; then
 		BNAME="$(basename "$file")"
 		(
 			doConvert "$file" "$DEST_DIR/$BNAME"
-			./apply.php "$DEST_DIR/$BNAME"
+			"$THIS_DIR/Apply.php" "$DEST_DIR/$BNAME"
 			date +%r
 		) &
 	done

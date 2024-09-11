@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Script to change hostname on Debian. Created for setting up cloned virtual machines.
+# Script to change hostname on Debian and generating new ssh keys.
+# Created for setting up cloned virtual machines.
 
 if [[ "root" != $(whoami) ]]
 then
@@ -28,7 +29,7 @@ then
     exit
 fi
 
-if [[ "$1" =~ ^[-a-zA-Z0-9]{1,63}$ ]]
+if ! [[ "$1" =~ ^[-a-zA-Z0-9]{1,63}$ ]]
 then
     echo 'Bad character(s) in new name.'
     echo 'Only letters, numbers, and hyphen allowed, up to 63 characters total.'
@@ -56,4 +57,14 @@ do
     [ -f "$f" ] && sed -i"$BU_SUF" -e "s/$old_hostname/$1/g" "$f"
 done
 
-echo 'Reboot for new hostname to take affect.'
+hostnamectl set-hostname "$1"
+
+rm /etc/ssh/ssh_host_*
+ssh-keygen -A
+
+
+# 0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q
+
+# 0 4 1 * * root /opt/certbot/bin/pip install --upgrade certbot certbot-nginx 2>/dev/null 1>&2
+
+# https://certbot.eff.org/instructions?ws=nginx&os=pip

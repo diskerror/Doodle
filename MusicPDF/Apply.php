@@ -1,12 +1,12 @@
 #!/usr/bin/env php
 <?php
 
-use Library\PdfMetaDataList;
+include __DIR__ . '/../vendor/autoload.php';
+
+use MusicPDF\PdfMetaDataList;
 
 setlocale(LC_CTYPE, 'en_US.UTF-8');
 mb_internal_encoding("UTF-8");
-
-include '../vendor/autoload.php';
 
 function esc($v)
 {

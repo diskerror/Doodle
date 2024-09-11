@@ -3,7 +3,6 @@
 namespace MusicPDF;
 
 use Library\Commands;
-use Library\PdfMetaDataList;
 
 class Main extends Command
 {
