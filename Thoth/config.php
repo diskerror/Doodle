@@ -13,7 +13,7 @@ return [
 		'procDir' => '/proc/'    //	location of actual PID
 	],
 
-	'options'=>[
+	'inputParams'=>[
 		['v|verbose'],
 		['n']
 	]

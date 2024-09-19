@@ -3,26 +3,25 @@
 namespace Application;
 
 use GetOptionKit\OptionResult;
+use Library\StdIo;
+
 
 /**
  * Abstract class for command classes.
  */
 abstract class Command
 {
-	public static $options = [];
-
 	/**
 	 * @var OptionResult
 	 */
-	protected static OptionResult $opts;
+	protected OptionResult $inputParams;
 
 	/**
-	 * @param OptionResult $opts description
-	 * @return void
+	 * @param OptionResult $inputParams description
 	 */
-	public static function init(OptionResult $opts): void
+	public function __construct(OptionResult $inputParams)
 	{
-		self::$opts = $opts;
+		$this->inputParams = $inputParams;
 	}
 
 	/**
@@ -30,28 +29,25 @@ abstract class Command
 	 *
 	 * @return int The exit code
 	 */
-	public static function main(): int
+	public function main(): int
 	{
-        $reflector = new Reflector(get_calling_class());
+		return $this->help();
+	}
 
-		StdIo::outln('Sub-commands:');
-        foreach ($reflector->getFormattedDescriptions() as $description) {
-			StdIo::outln("\t" . $description);
-        }
+	/**
+	 * Describes the items in this command.
+	 */
+	public function help(): int
+	{
+		$descArr = (new Reflector(get_called_class()))->getFormattedDescriptions();
+
+		if (count($descArr)) {
+			StdIo::outln('Sub-commands:');
+			foreach ($descArr as $description) {
+				StdIo::outln("\t" . $description);
+			}
+		}
 
 		return 0;
 	}
-
-    /**
-     * Describes the items in this command.
-     */
-    public static function help()
-    {
-		$reflector = new Reflector(get_calling_class());
-
-		StdIo::outln('Sub-commands:');
-        foreach ($reflector->getFormattedDescriptions() as $description) {
-			StdIo::outln("\t" . $description);
-        }
-    }
 }

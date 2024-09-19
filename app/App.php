@@ -2,6 +2,9 @@
 
 namespace Application;
 
+use Application\Exceptions\BadVerbException;
+use Application\Exceptions\MissingVerbException;
+use DirectoryIterator;
 use GetOptionKit\Option;
 use GetOptionKit\OptionCollection;
 use GetOptionKit\OptionParser;
@@ -11,83 +14,79 @@ use Library\StdIo;
 
 final class App
 {
-	//	These directories will be skipped, including some extras for now.
-	private static array $skipDirectories = ['app', 'lib', 'tests', 'vendor', 'Forensics', 'MusicPDF'];
-	private const APP_OPTIONS = '/app/app_options.php';
+	//	These directories will be skipped.
+	private array $skipFiles = ['app', 'lib', 'tests', 'vendor'];
+	private const APP_OPTIONS = '/app/options.php';
+	private const APP_CACHE   = '/commandCache.phps';
 
-	private static string $appRoot;
-	private static array $commands = [];
+	private string $rootDir;
+	private array  $commands = [];
 
-	private static OptionCollection $specs;
-	private static OptionParser $parser;
-	private static OptionResult $opts;
+	private OptionCollection $specs;
+	private OptionParser     $parser;
+	private OptionResult     $inputParams;
 
-	public static function init(string $appRoot): void
+	public function __construct(string $rootDir)
 	{
-		self::$appRoot = $appRoot;
-		self::$specs = new OptionCollection();
+		$this->rootDir = $rootDir;
+		$this->specs   = new OptionCollection();
 
-		//  The global_options.php file must return an indexed array of associative arrays.
-		self::addOptions(include self::$appRoot . self::APP_OPTIONS);
-
-		//  Add options from each working file or directory at the top level.
-		//  Each file must have the variable $options that is an array of associative arrays.
-		//  Directories must have at least one file named Main.php.
-		$dirIter = new \DirectoryIterator(self::$appRoot);
-		foreach ($dirIter as $itm) {
-			$basename = $itm->getBasename('.php');
-			$bnLower = strtolower($basename);
-
-			if (substr($basename, 0, 1) === '.' || in_array($basename, self::$skipDirectories)) {
-				continue;
-			}
-
-			$options = [];
-
-			switch (true) {
-				case ($itm->isFile() && $itm->getExtension() === 'php'):
-					self::$commands[$bnLower] = $basename;
-
-					include $itm->getPathname();
-
-					if (
-						class_exists($basename) &&
-						$basename instanceof Command &&
-						!empty($basename::$options)
-					) {
-						self::addOptions($basename::$options);
-					}
-					break;
-
-				case $itm->isDir():
-					$subIter = new \DirectoryIterator($itm->getPathname());
-					self::$commands[$bnLower] = [];
-
-					foreach ($subIter as $subItm) {
-						if ($subItm->isFile() && $subItm->getExtension() === 'php') {
-							$subBasename = $subItm->getBasename('.php');
-							$fullClassName = $basename . '\\' . $subBasename;
-
-							self::$commands[$bnLower][strtolower($subBasename)] = $fullClassName;
-
-							include $subItm->getPathname();
-
-							if (
-								class_exists($fullClassName) &&
-								$fullClassName instanceof Command &&
-								!empty($fullClassName::$options)
-							) {
-								self::addOptions($fullClassName::$options);
-							}
-						}
-					}
-					break;
-
-				default:
-			}
+		// All inputParams will be defined in this file for now.
+		if (file_exists($this->rootDir . self::APP_OPTIONS)) {
+			self::addOptions(include $this->rootDir . self::APP_OPTIONS);
 		}
 
-		self::$parser = new OptionParser(self::$specs);
+		if (file_exists($this->rootDir . self::APP_CACHE)) {
+			$this->commands = unserialize(file_get_contents($this->rootDir . self::APP_CACHE));
+		}
+		else {
+			$appRootFiles = new DirectoryIterator($this->rootDir);
+			foreach ($appRootFiles as $itm) {
+				$basename = $itm->getBasename('.php');
+
+				if (str_starts_with($basename, '.') || in_array($basename, $this->skipFiles)) {
+					continue;
+				}
+
+				$bnLower = strtolower($basename);
+
+				switch (true) {
+					case ($itm->isFile() && ($itm->getExtension() === 'php')):
+						$contents = file_get_contents($itm->getPathname());
+						if (preg_match("/class\\s+$basename\\s+extends\\s+Command/", $contents)) {
+							$this->commands[$bnLower]            = new CommandRef();
+							$this->commands[$bnLower]->filePath  = $itm->getPathname();
+							$this->commands[$bnLower]->className = $basename;
+						}
+						break;
+
+					case $itm->isDir():
+						$subIter = new DirectoryIterator($itm->getPathname() . '/');
+
+						foreach ($subIter as $subItm) {
+							if ($subItm->isFile() && ($subItm->getExtension() === 'php')) {
+								$subBasename = $subItm->getBasename('.php');
+								$sbnLower    = strtolower($subBasename);
+
+								$contents = file_get_contents($subItm->getPathname());
+								if (preg_match("/class.+$subBasename\\s+extends\\s+Command/", $contents)) {
+									$this->commands[$bnLower][$sbnLower]            = new CommandRef();
+									$this->commands[$bnLower][$sbnLower]->filePath  = $itm->getPathname();
+									$this->commands[$bnLower][$sbnLower]->dirName   = $basename;
+									$this->commands[$bnLower][$sbnLower]->className = $subBasename;
+								}
+							}
+						}
+						break;
+
+					default:
+				}
+			}
+
+			file_put_contents($this->rootDir . self::APP_CACHE, serialize($this->commands));
+		}
+
+		$this->parser = new OptionParser($this->specs);
 	}
 
 	/**
@@ -95,88 +94,139 @@ final class App
 	 * Each associative array contains the keys: spec, desc, type, default, and inc.
 	 * The only required key is spec.
 	 *
-	 * @param array $opts The array containing the keys: spec, desc, type, default, and inc.
+	 * @param array $optsIn The indexed array containing the keys: spec, desc, isa, defaultValue, and incremental.
 	 */
-	protected static function addOptions(array $opts)
+	protected function addOptions(array $optsIn): void
 	{
-		foreach ($opts as $opt) {
-			//	The following statement will cause an exception if the key is missing or invalid.
+		foreach ($optsIn as $opt) {
 			$option = new Option($opt['spec']);
+			unset($opt['spec']);
 
-			if (isset($opt['desc'])) {
-				$option->desc = $opt['desc'];
+			foreach ($opt as $optKey => $optValue) {
+				$option->$optKey = $optValue;
 			}
 
-			if (isset($opt['type'])) {
-				$option->isa = $opt['type'];
-			}
-
-			if (isset($opt['default'])) {
-				$option->defaultValue = $opt['default'];
-			}
-
-			if (isset($opt['inc']) && $opt['inc'] === true) {
-				$option->incremental = true;
-			}
-
-			self::$specs->addOption($option);
+			$this->specs->addOption($option);
 		}
 	}
 
-	public static function run(array $argv): int
+	protected function printHelp(): void
 	{
-		try {
-			self::$opts = self::$parser->parse($argv);
-			if (!isset(self::$opts->verbose)) {
-				self::$opts->verbose = 0;
+		StdIo::outln('Possible commands:');
+		foreach ($this->commands as $p_command => $commandData) {
+			if ($commandData instanceof CommandRef) {
+				StdIo::out('        ');
+				StdIo::outln($p_command);
+				StdIo::outln();
 			}
-
-			//  If no arguments then display help and exit
-			//  If -h then display help and exit
-
-			if (isset(self::$opts->help) || self::$opts->arguments === []) {
-				fprintf(STDOUT, App . php(new ConsoleOptionPrinter())->render(self::$specs) . PHP_EOL);
-
-				if (count(self::$opts->arguments) > 0) {
-					//	get help from reflection
+			else {
+				foreach ($commandData as $subCommandName => $subCommandData) {
+					StdIo::out('        ');
+					StdIo::outln($p_command . ' ' . $subCommandName);
+					StdIo::outln();
 				}
+			}
+		}
+		StdIo::outln();
+		StdIo::outln((new ConsoleOptionPrinter())->render($this->specs));
+	}
 
+	public function run(array $argv): int
+	{
+		$exit_code = 0;
+
+		try {
+			$this->inputParams = $this->parser->parse($argv);
+
+			$argument1 = $this->inputParams->arguments !== [] ?
+				array_shift($this->inputParams->arguments)->arg :
+				'';
+
+			//  If no arguments or -h then display help and exit
+			if (
+				isset($this->inputParams->help) ||
+				$argument1 === '' ||
+				$argument1 === 'help'
+			) {
+				$this->printHelp();
 				return 0;
 			}
-return 0;
-			//	the first arg is the command name
-			//  and corrisponds to a working directory
-			//  and namespacewith a file/class named 'Main.php'
 
-			//	the second arg can be another class/file
-			//	in the same working directory or namespace
+			if (!array_key_exists($argument1, $this->commands)) {
+				unlink($this->rootDir . self::APP_CACHE);
+				throw new BadVerbException();
+			}
 
-			$cmdObj = self::$commands[self::$opts->arguments[0]->arg];
-			$cmdObj::init(self::$opts);
-			$exitCode = $cmdObj::main();
+			//	Argument 1 is in array at this point.
+			$thisCommand = $this->commands[$argument1];
+			$argument2   = $this->inputParams->arguments !== [] ? $this->inputParams->arguments[0]->arg : '';
+
+			$runner = null;
+			$method = '';
+
+			if ($thisCommand instanceof CommandRef) {
+				//	This must be a file.
+				//  Check if second argument matches a public method,
+				//      remove from argument list, then call it.
+				if (method_exists($thisCommand->className, $argument2)) {
+					array_shift($this->inputParams->arguments);
+					$exit_code = (new $thisCommand->className($this->inputParams))->$argument2();
+				}
+				else {
+					$exit_code = (new $thisCommand->className($this->inputParams))->main();
+				}
+			}
+			else {
+				//	Else $cmd contains an array of CommandRef's
+				//  Argument 2 is required here.
+				if ($argument2 === '') {
+					throw new MissingVerbException();
+				}
+				array_shift($this->inputParams->arguments);
+
+				$thisSubCommand = $thisCommand[$argument2];
+				$fullClassName  = $thisSubCommand->dirName . '\\' . $thisSubCommand->className;
+
+				//	Check if third argument matches a public method, call it.
+				$argument3 = $this->inputParams->arguments !== [] ? $this->inputParams->arguments[0]->arg : '';
+				if (method_exists($fullClassName, $argument3)) {
+					$exit_code = (new $fullClassName($this->inputParams))->$argument3();
+				}
+				else {
+					$exit_code = (new $fullClassName($this->inputParams))->main();
+				}
+			}
 		}
 		catch (InvalidOptionException $e) {
 			StdIo::err('Invalid option.');
-			$exitCode = 1;
+			$exit_code = 1;
 		}
 		catch (InvalidOptionValueException $e) {
-			echo 'Invalid value.' . PHP_EOL;
-			$exitCode = 1;
+			StdIo::err('Invalid option value.');
+			$exit_code = 1;
 		}
 		catch (NonNumericException $e) {
-			echo 'Option parameter must be numeric.' . PHP_EOL;
-			$exitCode = 1;
+			StdIo::err('Option parameter must be numeric.');
+			$exit_code = 1;
 		}
 		catch (OptionConflictException $e) {
-			echo 'Option conflict.' . PHP_EOL;
-			$exitCode = 1;
+			StdIo::err('Option conflict.');
+			$exit_code = 1;
 		}
 		catch (RequireValueException $e) {
-			echo 'Option requires a value.' . PHP_EOL;
-			$exitCode = 1;
+			StdIo::err('Option requires a value.');
+			$exit_code = 1;
+		}
+		catch (MissingVerbException $e) {
+			StdIo::err('Missing command verb.');
+			$exit_code = 1;
+		}
+		catch (BadVerbException $e) {
+			StdIo::err('Bad command verb.');
+			$exit_code = 1;
 		}
 
-		return $exitCode;
+		return $exit_code;
 	}
 
 }

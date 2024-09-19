@@ -23,8 +23,8 @@ class FileTask extends TaskMaster
 		$list2->loadFileNames($path2);
 
 //		fwrite(STDOUT, 'Comparing file names' . PHP_EOL);
-//		if (array_key_exists('o', $_SERVER['opts'])) {
-//			$fp = fopen($_SERVER['opts']['o'], 'w');
+//		if (array_key_exists('o', $_SERVER['inputParams'])) {
+//			$fp = fopen($_SERVER['inputParams']['o'], 'w');
 //		}
 //		else {
 		$fp = STDOUT;

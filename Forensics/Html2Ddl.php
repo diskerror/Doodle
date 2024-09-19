@@ -1,5 +1,7 @@
 <?php
 
+namespace Forensics;
+
 use Application\Command;
 use Library\DomDocParser;
 

@@ -16,7 +16,7 @@
 # Servers have been configured with SuiteCRM files with owner setting 'chown www-data:www-data'
 #   so that SuiteCRM can write to it's own files and directories.
 
-# Set command and universal options.
+# Set command and universal inputParams.
 declare -r RSYNC='rsync --filter=._- -rltDumOe ssh'
 declare -r NL=$'\n'
 
@@ -72,7 +72,7 @@ usage () {
 ################################################################################
 # MAIN
 
-# Handle options.
+# Handle inputParams.
 while getopts "dhis" opt
 do
     case ${opt} in

@@ -9,6 +9,7 @@
 namespace Application;
 
 use Laminas\Server\Reflection;
+use Library\StdIo;
 
 /**
  * Class Reflector
@@ -22,7 +23,7 @@ class Reflector
 {
 	protected $_reflectedClass;
 
-	public function __construct($class)
+	public function __construct(string $class)
 	{
 		$this->_reflectedClass = Reflection::reflectClass($class);
 	}
@@ -60,19 +61,16 @@ class Reflector
 
 			switch ($methodName) {
 				case '':
-				case 'setDI':
-				case 'getDI':
-				case 'getEventsManager':
-				case 'setEventsManager':
+				case 'printHelp':
 					continue 2;
 			}
 
 			$desc = $method->getDescription();
 
-			$cmdDesc[substr($methodName, 0, -6)] =
+			$cmdDesc[$methodName] =
 				$methodName === $desc ?
 					'' :
-					wordwrap($desc, 72, "\n" . str_repeat(' ', 24));
+					wordwrap($desc, 72, PHP_EOL . str_repeat(' ', 24));
 		}
 
 		ksort($cmdDesc, SORT_NATURAL | SORT_FLAG_CASE);

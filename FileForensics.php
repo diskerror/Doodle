@@ -5,7 +5,7 @@ use Application\Command;
 
 class FileForensics extends Command
 {
-	public static $options = [
+	public OptionCollection $specs = [
 		[
 			"spec" => "o|output:",
 			"desc" => "Output to file (defaults to STDOUT).",
@@ -13,7 +13,7 @@ class FileForensics extends Command
 		],
 	];
 
-	protected static $pathsToIgnore = [
+	protected $pathsToIgnore = [
 		'/.idea',
 		'/.git',
 		'/.DS_Store',
@@ -57,17 +57,17 @@ class FileForensics extends Command
 		'/WindowsAzure.Storage.',
 	];
 
-	protected static $fp;
+	protected $fp;
 
-	public static function init(OptionResult $opts): void
+	public function __construct(OptionResult $inputParams)
 	{
-		parent::init($opts);
+		parent::__construct($inputParams);
 		ini_set('memory_limit', -1);
 
-		if (self::$opts->has('output')) {
-			self::$fp = fopen(self::$opts->output, 'w');
+		if ($this->inputParams->has('output')) {
+			$this->fp = fopen($this->inputParams->output, 'w');
 		} else {
-			self::$fp = STDOUT;
+			$this->fp = STDOUT;
 		}
 	}
 
