@@ -65,8 +65,10 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
 
     public static $classMap = array (
         'Application\\App' => __DIR__ . '/../..' . '/app/App.php',
-        'Application\\CmdRef' => __DIR__ . '/../..' . '/app/CmdRef.php',
         'Application\\Command' => __DIR__ . '/../..' . '/app/Command.php',
+        'Application\\CommandRef' => __DIR__ . '/../..' . '/app/CommandRef.php',
+        'Application\\Exceptions\\BadFileException' => __DIR__ . '/../..' . '/app/Exceptions/BadFileException.php',
+        'Application\\Exceptions\\BadVerbException' => __DIR__ . '/../..' . '/app/Exceptions/BadVerbException.php',
         'Application\\Exceptions\\MissingVerbException' => __DIR__ . '/../..' . '/app/Exceptions/MissingVerbException.php',
         'Application\\Reflector' => __DIR__ . '/../..' . '/app/Reflector.php',
         'CombineGraphs' => __DIR__ . '/../..' . '/CombineGraphs.php',
@@ -283,6 +285,7 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'Music\\Apply' => __DIR__ . '/../..' . '/Music/Apply.php',
         'Music\\PdfMetaData' => __DIR__ . '/../..' . '/Music/PdfMetaData.php',
         'Music\\PdfMetaDataList' => __DIR__ . '/../..' . '/Music/PdfMetaDataList.php',
+        'dumpSQLite' => __DIR__ . '/../..' . '/dumpSQLite.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

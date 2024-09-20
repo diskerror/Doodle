@@ -4,7 +4,6 @@ use Application\Command;
 use Application\Exceptions\BadFileException;
 use Library\StdIo;
 
-
 class dumpSQLite extends Command
 {
 	/**
@@ -31,19 +30,19 @@ class dumpSQLite extends Command
 		$tstm->execute();
 		$tables = $tstm->fetchAll(PDO::FETCH_COLUMN);
 
-		$data = [];
+		$output = [];
 
 		foreach ($tables as $table) {
 			try {
 				$tstm = $db->query('SELECT * FROM ' . $table);
 				$tstm->execute();
-				$data[$table] = $tstm->fetchAll(PDO::FETCH_ASSOC);
+				$output[$table] = $tstm->fetchAll(PDO::FETCH_ASSOC);
 			}
 			catch (Exception $e) {
 			}
 		}
 
-		echo json_encode($data, JSON_PRETTY_PRINT);
+		echo json_encode($output, JSON_PRETTY_PRINT);
 
 		return 0;
 	}

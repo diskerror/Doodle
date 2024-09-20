@@ -7,8 +7,10 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Application\\App' => $baseDir . '/app/App.php',
-    'Application\\CmdRef' => $baseDir . '/app/CmdRef.php',
     'Application\\Command' => $baseDir . '/app/Command.php',
+    'Application\\CommandRef' => $baseDir . '/app/CommandRef.php',
+    'Application\\Exceptions\\BadFileException' => $baseDir . '/app/Exceptions/BadFileException.php',
+    'Application\\Exceptions\\BadVerbException' => $baseDir . '/app/Exceptions/BadVerbException.php',
     'Application\\Exceptions\\MissingVerbException' => $baseDir . '/app/Exceptions/MissingVerbException.php',
     'Application\\Reflector' => $baseDir . '/app/Reflector.php',
     'CombineGraphs' => $baseDir . '/CombineGraphs.php',
@@ -225,4 +227,5 @@ return array(
     'Music\\Apply' => $baseDir . '/Music/Apply.php',
     'Music\\PdfMetaData' => $baseDir . '/Music/PdfMetaData.php',
     'Music\\PdfMetaDataList' => $baseDir . '/Music/PdfMetaDataList.php',
+    'dumpSQLite' => $baseDir . '/dumpSQLite.php',
 );
