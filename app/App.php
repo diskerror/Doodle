@@ -2,6 +2,7 @@
 
 namespace Application;
 
+use Application\Exceptions\BadFileException;
 use Application\Exceptions\BadVerbException;
 use Application\Exceptions\MissingVerbException;
 use DirectoryIterator;
@@ -223,6 +224,10 @@ final class App
 		}
 		catch (BadVerbException $e) {
 			StdIo::err('Bad command verb.');
+			$exit_code = 1;
+		}
+		catch(BadFileException $e){
+			StdIo::err('Bad file.');
 			$exit_code = 1;
 		}
 
