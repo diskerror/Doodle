@@ -9,17 +9,6 @@ then
 	exit
 fi
 
-#function kill_subprocesses()
-#{
-#	# pkill sends SIGTERM by default
-#	# -P means to match the children of '$$', which is this process
-#	pkill -P $$
-#	echo
-#	exit
-#}
-#
-#trap 'kill_subprocesses' SIGHUP SIGINT SIGTERM SIGQUIT SIGTSTP SIGSTOP
-
 # Get directory of this file for finding support files.
 #CMD_DIR=$(dirname $0)
 
@@ -32,7 +21,7 @@ fi
 if ! [[ "$1" =~ ^[-a-zA-Z0-9]{1,63}$ ]]
 then
     echo 'Bad character(s) in new name.'
-    echo 'Only letters, numbers, and hyphen allowed, up to 63 characters total.'
+    echo 'Only letters, numbers, and hyphen allowed; up to 63 characters total.'
     exit
 fi
 
