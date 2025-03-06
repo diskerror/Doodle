@@ -52,8 +52,8 @@ rm /etc/ssh/ssh_host_*
 ssh-keygen -A
 
 
-# 0 0,12 * * * rootDir /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q
+# 0 0,12 * * * baseDir /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && sudo certbot renew -q
 
-# 0 4 1 * * rootDir /opt/certbot/bin/pip install --upgrade certbot certbot-nginx 2>/dev/null 1>&2
+# 0 4 1 * * baseDir /opt/certbot/bin/pip install --upgrade certbot certbot-nginx 2>/dev/null 1>&2
 
 # https://certbot.eff.org/instructions?ws=nginx&os=pip

@@ -3,23 +3,15 @@
 
 use Application\App;
 
-ini_set('error_reporting', E_ALL);
-set_error_handler(function ($errno, $message, $fname, $line) {
-	throw new ErrorException($message, $errno, E_ERROR, $fname, $line);
-});
-
-setlocale(LC_CTYPE, 'en_US.UTF-8');
-mb_internal_encoding('UTF-8');
-
-require 'vendor/autoload.php';
-
 try {
-	$app = new App(__DIR__);
-	$ret = $app->run($argv);
-	exit($ret);
+    require 'vendor/diskerror/autoload/autoload.php';
+
+    $app = new App(__DIR__);
+    $app->run($argv);
 }
 catch (Throwable $t) {
-	fprintf(STDERR, "Fatal error: %s\n", $t->getMessage());
-	fprintf(STDERR, "%s\n", $t->getTraceAsString());
-	exit(1);
+//    fwrite(STDERR, $t . PHP_EOL);
+    fprintf(STDERR, "Fatal error: %s" . PHP_EOL, $t->getMessage());
+    fprintf(STDERR, "%s" . PHP_EOL, $t->getTraceAsString());
+    exit(1);
 }

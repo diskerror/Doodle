@@ -6,12 +6,16 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
     'Library\\' => array($baseDir . '/lib'),
     'Laminas\\Stdlib\\' => array($vendorDir . '/laminas/laminas-stdlib/src'),
     'Laminas\\Server\\' => array($vendorDir . '/laminas/laminas-server/src'),
     'Laminas\\Code\\' => array($vendorDir . '/laminas/laminas-code/src'),
     'GetOptionKit\\' => array($vendorDir . '/corneltek/getoptionkit/src'),
+    'Ds\\' => array($vendorDir . '/php-ds/php-ds/src'),
     'Diskerror\\Typed\\' => array($vendorDir . '/diskerror/typed/src'),
+    'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
+    'Application\\Structure\\' => array($baseDir . '/app/struct'),
     'Application\\' => array($baseDir . '/app'),
     '' => array($baseDir . '/'),
 );

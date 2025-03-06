@@ -15,13 +15,6 @@ use function count;
 class Node
 {
     /**
-     * Node value
-     *
-     * @var mixed
-     */
-    protected $value;
-
-    /**
      * Array of child nodes (if any)
      *
      * @var array
@@ -42,9 +35,13 @@ class Node
      * @param Node $parent Optional
      * @return Node
      */
-    public function __construct($value, ?Node $parent = null)
-    {
-        $this->value = $value;
+    public function __construct(
+        /**
+         * Node value
+         */
+        protected $value,
+        ?Node $parent = null
+    ) {
         if (null !== $parent) {
             $this->setParent($parent, true);
         }
@@ -57,6 +54,7 @@ class Node
      *
      * //phpcs:disable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName
      * //phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.UselessAnnotation
+     *
      * @param \Laminas\Server\Reflection\Node $node
      * //phpcs:enable SlevomatCodingStandard.TypeHints.ParameterTypeHint.UselessAnnotation
      * //phpcs:enable SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.ReferenceViaFullyQualifiedName

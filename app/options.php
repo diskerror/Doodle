@@ -1,6 +1,7 @@
 <?php
 
-//	See app/App.php addOptions() for the full list of option members
+//  Each associative array contains the keys: spec, desc, type, default, and inc.
+//  Unset members will be set to null.
 
 return [
 	[

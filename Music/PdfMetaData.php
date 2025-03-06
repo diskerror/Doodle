@@ -7,7 +7,7 @@ use Diskerror\Typed\TypedClass;
 
 class PdfMetaData extends TypedClass
 {
-	protected string $filename;
+	protected TStringTrim $filename;
 	protected TStringTrim $title;
 	protected TStringTrim $author;			//	Composer, One or more comma-separated values
 	protected TStringTrim $subject;			//	Genres, One or more comma-separated values

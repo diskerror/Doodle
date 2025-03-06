@@ -2,236 +2,229 @@
 
 namespace Application;
 
-use Application\Exceptions\BadFileException;
-use Application\Exceptions\BadVerbException;
-use Application\Exceptions\MissingVerbException;
-use DirectoryIterator;
+use ErrorException;
 use GetOptionKit\Option;
 use GetOptionKit\OptionCollection;
 use GetOptionKit\OptionParser;
 use GetOptionKit\OptionPrinter\ConsoleOptionPrinter;
 use GetOptionKit\OptionResult;
 use Library\StdIo;
+use Phalcon\Cli\Console;
+use Phalcon\Di\FactoryDefault\Cli as FdCli;
+use Phalcon\Events\Manager;
+use Resource\LoggerFactory;
+use Resource\PidHandler;
+use Service\Exception\RuntimeException;
+use Application\Structure\Config;
 
 final class App
 {
-	//	These directories will be skipped.
-	private array $skipFiles = ['app', 'lib', 'tests', 'vendor'];
-	private const APP_OPTIONS = '/app/options.php';
-	private const APP_CACHE   = '/commandCache.phps';
+    private OptionCollection $specs;
+    private OptionResult     $inputParams;
 
-	private string $rootDir;
-	private array  $commands = [];
+    private FdCli $di;
 
-	private OptionCollection $specs;
-	private OptionParser     $parser;
-	private OptionResult     $inputParams;
+    public function __construct(string $basePath)
+    {
+        ini_set('error_reporting', E_ALL);
+        set_error_handler(function ($errno, $message, $fname, $line) {
+            throw new ErrorException($message, $errno, E_ERROR, $fname, $line);
+        });
 
-	public function __construct(string $rootDir)
-	{
-		$this->rootDir = $rootDir;
-		$this->specs   = new OptionCollection();
+        setlocale(LC_CTYPE, 'en_US.UTF-8');
+        mb_internal_encoding('UTF-8');
 
-		// All inputParams will be defined in this file for now.
-		if (file_exists($this->rootDir . self::APP_OPTIONS)) {
-			self::addOptions(include $this->rootDir . self::APP_OPTIONS);
-		}
+        if (!is_dir($basePath)) {
+            throw new RuntimeException('"' . $basePath . '" base path does not exist.');
+        }
 
-		if (file_exists($this->rootDir . self::APP_CACHE)) {
-			$this->commands = unserialize(file_get_contents($this->rootDir . self::APP_CACHE));
-		}
-		else {
-			$appRootFiles = new DirectoryIterator($this->rootDir);
-			foreach ($appRootFiles as $itm) {
-				$basename = $itm->getBasename('.php');
 
-				if (str_starts_with($basename, '.') || in_array($basename, $this->skipFiles)) {
-					continue;
-				}
+        $this->di = $di = new FdCli();
 
-				$bnLower = strtolower($basename);
+        //	Setup shared resources and services.
+        $this->di->setShared('basePath', function () use ($basePath) {
+            return $basePath;
+        });
 
-				switch (true) {
-					case ($itm->isFile() && ($itm->getExtension() === 'php')):
-						$contents = file_get_contents($itm->getPathname());
-						if (preg_match("/class\\s+$basename\\s+extends\\s+Command/", $contents)) {
-							$this->commands[$bnLower]            = new CommandRef();
-							$this->commands[$bnLower]->filePath  = $itm->getPathname();
-							$this->commands[$bnLower]->className = $basename;
-						}
-						break;
+        $this->di->setShared('config', function () use ($basePath) {
+            static $config;
 
-					case $itm->isDir():
-						$subIter = new DirectoryIterator($itm->getPathname() . '/');
+            if (!isset($config)) {
+                //	File must exist and be in this directory.
+                $config = new Config(require 'config.php');
 
-						foreach ($subIter as $subItm) {
-							if ($subItm->isFile() && ($subItm->getExtension() === 'php')) {
-								$subBasename = $subItm->getBasename('.php');
-								$sbnLower    = strtolower($subBasename);
+                if (isset($GLOBALS['config'])) {
+                    $config->replace($GLOBALS['config']);
+                }
+            }
 
-								$contents = file_get_contents($subItm->getPathname());
-								if (preg_match("/class.+$subBasename\\s+extends\\s+Command/", $contents)) {
-									$this->commands[$bnLower][$sbnLower]            = new CommandRef();
-									$this->commands[$bnLower][$sbnLower]->filePath  = $itm->getPathname();
-									$this->commands[$bnLower][$sbnLower]->dirName   = $basename;
-									$this->commands[$bnLower][$sbnLower]->className = $subBasename;
-								}
-							}
-						}
-						break;
+            return $config;
+        });
 
-					default:
-				}
-			}
+        $this->di->setShared('logger', function () use ($basePath, $di) {
+            static $logger;
+            if (!isset($logger)) {
+                $logger = new LoggerFactory(
+                    $basePath . '/' . $di->getShared('config')->process->name . '.log'
+                );
+            }
+            return $logger;
+        });
 
-			file_put_contents($this->rootDir . self::APP_CACHE, serialize($this->commands));
-		}
+        $this->di->setShared('eventsManager', function () {
+            static $eventsManager;
+            if (!isset($eventsManager)) {
+                $eventsManager = new Manager();
+            }
+            return $eventsManager;
+        });
 
-		$this->parser = new OptionParser($this->specs);
-	}
+        $this->di->setShared('pidHandler', function () use ($di) {
+            static $pidHandler;
+            if (!isset($pidHandler)) {
+                $pidHandler = new PidHandler($di->getShared('config')->process);
+            }
+            return $pidHandler;
+        });
 
-	/**
-	 * Set an option based on the provided indexed array of associative arrays.
-	 * Each associative array contains the keys: spec, desc, type, default, and inc.
-	 * The only required key is spec.
-	 *
-	 * @param array $optsIn The indexed array containing the keys: spec, desc, isa, defaultValue, and incremental.
-	 */
-	protected function addOptions(array $optsIn): void
-	{
-		foreach ($optsIn as $opt) {
-			$option = new Option($opt['spec']);
-			unset($opt['spec']);
 
-			foreach ($opt as $optKey => $optValue) {
-				$option->$optKey = $optValue;
-			}
+        $appOptionsFile = $basePath . $this->di->getShared('config')->appOptionsFile;
+        if (file_exists($appOptionsFile)) {
+            self::addOptions(include $appOptionsFile);
+        }
 
-			$this->specs->addOption($option);
-		}
-	}
+        /**
+         * Allow additional options to be set from global variable.
+         */
+        if (isset($GLOBALS['options'])) {
+            self::addOptions($GLOBALS['options']);
+        }
+    }
 
-	protected function printHelp(): void
-	{
-		StdIo::outln('Possible commands:');
-		foreach ($this->commands as $p_command => $commandData) {
-			if ($commandData instanceof CommandRef) {
-				StdIo::out('        ');
-				StdIo::outln($p_command);
-				StdIo::outln();
-			}
-			else {
-				foreach ($commandData as $subCommandName => $subCommandData) {
-					StdIo::out('        ');
-					StdIo::outln($p_command . ' ' . $subCommandName);
-					StdIo::outln();
-				}
-			}
-		}
-		StdIo::outln();
-		StdIo::outln((new ConsoleOptionPrinter())->render($this->specs));
-	}
+    /**
+     * Set an option based on the provided indexed array of associative arrays.
+     * Each associative array contains the keys: spec, desc, type, default, and inc.
+     * The only required key is spec.
+     *
+     * @param array $optsIn The indexed array containing the keys: spec, desc, isa, defaultValue, and incremental.
+     */
+    private function addOptions(array $optsIn): void
+    {
+        if(!isset($this->specs)) {
+            $this->specs = new OptionCollection();
+        }
 
-	public function run(array $argv): int
-	{
-		$exit_code = 0;
+        foreach ($optsIn as $opt) {
+            $option = new Option($opt['spec']);
+            unset($opt['spec']);
 
-		try {
-			$this->inputParams = $this->parser->parse($argv);
+            foreach ($opt as $optKey => $optValue) {
+                $option->$optKey = $optValue;
+            }
 
-			$argument1 = $this->inputParams->arguments !== [] ?
-				array_shift($this->inputParams->arguments)->arg :
-				'';
+            $this->specs->addOption($option);
+        }
+    }
 
-			//  If no arguments or -h then display help and exit
-			if (
-				isset($this->inputParams->help) ||
-				$argument1 === '' ||
-				$argument1 === 'help'
-			) {
-				$this->printHelp();
-				return 0;
-			}
+    public function showOptions(): void
+    {
+        StdIo::outln();
+        StdIo::outln((new ConsoleOptionPrinter())->render($this->specs));
+    }
 
-			if (!array_key_exists($argument1, $this->commands)) {
-				unlink($this->rootDir . self::APP_CACHE);
-				throw new BadVerbException();
-			}
+    public function parseArgv(array $argv): OptionResult
+    {
+        if (!isset($this->inputParams)) {
+            $this->inputParams = (new OptionParser($this->specs))->parse($argv);
 
-			//	Argument 1 is in array at this point.
-			$thisCommand = $this->commands[$argument1];
-			$argument2   = $this->inputParams->arguments !== [] ? $this->inputParams->arguments[0]->arg : '';
+            $arg1 = $this->inputParams->arguments !== [] ?
+                $this->inputParams->arguments[0]->arg :
+                '';
 
-			$runner = null;
-			$method = '';
+            //  If no arguments or -h then display help and exit
+//            if (
+//                isset($this->inputParams->help) ||
+//                $arg1 === '' ||
+//                $arg1 === 'help'
+//            ) {
+//                $this->showOptions();
+////                return 0;
+//                exit(0);
+//            }
+        }
 
-			if ($thisCommand instanceof CommandRef) {
-				//	This must be a file.
-				//  Check if second argument matches a public method,
-				//      remove from argument list, then call it.
-				if (method_exists($thisCommand->className, $argument2)) {
-					array_shift($this->inputParams->arguments);
-					$exit_code = (new $thisCommand->className($this->inputParams))->$argument2();
-				}
-				else {
-					$exit_code = (new $thisCommand->className($this->inputParams))->main();
-				}
-			}
-			else {
-				//	Else $cmd contains an array of CommandRef's
-				//  Argument 2 is required here.
-				if ($argument2 === '') {
-					throw new MissingVerbException();
-				}
-				array_shift($this->inputParams->arguments);
+        return $this->inputParams;
+    }
 
-				$thisSubCommand = $thisCommand[$argument2];
-				$fullClassName  = $thisSubCommand->dirName . '\\' . $thisSubCommand->className;
+    public function run(array $argv): int
+    {
+//        $exit_code = 0;
 
-				//	Check if third argument matches a public method, call it.
-				$argument3 = $this->inputParams->arguments !== [] ? $this->inputParams->arguments[0]->arg : '';
-				if (method_exists($fullClassName, $argument3)) {
-					$exit_code = (new $fullClassName($this->inputParams))->$argument3();
-				}
-				else {
-					$exit_code = (new $fullClassName($this->inputParams))->main();
-				}
-			}
-		}
-		catch (InvalidOptionException $e) {
-			StdIo::err('Invalid option.');
-			$exit_code = 1;
-		}
-		catch (InvalidOptionValueException $e) {
-			StdIo::err('Invalid option value.');
-			$exit_code = 1;
-		}
-		catch (NonNumericException $e) {
-			StdIo::err('Option parameter must be numeric.');
-			$exit_code = 1;
-		}
-		catch (OptionConflictException $e) {
-			StdIo::err('Option conflict.');
-			$exit_code = 1;
-		}
-		catch (RequireValueException $e) {
-			StdIo::err('Option requires a value.');
-			$exit_code = 1;
-		}
-		catch (MissingVerbException $e) {
-			StdIo::err('Missing command verb.');
-			$exit_code = 1;
-		}
-		catch (BadVerbException $e) {
-			StdIo::err('Bad command verb.');
-			$exit_code = 1;
-		}
-		catch(BadFileException $e){
-			StdIo::err('Bad file.');
-			$exit_code = 1;
-		}
+//        try {
+        $this->parseArgv($argv);
 
-		return $exit_code;
-	}
+        $parsedArgv = [];
+        foreach ($this->inputParams->arguments as $argument) {
+            $parsedArgv[] = $argument->arg;
+        }
+
+        //	Reassemble command line arguments without options.
+        $args           = [];
+        $args['task']   = count($parsedArgv) ? array_shift($parsedArgv) : '';
+        $args['action'] = count($parsedArgv) ? array_shift($parsedArgv) : '';
+        $args['params'] = $parsedArgv;
+
+        $application = new Console($this->di);
+        $application->handle($args);
+
+
+//        }
+//        catch (InvalidOptionException $e) {
+//            StdIo::err('Invalid option.');
+//            $exit_code = 1;
+//        }
+//        catch (InvalidOptionValueException $e) {
+//            StdIo::err('Invalid option value.');
+//            $exit_code = 1;
+//        }
+//        catch (NonNumericException $e) {
+//            StdIo::err('Option parameter must be numeric.');
+//            $exit_code = 1;
+//        }
+//        catch (OptionConflictException $e) {
+//            StdIo::err('Option conflict.');
+//            $exit_code = 1;
+//        }
+//        catch (RequireValueException $e) {
+//            StdIo::err('Option requires a value.');
+//            $exit_code = 1;
+//        }
+//        catch (MissingVerbException $e) {
+//            StdIo::err('Missing command verb.');
+//            $exit_code = 1;
+//        }
+//        catch (BadVerbException $e) {
+//            StdIo::err('Bad command verb.');
+//            $exit_code = 1;
+//        }
+//        catch (BadFileException $e) {
+//            StdIo::err('Bad file.');
+//            $exit_code = 1;
+//        }
+//
+//        return $exit_code;
+    }
+
+    public function __get(string $name)
+    {
+        switch ($name) {
+            case 'inputParams':
+                return $this->inputParams;
+
+            default:
+        }
+
+        return $this->di->getShared($name);
+    }
 
 }

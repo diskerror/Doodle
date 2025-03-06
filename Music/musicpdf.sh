@@ -18,7 +18,7 @@ if  [ ! -d "$2" ]; then
 	exit
 fi
 
-THIS_DIR=$(dirname $0)
+THIS_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 function kill_subprocesses() {
 	#  local PID
@@ -50,9 +50,9 @@ function doConvert() {
 	#  magick -density ${RES}x${RES} -units pixelsperinch "$1" \
 	#    -alpha off -threshold 50% -depth 1 -compress Group4 "$2"
 
-	nice magick -density ${RES}x${RES} -units pixelsperinch "$1" \
+	convert -density ${RES}x${RES} -units pixelsperinch "$1" \
 		-alpha off -blur 3x0.9 \
-		-threshold 68% \
+		-threshold 67% \
 		-background white -deskew 80% \
 		-adaptive-resize $RESZ -resample ${RESF}x${RESF} \
 		-trim +repage -bordercolor white -border 5x2 \
@@ -78,16 +78,18 @@ date +%r
 if [[ -f $SRC && -d $DEST_DIR ]]; then
 	BNAME="$(basename "$SRC")"
 	time doConvert "$SRC" "$DEST_DIR/$BNAME"
-	"$THIS_DIR/Apply.php" "$DEST_DIR/$BNAME"
+#	"$THIS_DIR/Apply.php" "$DEST_DIR/$BNAME"
 	date +%r
 elif [[ -d $SRC && -d $DEST_DIR ]]; then
+#  set MAGICK_THREAD_LIMIT=1
 	find "$SRC" -iname '*.pdf' | while read file; do
 		BNAME="$(basename "$file")"
 		(
-			doConvert "$file" "$DEST_DIR/$BNAME"
-			"$THIS_DIR/Apply.php" "$DEST_DIR/$BNAME"
+			nice doConvert "$file" "$DEST_DIR/$BNAME"
+#			"$THIS_DIR/Apply.php" "$DEST_DIR/$BNAME"
 			date +%r
 		) &
+		sleep 3
 	done
 else
 	echo "Input error."

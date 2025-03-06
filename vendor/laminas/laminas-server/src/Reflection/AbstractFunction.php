@@ -311,7 +311,6 @@ abstract class AbstractFunction
         if (empty($paramTags)) {
             foreach ($parameters as $param) {
                 // Suppressing, because false positive
-                /** @psalm-suppress TooManyArguments **/
                 $paramTypesTmp[] = [$this->paramIsArray($param) ? 'array' : 'mixed'];
                 $paramDesc[]     = '';
             }
@@ -377,11 +376,7 @@ abstract class AbstractFunction
      */
     public function __get($key)
     {
-        if (isset($this->config[$key])) {
-            return $this->config[$key];
-        }
-
-        return null;
+        return $this->config[$key] ?? null;
     }
 
     /**
