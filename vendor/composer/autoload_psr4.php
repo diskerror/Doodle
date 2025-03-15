@@ -6,7 +6,17 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Psr\\SimpleCache\\' => array($vendorDir . '/psr/simple-cache/src'),
+    'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
+    'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
+    'Phalcon\\Traits\\' => array($vendorDir . '/phalcon/traits/src'),
+    'Phalcon\\Tests\\Unit\\' => array($vendorDir . '/phalcon/traits/tests/unit'),
+    'Phalcon\\Tests\\Fixtures\\' => array($vendorDir . '/phalcon/traits/tests/support/fixtures'),
+    'Phalcon\\' => array($vendorDir . '/phalcon/phalcon/src'),
+    'PayloadInterop\\' => array($vendorDir . '/payload-interop/payload-interop/src'),
+    'MatthiasMullie\\PathConverter\\' => array($vendorDir . '/matthiasmullie/path-converter/src'),
+    'MatthiasMullie\\Minify\\' => array($vendorDir . '/matthiasmullie/minify/src'),
     'Library\\' => array($baseDir . '/lib'),
     'Laminas\\Stdlib\\' => array($vendorDir . '/laminas/laminas-stdlib/src'),
     'Laminas\\Server\\' => array($vendorDir . '/laminas/laminas-server/src'),

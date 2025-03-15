@@ -60,14 +60,17 @@ class Reflector
 			$methodName = $method->getName();
 
 			switch ($methodName) {
-				case '':
-				case 'printHelp':
-					continue 2;
+                case '':
+                case 'setDI':
+                case 'getDI':
+                case 'getEventsManager':
+                case 'setEventsManager':
+                continue 2;
 			}
 
 			$desc = $method->getDescription();
 
-			$cmdDesc[$methodName] =
+            $cmdDesc[substr($methodName, 0, -6)] =
 				$methodName === $desc ?
 					'' :
 					wordwrap($desc, 72, PHP_EOL . str_repeat(' ', 24));

@@ -2,6 +2,8 @@
 
 namespace Application;
 
+use Application\Exception\RuntimeException;
+use Application\Structure\Config;
 use ErrorException;
 use GetOptionKit\Option;
 use GetOptionKit\OptionCollection;
@@ -10,12 +12,11 @@ use GetOptionKit\OptionPrinter\ConsoleOptionPrinter;
 use GetOptionKit\OptionResult;
 use Library\StdIo;
 use Phalcon\Cli\Console;
+use Phalcon\Cli\Dispatcher\Exception as DispatcherException;
 use Phalcon\Di\FactoryDefault\Cli as FdCli;
 use Phalcon\Events\Manager;
 use Resource\LoggerFactory;
 use Resource\PidHandler;
-use Service\Exception\RuntimeException;
-use Application\Structure\Config;
 
 final class App
 {
@@ -110,7 +111,7 @@ final class App
      */
     private function addOptions(array $optsIn): void
     {
-        if(!isset($this->specs)) {
+        if (!isset($this->specs)) {
             $this->specs = new OptionCollection();
         }
 
@@ -137,9 +138,14 @@ final class App
         if (!isset($this->inputParams)) {
             $this->inputParams = (new OptionParser($this->specs))->parse($argv);
 
-            $arg1 = $this->inputParams->arguments !== [] ?
-                $this->inputParams->arguments[0]->arg :
-                '';
+            $inputParams = $this->inputParams;
+            $this->di->setShared('inputParams', function () use ($inputParams) {
+                return $inputParams;
+            });
+
+//            $arg1 = $this->inputParams->arguments !== [] ?
+//                $this->inputParams->arguments[0]->arg :
+//                '';
 
             //  If no arguments or -h then display help and exit
 //            if (
@@ -156,8 +162,15 @@ final class App
         return $this->inputParams;
     }
 
-    public function run(array $argv): int
+    public function run(array $argv): void
     {
+        $ns = ucwords(basename($argv[0], '.php'), '.,-_+');
+
+        if ($ns !== 'Doodle') {
+            $this->di->get('dispatcher')->setDefaultNamespace($ns);
+            $this->di->get('dispatcher')->setNamespaceName($ns);
+        }
+
 //        $exit_code = 0;
 
 //        try {
@@ -174,45 +187,25 @@ final class App
         $args['action'] = count($parsedArgv) ? array_shift($parsedArgv) : '';
         $args['params'] = $parsedArgv;
 
-        $application = new Console($this->di);
-        $application->handle($args);
+        try {
+            $application = new Console($this->di);
+            $application->handle($args);
+        }
+        catch (DispatcherException $e) {
+            $newArgs           = [];
+            $newArgs['task']   = $args['task'];
+            $newArgs['action'] = '';
+            $newArgs['params'] = $parsedArgv;
 
-
-//        }
-//        catch (InvalidOptionException $e) {
-//            StdIo::err('Invalid option.');
-//            $exit_code = 1;
-//        }
-//        catch (InvalidOptionValueException $e) {
-//            StdIo::err('Invalid option value.');
-//            $exit_code = 1;
-//        }
-//        catch (NonNumericException $e) {
-//            StdIo::err('Option parameter must be numeric.');
-//            $exit_code = 1;
-//        }
-//        catch (OptionConflictException $e) {
-//            StdIo::err('Option conflict.');
-//            $exit_code = 1;
-//        }
-//        catch (RequireValueException $e) {
-//            StdIo::err('Option requires a value.');
-//            $exit_code = 1;
-//        }
-//        catch (MissingVerbException $e) {
-//            StdIo::err('Missing command verb.');
-//            $exit_code = 1;
-//        }
-//        catch (BadVerbException $e) {
-//            StdIo::err('Bad command verb.');
-//            $exit_code = 1;
-//        }
-//        catch (BadFileException $e) {
-//            StdIo::err('Bad file.');
-//            $exit_code = 1;
-//        }
-//
-//        return $exit_code;
+            try {
+                $application = new Console($this->di);
+                $application->handle($newArgs);
+            }
+            catch (DispatcherException $de) {
+                StdIo::err($de->getMessage());
+                exit($de->getCode());
+            }
+        }
     }
 
     public function __get(string $name)

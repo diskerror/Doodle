@@ -15,6 +15,11 @@
       "type": "vcs",
       "url": "../Autoload",
       "canonical": false
+    },
+    {
+      "type":      "vcs",
+      "url":       "https://github.com/phalcon/phalcon-devtools",
+      "canonical": false
     }
   ],
   "require": {
@@ -35,10 +40,10 @@
     "laminas/laminas-server": "^2.17"
   },
   "require-dev": {
+    "phalcon/phalcon": ">=v5.0.x-dev",
     "phpunit/phpunit": "^10.3"
   },
   "suggest": {
-    "phalcon/phalcon": "v5.0.x-dev",
     "ext-ds": "^1.5"
   },
   "config": {

@@ -40,10 +40,10 @@ foreach ($app->inputParams->arguments as $argument) {
                 $v = escapeshellarg($v);
             }
         }
-        $arg = escapeshellarg($arg);
+        $efile = escapeshellarg($argument->arg);
 
         $cmd = 'exiftool -overwrite_original ' .
-            "-Title=$meta->title -Author=$meta->author -Subject=$meta->subject -Keywords=$meta->keywords $arg";
+            "-Title=$meta->title -Author=$meta->author -Subject=$meta->subject -Keywords=$meta->keywords $efile";
 
 //        StdIo::outln($cmd);
 //        continue;
