@@ -3,7 +3,7 @@
 # Convert to 1-bit file.
 # convert in.tif -monochrome -depth 1 out.tif
 
-if  [ $# -le 1 ]; then
+if  [ $# -eq 0 ]; then
   echo "need input"
   exit
 fi
@@ -33,7 +33,7 @@ function doConvert() {
 
 SRC_DIR=$(realpath "$1")
 
-for SRC_FILE in $@; do
+for SRC_FILE in "$@"; do
   (
     doConvert "$SRC_FILE"
   ) &

@@ -1,0 +1,33 @@
+services:
+
+  phalcon-traits-8.1:
+    container_name: phalcon-traits-8.1
+    hostname: phalcon-81
+    build: resources/docker/8.1
+    working_dir: /srv
+    volumes:
+      - .:/srv
+
+  phalcon-traits-8.2:
+    container_name: phalcon-traits-8.2
+    hostname: phalcon-82
+    build: resources/docker/8.2
+    working_dir: /srv
+    volumes:
+      - .:/srv
+
+  phalcon-traits-8.3:
+    container_name: phalcon-traits-8.3
+    hostname: phalcon-83
+    build: resources/docker/8.3
+    working_dir: /srv
+    volumes:
+      - .:/srv
+
+  phalcon-traits-8.4:
+    container_name: phalcon-traits-8.4
+    hostname: phalcon-84
+    build: resources/docker/8.4
+    working_dir: /srv
+    volumes:
+      - .:/srv

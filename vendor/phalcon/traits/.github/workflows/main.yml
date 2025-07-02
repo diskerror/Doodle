@@ -1,0 +1,186 @@
+# This file is part of Phalcon.
+#
+# (c) Phalcon Team <team@phalcon.io>
+#
+# For the full copyright and license information, please view
+# the LICENSE file that was distributed with this source code.
+
+name: "Phalcon CI"
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Daily at 02:00 runs only on default branch
+  push:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+  pull_request:
+  workflow_dispatch:
+
+env:
+  fail-fast: true
+
+  # For tests
+  LANG: en_US.UTF-8
+  LANGUAGE: en_US.UTF-8
+  LC_ALL: en_US.UTF-8
+
+  # PHP extensions required by Composer
+  EXTENSIONS: intl, json, mbstring, msgpack
+
+permissions: { }
+jobs:
+  # PHP CodeSniffer inspection
+  phpcs:
+    name: "Validate Tests code style"
+    if: "!contains(github.event.head_commit.message, 'ci skip')"
+
+    permissions:
+      contents: read
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php:
+          - '8.1'
+          - '8.2'
+          - '8.3'
+          - '8.4'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ env.EXTENSIONS }}
+          ini-values: apc.enable_cli=on, session.save_path=/tmp
+          tools: pecl, composer:v2
+        env:
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Install development dependencies with Composer"
+        uses: "ramsey/composer-install@v3"
+        with:
+          composer-options: "--prefer-dist"
+
+      - name: "Code Sniffer"
+        run: |
+          composer cs
+
+      - name: "Code Analysis"
+        run: |
+          composer cs
+
+
+  unit-tests:
+    needs: phpcs
+
+    permissions:
+      contents: read # to fetch code (actions/checkout)
+
+    name: Unit tests / PHP-${{ matrix.php }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php:
+          - '8.1'
+          - '8.2'
+          - '8.3'
+          - '8.4'
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Setup platform specific environment"
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+
+      - name: "Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ env.EXTENSIONS }}
+          ini-values: apc.enable_cli=on
+          tools: pecl, composer:v2
+          coverage: pcov
+        env:
+          PHPTS: ${{ matrix.ts }}
+          COMPOSER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Validate composer"
+        run: composer validate --no-check-all --no-check-publish
+
+      - name: "Install development dependencies with Composer"
+        uses: "ramsey/composer-install@v3"
+        with:
+          composer-options: "--prefer-dist"
+
+      - name: "Setup Tests"
+        shell: bash
+        run: |
+          cp -v config/.env.example .env
+
+      - name: "Run Unit Tests"
+        if: always()
+        run: |
+          composer test-unit-coverage
+
+      - name: "Upload coverage file artifact"
+        uses: "actions/upload-artifact@v4"
+        with:
+          name: "unit-${{ matrix.php }}.coverage"
+          path: "tests/_output/coverage.xml"
+
+  upload-coverage:
+    permissions:
+      contents: read
+
+    name: "Upload coverage to Sonarcloud"
+    runs-on: ubuntu-latest
+    needs:
+      - "unit-tests"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+        with:
+          fetch-depth: 0
+
+      - name: "Display structure of downloaded files"
+        run: |
+          mkdir -p cv
+
+      - name: "Download coverage files"
+        uses: "actions/download-artifact@v4"
+        with:
+          path: "cv"
+
+      - name: "Display structure of downloaded files"
+        run: |
+          mv cv/unit-8.1.coverage/coverage.xml      cv/01.xml
+          mv cv/unit-8.2.coverage/coverage.xml      cv/02.xml
+          mv cv/unit-8.3.coverage/coverage.xml      cv/03.xml
+          mv cv/unit-8.4.coverage/coverage.xml      cv/04.xml
+          ls -la cv/
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4.2.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ./
+          args: >
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.sources=src/
+            -Dsonar.exclusions=vendor/**,cv/**,tests/**
+            -Dsonar.sourceEncoding=UTF-8
+            -Dsonar.language=php
+            -Dsonar.tests=tests/
+            -Dsonar.php.coverage.reportPaths=cv/01.xml,cv/02.xml,cv/03.xml,cv/04.xml
