@@ -50,7 +50,7 @@ class Tif2PdfTask extends TaskMaster
             $averageWidth += $tifFiles[$f]->width;  //  widest image
         }
         $averageWidth = round($averageWidth / count($tifFiles));
-        $averageWidth = $averageWidth > 4500 ? 4500 : $averageWidth;
+        $averageWidth = min($averageWidth, 4500);
 
         // Get resize resolution froms first file.
         $finalResolution = $tifFiles[0]->resolution > 720 ? 720 : $tifFiles[0]->resolution;
@@ -61,6 +61,7 @@ class Tif2PdfTask extends TaskMaster
         if (!file_exists('tmp2')) {
             mkdir('tmp2');
         }
+
 
         //  Set up ImageMagick command for each input file
         $cmdArray      = [];
@@ -73,8 +74,11 @@ magick \
   -alpha off -colorspace gray \
   -despeckle \
   -background white \
-  -set option:deskew:auto-crop true \
   -deskew 80% \
+  -blur 0x1.1 \
+  -threshold 50% \
+  -define trim:percent-background=99.1% \
+  -trim +repage \
   {$outputFileArr[$f]}
 CMD;
         }
@@ -83,6 +87,7 @@ CMD;
         $runner = new ProcessRunner($cmdArray, $workingDir);
         $runner->run(); //  Returns when all processes are finished
 
+
         $cmdArray       = [];
         $outputFileArr2 = [];
         for ($f = 0; $f < count($tifFiles); $f++) {
@@ -90,15 +95,15 @@ CMD;
             $outputFileArr2[$f] = escapeshellarg('tmp2/' . basename($info->name));
 
             $resize       = round(($averageWidth / $info->width) * 100.0, 1);
-            $resizeOption = $resize != 100.0 ? "-resize {$resize}%" : '';
+            $resizeOption = $resize != 100.0 ? "-adaptive-resize {$resize}%" : '';
 
             $cmdArray[$f] = <<<CMD
 magick \
   {$outputFileArr[$f]} \
   {$resizeOption} \
-  -blur 0x1.5 \
-  -threshold 45% \
-  -bordercolor white -border 0.05% \
+  -blur 0x1.6 \
+  -threshold 50% \
+  -bordercolor white -border 0.2% \
   -depth 1 \
   -compress Group4 \
   {$outputFileArr2[$f]};
@@ -108,6 +113,7 @@ CMD;
 
         $runner = new ProcessRunner($cmdArray, $workingDir);
         $runner->run(); //  Returns when all processes are finished
+
 
         chdir($workingDir);
         exec('magick ' . implode(' ', $outputFileArr2) .
