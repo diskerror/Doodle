@@ -15,3 +15,5 @@ catch (Throwable $t) {
     fprintf(STDERR, "%s" . PHP_EOL, $t->getTraceAsString());
     exit(1);
 }
+
+exit(0);

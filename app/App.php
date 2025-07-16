@@ -3,6 +3,8 @@
 namespace Application;
 
 use Application\Exception\RuntimeException;
+use Application\LoggerFactory;
+use Application\PidHandler;
 use Application\Structure\Config;
 use ErrorException;
 use GetOptionKit\Option;
@@ -15,8 +17,6 @@ use Phalcon\Cli\Console;
 use Phalcon\Cli\Dispatcher\Exception as DispatcherException;
 use Phalcon\Di\FactoryDefault\Cli as FdCli;
 use Phalcon\Events\Manager;
-use Resource\LoggerFactory;
-use Resource\PidHandler;
 
 final class App
 {

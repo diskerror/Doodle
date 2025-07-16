@@ -24,7 +24,7 @@ class dumpSQLite extends Command
 			throw new BadFileException();
 		}
 
-		$db = new PDO('sqlite:' . $this->inputParams->arguments[0]->arg, SQLITE3_OPEN_READONLY);
+		$db = new PDO('db:' . $this->inputParams->arguments[0]->arg, SQLITE3_OPEN_READONLY);
 
 		$tstm = $db->query('SELECT name FROM sqlite_schema');
 		$tstm->execute();

@@ -3,7 +3,17 @@
 
 use Application\App;
 
-require 'vendor/diskerror/autoload/autoload.php';
+try {
+    require 'vendor/diskerror/autoload/autoload.php';
 
-$app = new App(__DIR__);
-$app->run($argv);
+    $app = new App(__DIR__);
+    $app->run($argv);
+}
+catch (Throwable $t) {
+//    fwrite(STDERR, $t . PHP_EOL);
+    fprintf(STDERR, 'Fatal error: %s' . PHP_EOL, $t->getMessage());
+    fprintf(STDERR, '%s' . PHP_EOL, $t->getTraceAsString());
+    exit(1);
+}
+
+exit(0);
