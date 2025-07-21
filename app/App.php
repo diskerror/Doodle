@@ -3,8 +3,6 @@
 namespace Application;
 
 use Application\Exception\RuntimeException;
-use Application\LoggerFactory;
-use Application\PidHandler;
 use Application\Structure\Config;
 use ErrorException;
 use GetOptionKit\Option;
@@ -20,10 +18,9 @@ use Phalcon\Events\Manager;
 
 final class App
 {
+    private FdCli            $di;
     private OptionCollection $specs;
     private OptionResult     $inputParams;
-
-    private FdCli $di;
 
     public function __construct(string $basePath)
     {
@@ -35,12 +32,14 @@ final class App
         setlocale(LC_CTYPE, 'en_US.UTF-8');
         mb_internal_encoding('UTF-8');
 
+        $this->specs = new OptionCollection();
+
         if (!is_dir($basePath)) {
             throw new RuntimeException('"' . $basePath . '" base path does not exist.');
         }
 
-
         $this->di = $di = new FdCli();
+        $self     = $this;
 
         //	Setup shared resources and services.
         $this->di->setShared('basePath', function () use ($basePath) {
@@ -60,6 +59,11 @@ final class App
             }
 
             return $config;
+        });
+
+        //	This one will look like a property and act like a method.
+        $this->di->setShared('showOptions', function () use ($self) {
+            $self->showOptions();
         });
 
         $this->di->setShared('logger', function () use ($basePath, $di) {
@@ -97,7 +101,7 @@ final class App
         /**
          * Allow additional options to be set from global variable.
          */
-        if (isset($GLOBALS['options'])) {
+        if (array_key_exists('options', $GLOBALS)) {
             self::addOptions($GLOBALS['options']);
         }
     }
@@ -111,10 +115,6 @@ final class App
      */
     private function addOptions(array $optsIn): void
     {
-        if (!isset($this->specs)) {
-            $this->specs = new OptionCollection();
-        }
-
         foreach ($optsIn as $opt) {
             $option = new Option($opt['spec']);
             unset($opt['spec']);
@@ -142,21 +142,6 @@ final class App
             $this->di->setShared('inputParams', function () use ($inputParams) {
                 return $inputParams;
             });
-
-//            $arg1 = $this->inputParams->arguments !== [] ?
-//                $this->inputParams->arguments[0]->arg :
-//                '';
-
-            //  If no arguments or -h then display help and exit
-//            if (
-//                isset($this->inputParams->help) ||
-//                $arg1 === '' ||
-//                $arg1 === 'help'
-//            ) {
-//                $this->showOptions();
-////                return 0;
-//                exit(0);
-//            }
         }
 
         return $this->inputParams;
@@ -171,9 +156,6 @@ final class App
             $this->di->get('dispatcher')->setNamespaceName($ns);
         }
 
-//        $exit_code = 0;
-
-//        try {
         $this->parseArgv($argv);
 
         $parsedArgv = [];
@@ -181,29 +163,60 @@ final class App
             $parsedArgv[] = $argument->arg;
         }
 
-        //	Reassemble command line arguments without options.
-        $args           = [];
-        $args['task']   = count($parsedArgv) ? array_shift($parsedArgv) : '';
-        $args['action'] = count($parsedArgv) ? array_shift($parsedArgv) : '';
-        $args['params'] = $parsedArgv;
+        $application = new Console($this->di);
+
+        if ($ns === 'Application') {
+            //  Handle Doodle help uniquely.
+            if ($this->inputParams->help) {
+                $application->handle([
+                                         'task' => 'main',
+                                         'action' => 'help',
+                                         'params' => [],
+                                     ]);
+                return;
+            }
+        }
+
+        //  Handle help uniquely.
+        if ($this->inputParams->help) {
+            $application->handle([
+                                     'task' => 'main',
+                                     'action' => 'help',
+                                     'params' => [],
+                                 ]);
+            return;
+        }
+
 
         try {
-            $application = new Console($this->di);
-            $application->handle($args);
+            $workingArgv = $parsedArgv;
+            $application->handle([
+                                     'task' => count($workingArgv) ? array_shift($workingArgv) : 'main',
+                                     'action' => count($workingArgv) ? array_shift($workingArgv) : 'main',
+                                     'params' => $workingArgv,
+                                 ]);
         }
-        catch (DispatcherException $e) {
-            $newArgs           = [];
-            $newArgs['task']   = $args['task'];
-            $newArgs['action'] = '';
-            $newArgs['params'] = $parsedArgv;
-
+        catch (DispatcherException) {
             try {
-                $application = new Console($this->di);
-                $application->handle($newArgs);
+                $workingArgv = $parsedArgv;
+                $application->handle([
+                                         'task' => count($workingArgv) ? array_shift($workingArgv) : 'main',
+                                         'action' => 'main',
+                                         'params' => $workingArgv,
+                                     ]);
             }
-            catch (DispatcherException $de) {
-                StdIo::err($de->getMessage());
-                exit($de->getCode());
+            catch (DispatcherException) {
+                try {
+                    $application->handle([
+                                             'task' => 'main',
+                                             'action' => 'main',
+                                             'params' => $parsedArgv,
+                                         ]);
+                }
+                catch (DispatcherException $de) {
+                    StdIo::err($de->getMessage());
+                    exit($de->getCode());
+                }
             }
         }
     }

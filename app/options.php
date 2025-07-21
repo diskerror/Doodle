@@ -7,16 +7,18 @@ return [
 	[
 		"spec" => "h|help",
 		"desc" => "Show this help.",
-	],
+        'type' => 'boolean',
+        'defaultValue' => false,
+    ],
 	[
 		"spec" => "v|verbose",
-		"desc" => "Verbose output.",
+		"desc" => "Verbose output (if implemented).",
 		"incremental" => true,
 		'defaultValue' => 0,
 	],
 	[
 		'spec' => 'q|quiet',
-		'desc' => 'Minimal output.',
+		'desc' => 'Minimal output (if implemented).',
 		'defaultValue' => 0,
 	],
 ];

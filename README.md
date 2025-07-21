@@ -7,6 +7,8 @@ One place to hold all of my little projects and scripts. It uses the Phalcon fra
 + Place for common files (lib directory).
 + Help system based on DocBlocks (laminas/laminas-server).
 + Caches list of commands. Automatically rebuilt on error.
++ "Application\App.php" now handles app namespaces without tasks or actions. Using "project main main [params]" can be
+  called with "project [params]". Application, always sends -h or --help to the help task for that namespace.
 
 # Featured Projects
 Most of my small project files have been moved into this repository. The best of them that have been fully integrated into this framework are listed below.
@@ -19,3 +21,16 @@ Converts a singledirectory of TIFF files into a single PDF file. It handles sour
 
 ### ApplyMeta[data]
 Applies title, composer, and other metadata to a PDF by its filename from data save in an SQLite database 'music.db'.
+
+## AudioMetaData
+This project manages audio metadata for my recording projects. It requires the command line tools:
++ exiftool: for the PDFs of the programs
++ bwfmetaedit: for the WAV audio files
+
+Data is magaged with the SQLite database IDE in PHPStorm.
+
+### Load
+Loads data from various sources into a SQLite database.
+
+### Main
+Attaches metadata from the database to the final files.

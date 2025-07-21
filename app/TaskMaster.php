@@ -2,9 +2,8 @@
 
 namespace Application;
 
-use Phalcon\Cli\Task;
-use Application\Reflector;
 use Library\StdIo;
+use Phalcon\Cli\Task;
 
 /**
  * Class TaskMaster
@@ -21,12 +20,7 @@ class TaskMaster extends Task
      */
     public function mainAction()
     {
-        $reflector = new Reflector(get_called_class());
-
-        StdIo::outln('Sub-commands:');
-        foreach ($reflector->getFormattedDescriptions() as $description) {
-            StdIo::outln("\t" . $description);
-        }
+        $this->helpAction();
     }
 
     /**
@@ -40,5 +34,7 @@ class TaskMaster extends Task
         foreach ($reflector->getFormattedDescriptions() as $description) {
             StdIo::outln("\t" . $description);
         }
+
+        $this->showOptions; //  actually calls the showOptions() method
     }
 }
