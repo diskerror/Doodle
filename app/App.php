@@ -2,69 +2,100 @@
 
 namespace Application;
 
-use Application\Exception\RuntimeException;
 use Application\Structure\Config;
 use ErrorException;
 use GetOptionKit\Option;
 use GetOptionKit\OptionCollection;
 use GetOptionKit\OptionParser;
-use GetOptionKit\OptionPrinter\ConsoleOptionPrinter;
 use GetOptionKit\OptionResult;
 use Library\StdIo;
-use Phalcon\Cli\Console;
 use Phalcon\Cli\Dispatcher\Exception as DispatcherException;
 use Phalcon\Di\FactoryDefault\Cli as FdCli;
 use Phalcon\Events\Manager;
+use Throwable;
 
 final class App
 {
+    private Config           $config;
     private FdCli            $di;
-    private OptionCollection $specs;
+    private OptionCollection $possibleOptions;
     private OptionResult     $inputParams;
 
+    //  Change error handling to throw exceptions.
+    public static function _errorHandler($errno, $message, $fname, $line)
+    {
+        throw new ErrorException($message, $errno, E_ERROR, $fname, $line);
+    }
+
+    //  Catch uncaught exceptions.
+    public static function _exceptionHandler(Throwable $t)
+    {
+        fprintf(STDERR, 'Uncaught exception: %s' . PHP_EOL, $t->getMessage());
+        fprintf(STDERR, '%s' . PHP_EOL, $t->getTraceAsString());
+        exit($t->getCode());
+    }
+
+    public static function _shutdownHandler()
+    {
+        $lastError = error_get_last();
+        if ($lastError !== null && $lastError['type'] === E_ERROR) {
+            fprintf(STDERR, 'Uncaught exception: %s' . PHP_EOL, $lastError['message']);
+            fprintf(STDERR, '%s:%s' . PHP_EOL, $lastError['file'], $lastError['line']);
+        }
+    }
+
+    /**
+     * @param string $basePath
+     * @throws \GetOptionKit\Exception\OptionConflictException
+     * @throws \Phalcon\Di\Exception
+     */
     public function __construct(string $basePath)
     {
         ini_set('error_reporting', E_ALL);
-        set_error_handler(function ($errno, $message, $fname, $line) {
-            throw new ErrorException($message, $errno, E_ERROR, $fname, $line);
-        });
+        set_error_handler([self::class, '_errorHandler']);
+        set_exception_handler([self::class, '_exceptionHandler']);
+        register_shutdown_function([self::class, '_shutdownHandler']);
 
         setlocale(LC_CTYPE, 'en_US.UTF-8');
         mb_internal_encoding('UTF-8');
 
-        $this->specs = new OptionCollection();
-
-        if (!is_dir($basePath)) {
-            throw new RuntimeException('"' . $basePath . '" base path does not exist.');
-        }
-
         $this->di = $di = new FdCli();
         $self     = $this;
+        $basePath = realpath(__DIR__ . '/..'); //	Relative to this file, Doodle/.
 
         //	Setup shared resources and services.
         $this->di->setShared('basePath', function () use ($basePath) {
             return $basePath;
         });
 
-        $this->di->setShared('config', function () use ($basePath) {
-            static $config;
 
-            if (!isset($config)) {
-                //	File must exist and be in this directory.
-                $config = new Config(require 'config.php');
+        //	File must exist and be in this directory.
+        $this->config = new Config(require 'config.php');
 
-                if (isset($GLOBALS['config'])) {
-                    $config->replace($GLOBALS['config']);
-                }
-            }
-
-            return $config;
+        if (isset($GLOBALS['config'])) {
+            $this->config->replace($GLOBALS['config']);
+        }
+        $this->di->setShared('config', function () use ($self) {
+            return $self->config;
         });
 
-        //	This one will look like a property and act like a method.
-        $this->di->setShared('showOptions', function () use ($self) {
-            $self->showOptions();
+
+        $this->possibleOptions = new OptionCollection();
+        $appOptionsFile        = $basePath . $this->di->getShared('config')->appOptionsFile;
+
+        if (file_exists($appOptionsFile)) {
+            $this->addOptions(include $appOptionsFile);
+        }
+
+        //  Allow additional options to be set from global variable.
+        if (array_key_exists('options', $GLOBALS)) {
+            $this->addOptions($GLOBALS['options']);
+        }
+
+        $this->di->setShared('possibleOptions', function () use ($self) {
+            return $self->possibleOptions;
         });
+
 
         $this->di->setShared('logger', function () use ($basePath, $di) {
             static $logger;
@@ -91,19 +122,6 @@ final class App
             }
             return $pidHandler;
         });
-
-
-        $appOptionsFile = $basePath . $this->di->getShared('config')->appOptionsFile;
-        if (file_exists($appOptionsFile)) {
-            self::addOptions(include $appOptionsFile);
-        }
-
-        /**
-         * Allow additional options to be set from global variable.
-         */
-        if (array_key_exists('options', $GLOBALS)) {
-            self::addOptions($GLOBALS['options']);
-        }
     }
 
     /**
@@ -123,20 +141,19 @@ final class App
                 $option->$optKey = $optValue;
             }
 
-            $this->specs->addOption($option);
+            $this->possibleOptions->addOption($option);
         }
     }
 
     public function showOptions(): void
     {
-        StdIo::outln();
-        StdIo::outln((new ConsoleOptionPrinter())->render($this->specs));
+
     }
 
     public function parseArgv(array $argv): OptionResult
     {
         if (!isset($this->inputParams)) {
-            $this->inputParams = (new OptionParser($this->specs))->parse($argv);
+            $this->inputParams = (new OptionParser($this->possibleOptions))->parse($argv);
 
             $inputParams = $this->inputParams;
             $this->di->setShared('inputParams', function () use ($inputParams) {
@@ -149,77 +166,53 @@ final class App
 
     public function run(array $argv): void
     {
-        $ns = ucwords(basename($argv[0], '.php'), '.,-_+');
-
-        if ($ns !== 'Doodle') {
-            $this->di->get('dispatcher')->setDefaultNamespace($ns);
-            $this->di->get('dispatcher')->setNamespaceName($ns);
-        }
-
         $this->parseArgv($argv);
 
         $parsedArgv = [];
         foreach ($this->inputParams->arguments as $argument) {
             $parsedArgv[] = $argument->arg;
         }
+        $parsedArgc = count($parsedArgv);
+
+        //  Initially, the namespace is based on the filename that starts the script.
+        $activeNamespace = ucwords(basename($argv[0], '.php'), '.,-_+');
+
+        //  'Doodle' by itself calls help for all projects (Application\MainTask::helpAction()).
+        switch (true) {
+            case $activeNamespace === 'Doodle' && $parsedArgc === 0:
+            case $activeNamespace === 'Doodle' && $parsedArgc >= 1 && strtolower($parsedArgv[0]) === 'help':
+                $activeNamespace = 'Application';
+                $parsedArgv      = ['main', 'help'];
+                break;
+
+            case $activeNamespace === 'Doodle':
+                $activeNamespace = ucwords(basename(array_shift($parsedArgv), '.php'), '.,-_+');
+                break;
+
+            default:
+        }
+
+        $dispatcher = $this->di->get('dispatcher');
+        $dispatcher->setDefaultNamespace($activeNamespace);
+        $dispatcher->setNamespaceName($activeNamespace);
 
         $application = new Console($this->di);
 
-        if ($ns === 'Application') {
-            //  Handle Doodle help uniquely.
-            if ($this->inputParams->help) {
-                $application->handle([
-                                         'task' => 'main',
-                                         'action' => 'help',
-                                         'params' => [],
-                                     ]);
-                return;
-            }
+        //  This will choose help for the set namespace.
+        if ($this->inputParams->help || (count($parsedArgv) >= 1 && strtolower($parsedArgv[0]) === 'help')
+        ) {
+            $parsedArgv = ['main', 'help'];
         }
-
-        //  Handle help uniquely.
-        if ($this->inputParams->help) {
-            $application->handle([
-                                     'task' => 'main',
-                                     'action' => 'help',
-                                     'params' => [],
-                                 ]);
-            return;
-        }
-
 
         try {
-            $workingArgv = $parsedArgv;
-            $application->handle([
-                                     'task' => count($workingArgv) ? array_shift($workingArgv) : 'main',
-                                     'action' => count($workingArgv) ? array_shift($workingArgv) : 'main',
-                                     'params' => $workingArgv,
-                                 ]);
+            $application->handle($parsedArgv);
         }
-        catch (DispatcherException) {
-            try {
-                $workingArgv = $parsedArgv;
-                $application->handle([
-                                         'task' => count($workingArgv) ? array_shift($workingArgv) : 'main',
-                                         'action' => 'main',
-                                         'params' => $workingArgv,
-                                     ]);
-            }
-            catch (DispatcherException) {
-                try {
-                    $application->handle([
-                                             'task' => 'main',
-                                             'action' => 'main',
-                                             'params' => $parsedArgv,
-                                         ]);
-                }
-                catch (DispatcherException $de) {
-                    StdIo::err($de->getMessage());
-                    exit($de->getCode());
-                }
-            }
+        catch (DispatcherException $de) {
+            StdIo::err($de->getMessage());
+            exit($de->getCode());
         }
     }
+
 
     public function __get(string $name)
     {

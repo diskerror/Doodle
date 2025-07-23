@@ -43,7 +43,8 @@
     "phpunit/phpunit": "^10.3"
   },
   "suggest": {
-    "ext-ds": "^1.5"
+    "ext-ds": "^1.5",
+    "ext-phalcon": "^5.9"
   },
   "config": {
     "optimize-autoloader": true
