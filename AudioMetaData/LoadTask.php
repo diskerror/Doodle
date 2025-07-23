@@ -16,6 +16,16 @@ class LoadTask extends TaskMaster
 {
     const SQLITE_FILE = __DIR__ . '/recording_projects.sqlite';
 
+
+    /**
+     * Not implemented
+     * @throws \Exception
+     */
+    public function mainAction()
+    {
+        throw new \Exception('not implemented');
+    }
+
     /**
      * Create recording projects database
      */
@@ -57,23 +67,19 @@ class LoadTask extends TaskMaster
      *
      * @return void
      */
-    public function csvAction()
+    public function csvAction(...$params)
     {
         $this->logger->info('AudioMetaData LoadTask csvAction');
 
-        $args = $this->inputParams->arguments;
-        array_shift($args);
-        array_shift($args);
-
-        if (count($args) != 1) {
+        if (count($params) != 1) {
             $this->logger->error('AudioMetaData LoadTask csvAction: missing argument, need csv file' . PHP_EOL);
             $this->helpAction();
             return;
         }
 
-        $file = fopen($args[0]->arg, 'r');
+        $file = fopen($params[0], 'r');
         if ($file === false) {
-            $this->logger->error('AudioMetaData LoadTask csvAction: ' . $args[0]->arg . ' not found');
+            $this->logger->error('AudioMetaData LoadTask csvAction: ' . $params[0] . ' not found');
             return;
         }
 
@@ -152,22 +158,19 @@ INSERT INTO main (
      *
      * @return void
      */
-    public function getLoadDatesAction()
+    public function getLoadDatesAction(...$params)
     {
         $this->logger->info('AudioMetaData LoadTask getLoadDatesAction');
-        $args = $this->inputParams->arguments;
-        array_shift($args);
-        array_shift($args);
 
-        if (count($args) != 1) {
+        if (count($params) != 1) {
             $this->logger->error('AudioMetaData LoadTask getLoadDatesAction: missing argument, need directory' . PHP_EOL);
             $this->helpAction();
             return;
         }
 
-        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($args[0]->arg));
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($params[0]));
         if ($files === false) {
-            $this->logger->error('AudioMetaData LoadTask getLoadDatesAction: ' . $args[0]->arg . ' not found');
+            $this->logger->error('AudioMetaData LoadTask getLoadDatesAction: ' . $params[0] . ' not found');
             return;
         }
 
@@ -204,16 +207,13 @@ INSERT INTO main (
      *   'Caltech-Occindental Wind Ensemble and Jazz Bands recorded in Beckman Auditorium, Pasadena CA.' \
      *   Caltech\ Bands\ 1991-05-11.wav
      */
-    public function bparseAction()
+    public function bparseAction(...$params)
     {
         $this->logger->info('AudioMetaData LoadTask bparseAction');
-        $args = $this->inputParams->arguments;
-        array_shift($args);
-        array_shift($args);
 
-        $file = fopen($args[0]->arg, 'r');
+        $file = fopen($params[0], 'r');
         if ($file === false) {
-            $this->logger->error('AudioMetaData LoadTask bparseAction: ' . $args[0]->arg . ' not found');
+            $this->logger->error('AudioMetaData LoadTask bparseAction: ' . $params[0] . ' not found');
             return;
         }
 

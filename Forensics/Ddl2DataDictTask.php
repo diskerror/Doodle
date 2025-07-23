@@ -1,12 +1,12 @@
 <?php
 
-use Application\Command;
+use Application\TaskMaster;
 
-class Ddl2DataDict extends Command
+class Ddl2DataDictTask extends TaskMaster
 {
-	public static function main(): int
+	public function mainAction(): int
 	{
-		$fileStr = self::$opts->arguments[1]->arg;
+		$fileStr = $this->options->arguments[0]->arg;
 
 		if (!file_exists($fileStr)) {
 			echo "File not found: $fileStr\n";

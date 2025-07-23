@@ -1,10 +1,12 @@
 <?php
 
-use Application\Command;
-use Application\Exceptions\BadFileException;
+namespace Forensics;
+
+use Application\TaskMaster;
+use Library\Exceptions\BadFileException;
 use Library\StdIo;
 
-class dumpSQLite extends Command
+class dumpSQLiteTask extends TaskMaster
 {
 	/**
 	 * Dump contents of SQLite file as JSON.
@@ -12,7 +14,7 @@ class dumpSQLite extends Command
 	 * @return int
 	 * @throws ErrorException
 	 */
-	public function main(): int
+	public function mainAction(): int
 	{
 		if (count($this->inputParams->arguments) === 0) {
 			StdIo::outln('Requires path to SQLite file.');

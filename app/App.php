@@ -19,7 +19,8 @@ final class App
     private Config           $config;
     private FdCli            $di;
     private OptionCollection $possibleOptions;
-    private OptionResult     $inputParams;
+    private OptionResult     $inputParams;  //  deprecated
+    private OptionResult     $options;
 
     //  Change error handling to throw exceptions.
     public static function _errorHandler($errno, $message, $fname, $line)
@@ -30,8 +31,10 @@ final class App
     //  Catch uncaught exceptions.
     public static function _exceptionHandler(Throwable $t)
     {
-        fprintf(STDERR, 'Uncaught exception: %s' . PHP_EOL, $t->getMessage());
-        fprintf(STDERR, '%s' . PHP_EOL, $t->getTraceAsString());
+        fprintf(STDERR, '%s' . PHP_EOL, $t->getMessage());
+        if($GLOBALS['debug']) {
+            fprintf(STDERR, '%s' . PHP_EOL, $t->getTraceAsString());
+        }
         exit($t->getCode());
     }
 
@@ -45,6 +48,8 @@ final class App
     }
 
     /**
+     * App constructor.
+     * Set up the environment.
      * @throws \GetOptionKit\Exception\OptionConflictException
      * @throws \Phalcon\Di\Exception
      */
@@ -60,7 +65,7 @@ final class App
 
         $this->di = $di = new FdCli();
         $self     = $this;
-        $basePath = realpath(__DIR__ . '/..'); //	Relative to this file, Doodle/.
+        $basePath = realpath(__DIR__ . '/..'); //	Relative to this file, ~/Doodle/.
 
         //	Setup shared resources and services.
         $this->di->setShared('basePath', function () use ($basePath) {
@@ -152,12 +157,6 @@ final class App
     public function parseArgv(array $argv): OptionResult
     {
         if (!isset($this->inputParams)) {
-            $this->inputParams = (new OptionParser($this->possibleOptions))->parse($argv);
-
-            $inputParams = $this->inputParams;
-            $this->di->setShared('inputParams', function () use ($inputParams) {
-                return $inputParams;
-            });
         }
 
         return $this->inputParams;
@@ -165,27 +164,38 @@ final class App
 
     public function run(array $argv): void
     {
-        $this->parseArgv($argv);
+        $this->inputParams = (new OptionParser($this->possibleOptions))->parse($argv);
 
-        $parsedArgv = [];
-        foreach ($this->inputParams->arguments as $argument) {
-            $parsedArgv[] = $argument->arg;
-        }
-        $parsedArgc = count($parsedArgv);
+        $inputParams = $this->inputParams;
+        $this->di->setShared('inputParams', function () use ($inputParams) {
+            return $inputParams;
+        });
+
+        $GLOBALS['debug'] = (bool)$this->inputParams->debug;
+
+        $parsedParams = $this->inputParams->getArguments();
+        $paramCt = count($parsedParams);
+
+        //  Set new source of parsed options.
+        unset($this->inputParams->arguments);
+        $options = $this->inputParams;
+        $this->di->setShared('options', function () use ($options) {
+            return $options;
+        });
 
         //  Initially, the namespace is based on the filename that starts the script.
         $activeNamespace = ucwords(basename($argv[0], '.php'), '.,-_+');
 
         //  'Doodle' by itself calls help for all projects (Application\MainTask::helpAction()).
         switch (true) {
-            case $activeNamespace === 'Doodle' && $parsedArgc === 0:
-            case $activeNamespace === 'Doodle' && $parsedArgc >= 1 && strtolower($parsedArgv[0]) === 'help':
+            case $activeNamespace === 'Doodle' && $paramCt === 0:
+            case $activeNamespace === 'Doodle' && $paramCt >= 1 && strtolower($parsedParams[0]) === 'help':
                 $activeNamespace = 'Application';
-                $parsedArgv      = ['main', 'help'];
+                $parsedParams    = ['main', 'help'];
                 break;
 
             case $activeNamespace === 'Doodle':
-                $activeNamespace = ucwords(basename(array_shift($parsedArgv), '.php'), '.,-_+');
+                $activeNamespace = ucwords(basename(array_shift($parsedParams), '.php'), '.,-_+');
                 break;
 
             default:
@@ -195,13 +205,13 @@ final class App
         $this->dispatcher->setNamespaceName($activeNamespace);
 
         //  This will choose help for the set namespace.
-        if ($this->inputParams->help || (count($parsedArgv) >= 1 && strtolower($parsedArgv[0]) === 'help')
+        if ($this->inputParams->help || (count($parsedParams) >= 1 && strtolower($parsedParams[0]) === 'help')
         ) {
-            $parsedArgv = ['main', 'help'];
+            $parsedParams = ['main', 'help'];
         }
 
         try {
-            (new Console($this->di))->handle($parsedArgv);
+            (new Console($this->di))->handle($parsedParams);
         }
         catch (DispatcherException $de) {
             StdIo::err($de->getMessage());

@@ -146,11 +146,8 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
 
     public static $classMap = array (
         'Application\\App' => __DIR__ . '/../..' . '/app/App.php',
-        'Application\\AppBACKUP' => __DIR__ . '/../..' . '/app/AppBACKUP.php',
         'Application\\Command' => __DIR__ . '/../..' . '/app/Command.php',
-        'Application\\Exceptions\\BadFileException' => __DIR__ . '/../..' . '/app/Exceptions/BadFileException.php',
-        'Application\\Exceptions\\BadVerbException' => __DIR__ . '/../..' . '/app/Exceptions/BadVerbException.php',
-        'Application\\Exceptions\\MissingVerbException' => __DIR__ . '/../..' . '/app/Exceptions/MissingVerbException.php',
+        'Application\\Console' => __DIR__ . '/../..' . '/app/Console.php',
         'Application\\LoggerFactory' => __DIR__ . '/../..' . '/app/LoggerFactory.php',
         'Application\\MainTask' => __DIR__ . '/../..' . '/app/MainTask.php',
         'Application\\Reflector' => __DIR__ . '/../..' . '/app/Reflector.php',
@@ -237,8 +234,10 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'Ds\\Traits\\GenericSequence' => __DIR__ . '/..' . '/php-ds/php-ds/src/Traits/GenericSequence.php',
         'Ds\\Traits\\SquaredCapacity' => __DIR__ . '/..' . '/php-ds/php-ds/src/Traits/SquaredCapacity.php',
         'Ds\\Vector' => __DIR__ . '/..' . '/php-ds/php-ds/src/Vector.php',
-        'Forensics\\CombineGraphs' => __DIR__ . '/../..' . '/Forensics/CombineGraphs.php',
-        'Forensics\\Html2Ddl' => __DIR__ . '/../..' . '/Forensics/Html2Ddl.php',
+        'Forensics\\CombineGraphsTask' => __DIR__ . '/../..' . '/Forensics/CombineGraphsTask.php',
+        'Forensics\\Html2DdlTask' => __DIR__ . '/../..' . '/Forensics/Html2DdlTask.php',
+        'Forensics\\MainTask' => __DIR__ . '/../..' . '/Forensics/MainTask.php',
+        'Forensics\\dumpSQLiteTask' => __DIR__ . '/../..' . '/Forensics/dumpSQLiteTask.php',
         'GetOptionKit\\Argument' => __DIR__ . '/..' . '/corneltek/getoptionkit/src/Argument.php',
         'GetOptionKit\\ContinuousOptionParser' => __DIR__ . '/..' . '/corneltek/getoptionkit/src/ContinuousOptionParser.php',
         'GetOptionKit\\Exception\\InvalidOptionException' => __DIR__ . '/..' . '/corneltek/getoptionkit/src/Exception/InvalidOptionException.php',
@@ -422,7 +421,8 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'Library\\CmdBuffer' => __DIR__ . '/../..' . '/lib/CmdBuffer.php',
         'Library\\DirectoryFiles' => __DIR__ . '/../..' . '/lib/DirectoryFiles.php',
         'Library\\DomDocParser' => __DIR__ . '/../..' . '/lib/DomDocParser.php',
-        'Library\\Exception\\RuntimeException' => __DIR__ . '/../..' . '/lib/Exception/RuntimeException.php',
+        'Library\\Exceptions\\BadFileException' => __DIR__ . '/../..' . '/lib/Exceptions/BadFileException.php',
+        'Library\\Exceptions\\RuntimeException' => __DIR__ . '/../..' . '/lib/Exceptions/RuntimeException.php',
         'Library\\ProcessRunner' => __DIR__ . '/../..' . '/lib/ProcessRunner.php',
         'Library\\StdIo' => __DIR__ . '/../..' . '/lib/StdIo.php',
         'Library\\Xml2Array' => __DIR__ . '/../..' . '/lib/Xml2Array.php',
@@ -2678,7 +2678,6 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'TheSeer\\Tokenizer\\TokenCollectionException' => __DIR__ . '/..' . '/theseer/tokenizer/src/TokenCollectionException.php',
         'TheSeer\\Tokenizer\\Tokenizer' => __DIR__ . '/..' . '/theseer/tokenizer/src/Tokenizer.php',
         'TheSeer\\Tokenizer\\XMLSerializer' => __DIR__ . '/..' . '/theseer/tokenizer/src/XMLSerializer.php',
-        'dumpSQLite' => __DIR__ . '/../..' . '/dumpSQLite.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

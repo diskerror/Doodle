@@ -2,12 +2,12 @@
 
 namespace Forensics;
 
-use Application\Command;
+use Application\TaskMaster;
 use Library\DomDocParser;
 
-class Html2Ddl extends Command
+class Html2DdlTask extends TaskMaster
 {
-	public static function main(): int
+	public function mainAction(): int
 	{
 		$fName = '';
 

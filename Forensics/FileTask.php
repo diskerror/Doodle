@@ -1,17 +1,17 @@
 <?php
 
 use GetOptionKit\OptionResult;
-use Application\Command;
+use Application\TaskMaster;
 
-class FileForensics extends Command
+class FileTask extends TaskMaster
 {
-	public OptionCollection $specs = [
-		[
-			"spec" => "o|output:",
-			"desc" => "Output to file (defaults to STDOUT).",
-			"type" => "File",
-		],
-	];
+//	public OptionCollection $specs = [
+//		[
+//			"spec" => "o|output:",
+//			"desc" => "Output to file (defaults to STDOUT).",
+//			"type" => "File",
+//		],
+//	];
 
 	protected $pathsToIgnore = [
 		'/.idea',
@@ -59,17 +59,17 @@ class FileForensics extends Command
 
 	protected $fp;
 
-	public function __construct(OptionResult $inputParams)
-	{
-		parent::__construct($inputParams);
-		ini_set('memory_limit', -1);
-
-		if ($this->inputParams->has('output')) {
-			$this->fp = fopen($this->inputParams->output, 'w');
-		} else {
-			$this->fp = STDOUT;
-		}
-	}
+//	public function __construct(OptionResult $inputParams)
+//	{
+//		parent::__construct($inputParams);
+//		ini_set('memory_limit', -1);
+//
+//		if ($this->inputParams->has('output')) {
+//			$this->fp = fopen($this->inputParams->output, 'w');
+//		} else {
+//			$this->fp = STDOUT;
+//		}
+//	}
 
 	public static function Compare(): int
 	{

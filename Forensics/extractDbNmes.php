@@ -41,7 +41,7 @@ foreach ($sqlFiles as $sqlFile) {
 	//  Look for table, procedure, or view name assuming SQL Server syntax, case insensitive.
 	switch ($type) {
 		case 'table':
-			preg_match(         '/CREATE\s+TABLE\s+(?:(?:\[dbo\]\.|)\[([\w.]+)\]|(?:dbo\.|)([\w.]+)).*/si', $sql, $match);
+			preg_match('/CREATE\s+TABLE\s+(?:(?:\[dbo\]\.|)\[([\w.]+)\]|(?:dbo\.|)([\w.]+)).*/si', $sql, $match);
 			break;
 
 		case 'procedure':
@@ -49,7 +49,7 @@ foreach ($sqlFiles as $sqlFile) {
 			break;
 
 		case 'view':
-			preg_match(          '/CREATE\s+VIEW\s+(?:(?:\[dbo\]\.|)\[([\w.]+)\]|(?:dbo\.|)([\w.]+)).*/si', $sql, $match);
+			preg_match('/CREATE\s+VIEW\s+(?:(?:\[dbo\]\.|)\[([\w.]+)\]|(?:dbo\.|)([\w.]+)).*/si', $sql, $match);
 			break;
 	}
 

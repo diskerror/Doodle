@@ -6,7 +6,7 @@
  * Time: 1:02 PM
  */
 
-namespace Library\Exception;
+namespace Library\Exceptions;
 
 class RuntimeException extends \RuntimeException
 {

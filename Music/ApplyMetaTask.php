@@ -4,7 +4,8 @@ namespace Music;
 
 use Application\TaskMaster;
 use ErrorException;
-use Library\Exception\RuntimeException;
+use Library\Exceptions\BadFileException;
+use Library\Exceptions\RuntimeException;
 use Library\StdIo;
 use SQLite3;
 
@@ -34,7 +35,7 @@ class ApplyMetaTask extends TaskMaster
             $file = $fileArg->arg;
 
             if (!is_file($file)) {
-                throw new RuntimeException('Not a file.' . PHP_EOL . '  ' . $file . PHP_EOL);
+                throw new BadFileException('Not a file.' . PHP_EOL . '  ' . $file . PHP_EOL);
             }
 
             $output      = '';

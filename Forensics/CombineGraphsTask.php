@@ -2,9 +2,9 @@
 
 namespace Forensics;
 
-use Application\Command;
+use Application\TaskMaster;
 
-class CombineGraphs extends Command
+class CombineGraphsTask extends TaskMaster
 {
     private static $map = ['Microsoft.Azure.Devices' => 'MAD'];
 
@@ -16,9 +16,9 @@ class CombineGraphs extends Command
      *
      * @return int
      */
-    public static function main(): int
+    public function mainAction(): int
     {
-        $searchDir = self::$opts->arguments[1]->arg;
+        $searchDir = $this->options->arguments[0]->arg;
         //	$outName   = 'Inherit Graph';
         $outName = 'Call Graph';
 
@@ -43,7 +43,7 @@ class CombineGraphs extends Command
 
         foreach ($dotFileNames as $dotFileName) {
             $file  = file_get_contents($dotFileName);
-            $file  = strtr($file, $map);
+            $file  = strtr($file, self::$map);
             $lines = explode("\n", $file);
 
             //	first make node names match the labels
