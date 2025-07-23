@@ -5,6 +5,15 @@ use Application\App;
 
 require 'vendor/diskerror/autoload/autoload.php';
 
-$app = new App(__DIR__);
+$GLOBALS ['options'] = [
+    [
+        'spec' => 'p|print',
+        'desc' => 'Echo or print command rather than executing.',
+        'type' => 'boolean',
+        'defaultValue' => false,
+    ],
+];
+
+$app     = new App();
 $argv[0] = 'AudioMetaData';
 $app->run($argv);

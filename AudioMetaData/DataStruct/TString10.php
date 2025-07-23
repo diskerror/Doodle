@@ -4,5 +4,5 @@ namespace AudioMetaData\DataStruct;
 
 class TString10 extends TStringLength
 {
-    protected int $maxLength = 10;
+    protected int $_maxLength = 10;
 }

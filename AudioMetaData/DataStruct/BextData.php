@@ -15,7 +15,7 @@ class BextData extends TypedClass
     protected TString32        $OriginatorReference;
     protected TString10        $OriginatorDate;
     protected TString8         $OriginatorTime;
-    protected TIntegerUnsigned $TimeReference;
+    protected TIntegerUnsigned $TimeReference;  //  ProTools seems to use this as the number of samples from the start of the source session.
     protected TIntegerUnsigned $Version;
     protected TString64        $UMID;
     protected TInteger         $LoudnessValue;

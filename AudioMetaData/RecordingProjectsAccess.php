@@ -6,43 +6,31 @@ use AudioMetaData\DataStruct\RecordingRecord;
 use AudioMetaData\DataStruct\RecordingRecordArray;
 use SQLite3;
 
-class RecordingProjectsAccess
+final class RecordingProjectsAccess extends SQLite3
 {
-    protected const SQLITE_DB  = 'recording_projects.db';
-    protected const TABLE_NAME = 'main';
-
-    protected static SQLite3 $db;
-    protected static int     $dbAccessors = 0;
+    protected const SQLITE_FILE = __DIR__ . '/recording_projects.sqlite';
+    protected const TABLE_NAME  = 'main';
 
     public function __construct()
     {
-        if (!isset(self::$db)) {
-            self::$db = new SQLite3(SQLITE_DB);
-        }
-
-        self::$dbAccessors++;
+        parent::__construct(self::SQLITE_FILE);
+        parent::enableExceptions(true);
     }
 
     public function __destruct()
     {
-        self::$dbAccessors--;
-        if (self::$dbAccessors > 0) {
-            return;
-        }
-        self::$db->close();
+        parent::close();    // Probably not needed
     }
 
-    public function exec(string $sql): bool
-    {
-        return self::$db->exec($sql);
-    }
-
+    #[\ReturnTypeWillChange]
     public function query(string $sql): RecordingRecordArray
     {
-        $queryResult = self::$db->query($sql);
+        $queryResult = parent::query($sql);
         $returnArray = new RecordingRecordArray();
-        while ($row = $queryResult->fetchArray(SQLITE3_ASSOC)) {
-            $returnArray[] = $row;
+        if ($queryResult !== false) {
+            foreach ($queryResult->fetchArray(SQLITE3_ASSOC) as $record) {
+                $returnArray[] = $record;
+            }
         }
 
         return $returnArray;
@@ -50,12 +38,30 @@ class RecordingProjectsAccess
 
     public function getWhere(string $expression): RecordingRecordArray
     {
-        return $this->query('SELECT * FROM ' . self::TABLE_NAME . ' WHERE ' . $expression);
+        return self::query('SELECT * FROM ' . self::TABLE_NAME . ' WHERE ' . $expression);
     }
 
-    public function getOneWhere(string $expression): RecordingRecord
+    public function getOneWhere(string $expression): ?RecordingRecord
     {
-        return $this->getWhere($expression)[0];
+        $response = self::getWhere($expression);
+
+        if ($response->count() === 0) {
+            return null;
+        }
+
+        return $response[0];
+    }
+
+    public function getSessionRecord(string $session): ?RecordingRecord
+    {
+        $result = self::querySingle(
+            'SELECT * FROM ' . self::TABLE_NAME . ' WHERE session = ' . escapeshellarg($session), true);
+
+        if ($result === false) {
+            return null;
+        }
+
+        return new RecordingRecord($result);
     }
 
 }

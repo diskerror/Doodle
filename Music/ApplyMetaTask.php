@@ -34,7 +34,7 @@ class ApplyMetaTask extends TaskMaster
             $file = $fileArg->arg;
 
             if (!is_file($file)) {
-                throw new RuntimeException('Not a file.' . PHP_EOL . '  ' . $file);
+                throw new RuntimeException('Not a file.' . PHP_EOL . '  ' . $file . PHP_EOL);
             }
 
             $output      = '';
