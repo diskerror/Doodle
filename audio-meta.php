@@ -3,7 +3,7 @@
 
 use Application\App;
 
-require 'vendor/diskerror/autoload/autoload.php';
+include __DIR__ . '/autoload_check.php';
 
 $GLOBALS ['options'] = [
     [

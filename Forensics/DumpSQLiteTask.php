@@ -6,7 +6,7 @@ use Application\TaskMaster;
 use Library\Exceptions\BadFileException;
 use Library\StdIo;
 
-class dumpSQLiteTask extends TaskMaster
+class DumpSQLiteTask extends TaskMaster
 {
 	/**
 	 * Dump contents of SQLite file as JSON.

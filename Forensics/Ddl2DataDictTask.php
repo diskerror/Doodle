@@ -4,7 +4,13 @@ use Application\TaskMaster;
 
 class Ddl2DataDictTask extends TaskMaster
 {
-	public function mainAction(): int
+    /**
+     * Converts a DDL to a data dictionary.
+     *
+     * @return int
+     * @throws ErrorException
+     */
+    public function mainAction(): int
 	{
 		$fileStr = $this->options->arguments[0]->arg;
 
@@ -36,6 +42,7 @@ class Ddl2DataDictTask extends TaskMaster
 				}
 			}
 		}
+        return 0;
 	}
 
 	/**
