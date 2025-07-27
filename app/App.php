@@ -32,7 +32,7 @@ final class App
     public static function _exceptionHandler(Throwable $t)
     {
         fprintf(STDERR, '%s' . PHP_EOL, $t->getMessage());
-        if($GLOBALS['debug']) {
+        if(isset($GLOBALS['doodle_debug']) && $GLOBALS['doodle_debug']) {
             fprintf(STDERR, '%s' . PHP_EOL, $t->getTraceAsString());
         }
         exit($t->getCode());
@@ -171,7 +171,7 @@ final class App
             return $inputParams;
         });
 
-        $GLOBALS['debug'] = (bool)$this->inputParams->debug;
+        $GLOBALS['doodle_debug'] = (bool)$this->inputParams->debug;
 
         $parsedParams = $this->inputParams->getArguments();
         $paramCt = count($parsedParams);
