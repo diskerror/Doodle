@@ -8,8 +8,8 @@ use SQLite3;
 
 final class RecordingProjectsAccess extends SQLite3
 {
-    protected const SQLITE_FILE = __DIR__ . '/recording_projects.sqlite';
-    protected const TABLE_NAME  = 'main';
+    const SQLITE_FILE = __DIR__ . '/recording_projects.sqlite';
+    const TABLE_NAME  = 'main';
 
     public function __construct()
     {
@@ -26,9 +26,10 @@ final class RecordingProjectsAccess extends SQLite3
     public function query(string $sql): RecordingRecordArray
     {
         $queryResult = parent::query($sql);
+
         $returnArray = new RecordingRecordArray();
         if ($queryResult !== false) {
-            foreach ($queryResult->fetchArray(SQLITE3_ASSOC) as $record) {
+            while ($record = $queryResult->fetchArray(SQLITE3_ASSOC)) {
                 $returnArray[] = $record;
             }
         }
@@ -36,7 +37,7 @@ final class RecordingProjectsAccess extends SQLite3
         return $returnArray;
     }
 
-    public function getWhere(string $expression): RecordingRecordArray
+    public function getWhere(int|float|string $expression): RecordingRecordArray
     {
         return self::query('SELECT * FROM ' . self::TABLE_NAME . ' WHERE ' . $expression);
     }
