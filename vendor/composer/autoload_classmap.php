@@ -15,6 +15,8 @@ return array(
     'Application\\Structure\\Config' => $baseDir . '/app/struct/Config.php',
     'Application\\Structure\\Config\\Process' => $baseDir . '/app/struct/Config/Process.php',
     'Application\\TaskMaster' => $baseDir . '/app/TaskMaster.php',
+    'AudioMetaData\\CheckTask' => $baseDir . '/AudioMetaData/CheckTask.php',
+    'AudioMetaData\\CsvTask' => $baseDir . '/AudioMetaData/CsvTask.php',
     'AudioMetaData\\DataStruct\\BextData' => $baseDir . '/AudioMetaData/DataStruct/BextData.php',
     'AudioMetaData\\DataStruct\\DateTime' => $baseDir . '/AudioMetaData/DataStruct/DateTime.php',
     'AudioMetaData\\DataStruct\\RecordingRecord' => $baseDir . '/AudioMetaData/DataStruct/RecordingRecord.php',

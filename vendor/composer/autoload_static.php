@@ -154,6 +154,8 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'Application\\Structure\\Config' => __DIR__ . '/../..' . '/app/struct/Config.php',
         'Application\\Structure\\Config\\Process' => __DIR__ . '/../..' . '/app/struct/Config/Process.php',
         'Application\\TaskMaster' => __DIR__ . '/../..' . '/app/TaskMaster.php',
+        'AudioMetaData\\CheckTask' => __DIR__ . '/../..' . '/AudioMetaData/CheckTask.php',
+        'AudioMetaData\\CsvTask' => __DIR__ . '/../..' . '/AudioMetaData/CsvTask.php',
         'AudioMetaData\\DataStruct\\BextData' => __DIR__ . '/../..' . '/AudioMetaData/DataStruct/BextData.php',
         'AudioMetaData\\DataStruct\\DateTime' => __DIR__ . '/../..' . '/AudioMetaData/DataStruct/DateTime.php',
         'AudioMetaData\\DataStruct\\RecordingRecord' => __DIR__ . '/../..' . '/AudioMetaData/DataStruct/RecordingRecord.php',

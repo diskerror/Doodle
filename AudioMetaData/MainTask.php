@@ -6,28 +6,48 @@ use Application\TaskMaster;
 
 class MainTask extends TaskMaster
 {
-    private const ME = "'Reid Woodbury Jr.'";
+    private const string ME_MYSELF = "'Reid Woodbury Jr.'";
 
     //  me - tape - performers - file
-    private const PDF_CMD = <<<'PDF_CMD'
+    private const string PDF_CMD = <<<'PDF_CMD'
         exiftool -overwrite_original_in_place \
-            -Creator=%s -Title=%s -Author=%s -Subject='concert program' %s
+          -Creator=%s \
+          -Title=%s \
+          -Author=%s \
+          -Subject='concert program scan' \
+          %s
         
         PDF_CMD;
 
     //  me - reference - recorded_on=YmdHi - recorded_on=Y-m-d - recorded_on=H:i:s - description
     //  performers - recorded_on=Y-m-d - medium - encoding - me - me - file
-    private const WAV_CMD = <<<'WAV_CMD'
+    // --MD5-Embed-Overwrite
+    private const string WAV_CMD = <<<'WAV_CMD'
         bwfmetaedit --MD5-Embed-Overwrite \
-            --Originator=%s --OriginatorReference=%s%s --OriginationDate=%s --OriginationTime=%s --Description=%s \
-            --ICMS=%s --ICRD=%s --IMED=%s-%s --IENG=%s --ITCH=%s %s
+          --Originator=%s \
+          --OriginatorReference=%s%s \
+          --OriginationDate=%s \
+          --OriginationTime=%s \
+          --Description=%s \
+          --ICMS=%s \
+          --ICRD=%s \
+          --IMED=%s-%s \
+          --IENG=%s \
+          --ITCH=%s \
+          %s
         
         WAV_CMD;
 
     //  me - tape - performers - description - recorded_on - uploaded_on - file
-    private const MOV_CMD = <<<'MOV_CMD'
+    private const string MOV_CMD = <<<'MOV_CMD'
         exiftool -overwrite_original_in_place \
-            --Creator=%s Title=%s -Artist=%s -Description=%s -CreateDate=%s -MediaCreateDate=%s\ 15:00 %s
+          -Creator=%s \
+          -Title=%s \
+          -Artist=%s \
+          -Description=%s \
+          -CreateDate=%s \
+          -MediaCreateDate=%s \
+          %s
         
         MOV_CMD;
 
@@ -76,26 +96,31 @@ class MainTask extends TaskMaster
                     break;
 
                 case 'pdf':
-                    $exec(sprintf(self::PDF_CMD, self::ME, $record['tape'], $record['performers'], $escapedName));
+                case 'jpg':
+                    $exec(sprintf(
+                              self::PDF_CMD, self::ME_MYSELF, $record['title'], $record['performers'], $escapedName
+                          ));
                     break;
 
                 case 'wav':
                     $exec(sprintf(
                               self::WAV_CMD,
-                              self::ME, $record->reference, $record->recorded_on->format('YmdHi'),
+                              self::ME_MYSELF, $record->reference, $record->recorded_on->format('YmdHi'),
                               $record->recorded_on->format('Y-m-d'), $record->recorded_on->format('H:i:s'),
                               $record['description'],
                               $record['performers'], $record->recorded_on->format('Y-m-d'),
                               $record->medium, $record->encoding,
-                              self::ME, self::ME, $escapedName
+                              self::ME_MYSELF, self::ME_MYSELF,
+                              $escapedName
                           ));
                     break;
 
                 case 'mov':
                     $exec(sprintf(
                               self::MOV_CMD,
-                              self::ME, $record['tape'], $record['performers'], $record['description'],
-                              $record->recorded_on->format('Y-m-d'), $record->uploaded_on->format('Y-m-d'),
+                              self::ME_MYSELF, $record['title'], $record['performers'], $record['description'],
+                              $record->recorded_on->format('"Y-m-d H:i:00"'),
+                              $record->edited_on->format('"Y-m-d 15:00:00"'),
                               $escapedName
                           ));
                     break;
@@ -105,6 +130,23 @@ class MainTask extends TaskMaster
             }
 
             $exec('touch -t ' . $record->recorded_on->format('YmdHi') . ' ' . $escapedName . "\n");
+        }
+    }
+
+    public function checkAction()
+    {
+        $this->logger->info('AudioMetaData MainTask checkAction');
+
+        $db   = new RecordingProjectsAccess();
+        $data = $db->getWhere(1); // get all
+
+        foreach ($data->fetchArray(SQLITE3_ASSOC) as $record) {
+            try {
+                new RecordingRecord($record);
+            }
+            catch (\Exception $e) {
+                continue;
+            }
         }
     }
 }
