@@ -14,17 +14,8 @@ use SQLite3;
  */
 class LoadTask extends TaskMaster
 {
-    const SQLITE_FILE = __DIR__ . '/recording_projects.sqlite';
+//    const SQLITE_FILE = __DIR__ . '/recording_projects.sqlite';
 
-
-    /**
-     * Not implemented
-     * @throws \Exception
-     */
-    public function mainAction()
-    {
-        throw new \Exception('not implemented');
-    }
 
     /**
      * Create recording projects database
@@ -33,37 +24,27 @@ class LoadTask extends TaskMaster
     {
         $this->logger->info('AudioMetaData LoadTask createDbAction');
 
-        $db = new SQLite3(self::SQLITE_FILE);
-//        $db->exec('DROP TABLE if EXISTS main');
-//        $db->exec('
-//CREATE TABLE main (
-//    main_id      INTEGER PRIMARY KEY,
-//    tape         text DEFAULT "", -- name of tape
-//    location     text DEFAULT "", -- location recording was made
-//    recorded_on  text DEFAULT "", -- date and time tape was recorded
-//    reference    text DEFAULT "", -- machine code
-//    medium       text DEFAULT "", -- tape medium type
-//    encoding     text DEFAULT "", -- tape encoding type
-//    loaded_on    text DEFAULT "", -- date tape was loaded into session
-//    session      text DEFAULT "", -- session name
-//    notes        text DEFAULT "",
-//    edited_on    text DEFAULT "", -- date session was edited
-//    uploaded_on  text DEFAULT "", -- upload date
-//    description  text DEFAULT ""
-//	performers   text DEFAULT ""
-//)');
-//        $db->exec('CREATE INDEX idx_tape_date ON main (tape, recorded_on)');
-//        $db->exec('CREATE UNIQUE INDEX idx_session ON main (session)');
-//        $db->exec('CREATE INDEX idx_recorded_on ON main (recorded_on)');
-//        $db->exec('CREATE INDEX idx_loaded_on ON main (loaded_on)');
-//        $db->exec('CREATE INDEX idx_upload_on ON main (uploaded_on)');
+        $recordNames = (new RecordingRecord())->getPublicNames();
+        $sqlString = "CREATE TABLE IF NOT EXISTS main (\n    main_id  INTEGER PRIMARY KEY,\n    ";
+        $sqlString .= implode("  TEXT DEFAULT '',\n    ", $recordNames);
+        $sqlString .= "  TEXT DEFAULT ''\n)\n";
 
-        $db->close();
+        $db = new RecordingProjectsAccess();
+        $db->exec('DROP TABLE if EXISTS main');
+        $db->exec($sqlString);
+
+        $db->exec('CREATE INDEX idx_tape_date ON main (tape, recorded_on)');
+        $db->exec('CREATE UNIQUE INDEX idx_session ON main (session)');
+        $db->exec('CREATE INDEX idx_recorded_on ON main (recorded_on)');
+        $db->exec('CREATE INDEX idx_loaded_on ON main (loaded_on)');
+        $db->exec('CREATE INDEX idx_edited_on ON main (edited_on)');
+        $db->exec('CREATE INDEX idx_uploaded_on ON main (uploaded_on)');
+        $db->exec('CREATE INDEX idx_title ON main (title)');
     }
 
 
     /**
-     * Load data from CSV of previous EXCEL spreadsheet
+     * Load data from CSV version of original working EXCEL spreadsheet
      *
      * @return void
      */
@@ -237,7 +218,7 @@ INSERT INTO main (
             $session = basename(array_pop($packet), '.wav');
 
             if (array_key_exists('Description', $data)) {
-            $db->exec('
+                $db->exec('
                 UPDATE main
                 SET description = "' . $data['Description'] . '"
                 WHERE session = "' . $session . '"
