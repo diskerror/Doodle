@@ -1,6 +1,6 @@
 <?php
 
-namespace AudioMetaData\DataStruct;
+namespace Recordings\DataStruct;
 
 class TString32 extends TStringLength
 {

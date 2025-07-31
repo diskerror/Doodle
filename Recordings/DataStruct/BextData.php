@@ -1,9 +1,9 @@
 <?php
 
-namespace AudioMetaData\DataStruct;
+namespace Recordings\DataStruct;
 
-use AudioMetaData\TInteger;
-use AudioMetaData\TString;
+use Recordings\TInteger;
+use Recordings\TString;
 use Diskerror\Typed\Scalar\TIntegerUnsigned;
 use Diskerror\Typed\TypedClass;
 

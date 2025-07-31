@@ -15,5 +15,4 @@ $GLOBALS ['options'] = [
 ];
 
 $app     = new App();
-$argv[0] = 'AudioMetaData';
 $app->run($argv);

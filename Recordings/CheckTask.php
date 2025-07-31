@@ -1,15 +1,15 @@
 <?php
 
-namespace AudioMetaData;
+namespace Recordings;
 
 use Application\TaskMaster;
-use AudioMetaData\DataStruct\RecordingRecord;
+use Recordings\DataStruct\RecordingRecord;
 
 class CheckTask extends TaskMaster
 {
     public function mainAction()
     {
-        $this->logger->info('AudioMetaData MainTask checkAction');
+        $this->logger->info('Recordings MainTask checkAction');
 
         $db = new RecordingProjectsAccess();
         $data = $db->getWhere('main_id > 0'); // get all

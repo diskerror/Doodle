@@ -1,9 +1,9 @@
 <?php
 
-namespace AudioMetaData;
+namespace Recordings;
 
-use AudioMetaData\DataStruct\RecordingRecord;
-use AudioMetaData\DataStruct\RecordingRecordArray;
+use Recordings\DataStruct\RecordingRecord;
+use Recordings\DataStruct\RecordingRecordArray;
 use SQLite3;
 
 final class RecordingProjectsAccess extends SQLite3

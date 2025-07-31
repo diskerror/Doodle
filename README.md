@@ -22,7 +22,7 @@ Converts a singledirectory of TIFF files into a single PDF file. It handles sour
 ### ApplyMeta[data]
 Applies title, composer, and other metadata to a PDF by its filename from data save in an SQLite database 'music.db'.
 
-## AudioMetaData
+## Recordings
 This project manages audio metadata for my recording projects. It requires the command line tools:
 + exiftool: for the PDFs of the programs
 + bwfmetaedit: for the WAV audio files

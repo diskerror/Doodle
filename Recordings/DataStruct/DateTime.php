@@ -1,6 +1,6 @@
 <?php
 
-namespace AudioMetaData\DataStruct;
+namespace Recordings\DataStruct;
 
 use Diskerror\Typed\DateTime as TypedDT;
 

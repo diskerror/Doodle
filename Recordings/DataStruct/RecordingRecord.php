@@ -1,6 +1,6 @@
 <?php
 
-namespace AudioMetaData\DataStruct;
+namespace Recordings\DataStruct;
 
 use ArrayAccess;
 use Diskerror\Typed\ConversionOptions;
@@ -18,21 +18,21 @@ use Diskerror\Typed\TypedClass;
  * Using ArrayAccess returns an escaped version of the stored value.
  * Object access returns the normal value.
  *
- * @package AudioMetaData\DataStruct
+ * @package Recordings\DataStruct
  */
 class RecordingRecord extends TypedClass implements ArrayAccess
 {
     protected TString64   $tape;            // name of tape, arbitrary max length
     protected TString64   $location;        // recording address
-    protected DateTime    $recorded_on;     // date tape was recorded, AudioMetaData\DataStruct\DateTime, YYYY-MM-DD[ HH:MM]
+    protected DateTime    $recorded_on;     // date tape was recorded, Recordings\DataStruct\DateTime, YYYY-MM-DD[ HH:MM]
     protected TString20   $reference;       // may include device serial number and model name, will have date appended (12 char, total 32)
     protected TString8    $medium;          // tape medium type, VHS, 8MM, DAT
     protected TString8    $encoding;        // tape encoding type, PCM, FM, analog tape
-    protected Date        $loaded_on;       // date session was loaded, AudioMetaData\DataStruct\DateTime, only date is used
+    protected Date        $loaded_on;       // date session was loaded, Recordings\DataStruct\DateTime, only date is used
     protected TString64   $session;         // session directory name, arbitrary max length
     protected TStringTrim $notes;           // notes
-    protected Date        $edited_on;       // date session was edited, AudioMetaData\DataStruct\DateTime, only date is used
-    protected Date        $uploaded_on;     // date audio was uploaded, AudioMetaData\DataStruct\DateTime, only date is used
+    protected Date        $edited_on;       // date session was edited, Recordings\DataStruct\DateTime, only date is used
+    protected Date        $uploaded_on;     // date audio was uploaded, Recordings\DataStruct\DateTime, only date is used
     protected TString32   $title;           // title
     protected TString256  $description;     // description
     protected TString64   $performers;      // group that was recorded

@@ -1,9 +1,9 @@
 <?php
 
-namespace AudioMetaData;
+namespace Recordings;
 
 use Application\TaskMaster;
-use AudioMetaData\DataStruct\RecordingRecord;
+use Recordings\DataStruct\RecordingRecord;
 use SQLite3;
 
 /**
@@ -22,7 +22,7 @@ class LoadTask extends TaskMaster
      */
     public function createDbAction()
     {
-        $this->logger->info('AudioMetaData LoadTask createDbAction');
+        $this->logger->info('Recordings LoadTask createDbAction');
 
 //        $db = new SQLite3(self::SQLITE_FILE);
 //        $db->exec('DROP TABLE if EXISTS main');
@@ -60,17 +60,17 @@ class LoadTask extends TaskMaster
      */
     public function csvAction(...$params)
     {
-        $this->logger->info('AudioMetaData LoadTask csvAction');
+        $this->logger->info('Recordings LoadTask csvAction');
 
         if (count($params) != 1) {
-            $this->logger->error('AudioMetaData LoadTask csvAction: missing argument, need csv file' . PHP_EOL);
+            $this->logger->error('Recordings LoadTask csvAction: missing argument, need csv file' . PHP_EOL);
             $this->helpAction();
             return;
         }
 
         $file = fopen($params[0], 'r');
         if ($file === false) {
-            $this->logger->error('AudioMetaData LoadTask csvAction: ' . $params[0] . ' not found');
+            $this->logger->error('Recordings LoadTask csvAction: ' . $params[0] . ' not found');
             return;
         }
 
@@ -151,17 +151,17 @@ INSERT INTO main (
      */
     public function getLoadDatesAction(...$params)
     {
-        $this->logger->info('AudioMetaData LoadTask getLoadDatesAction');
+        $this->logger->info('Recordings LoadTask getLoadDatesAction');
 
         if (count($params) != 1) {
-            $this->logger->error('AudioMetaData LoadTask getLoadDatesAction: missing argument, need directory' . PHP_EOL);
+            $this->logger->error('Recordings LoadTask getLoadDatesAction: missing argument, need directory' . PHP_EOL);
             $this->helpAction();
             return;
         }
 
         $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($params[0]));
         if ($files === false) {
-            $this->logger->error('AudioMetaData LoadTask getLoadDatesAction: ' . $params[0] . ' not found');
+            $this->logger->error('Recordings LoadTask getLoadDatesAction: ' . $params[0] . ' not found');
             return;
         }
 
@@ -200,11 +200,11 @@ INSERT INTO main (
      */
     public function bparseAction(...$params)
     {
-        $this->logger->info('AudioMetaData LoadTask bparseAction');
+        $this->logger->info('Recordings LoadTask bparseAction');
 
         $file = fopen($params[0], 'r');
         if ($file === false) {
-            $this->logger->error('AudioMetaData LoadTask bparseAction: ' . $params[0] . ' not found');
+            $this->logger->error('Recordings LoadTask bparseAction: ' . $params[0] . ' not found');
             return;
         }
 

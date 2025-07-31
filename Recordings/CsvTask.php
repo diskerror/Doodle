@@ -1,11 +1,11 @@
 <?php
 
-namespace AudioMetaData;
+namespace Recordings;
 
 use Application\TaskMaster;
-use AudioMetaData\DataStruct\RecordingRecord;
-use AudioMetaData\DataStruct\RecordingRecordArray;
-use AudioMetaData\RecordingProjectsAccess;
+use Recordings\DataStruct\RecordingRecord;
+use Recordings\DataStruct\RecordingRecordArray;
+use Recordings\RecordingProjectsAccess;
 
 class CsvTask extends TaskMaster
 {
@@ -17,7 +17,7 @@ class CsvTask extends TaskMaster
      */
     public function exportAction(...$params)
     {
-        $this->logger->info('AudioMetaData CsvTask exportAction');
+        $this->logger->info('Recordings CsvTask exportAction');
 
         if (count($params) != 1) {
             $this->logger->error('needs  output file' . PHP_EOL);
@@ -28,13 +28,13 @@ class CsvTask extends TaskMaster
         // get all fields of all records
         $records = (new RecordingProjectsAccess())->getWhere('1 ORDER BY main_id ASC');
         if (count($records) == 0) {
-            $this->logger->error('AudioMetaData CsvTask exportAction: no records found' . PHP_EOL);
+            $this->logger->error('Recordings CsvTask exportAction: no records found' . PHP_EOL);
             return;
         }
 
         $fp      = fopen($params[0], 'wb');
         if ($fp === false) {
-            $this->logger->error('AudioMetaData CsvTask exportAction: cannot open/create file ' . $params[0] . PHP_EOL);
+            $this->logger->error('Recordings CsvTask exportAction: cannot open/create file ' . $params[0] . PHP_EOL);
             return;
         }
 
@@ -55,10 +55,10 @@ class CsvTask extends TaskMaster
      */
     public function importAction(...$params)
     {
-        $this->logger->info('AudioMetaData CsvTask importAction');
+        $this->logger->info('Recordings CsvTask importAction');
 
         if (count($params) != 1) {
-            $this->logger->error('AudioMetaData CsvTask importAction: missing argument, input file' . PHP_EOL);
+            $this->logger->error('Recordings CsvTask importAction: missing argument, input file' . PHP_EOL);
             $this->helpAction();
             return;
         }
@@ -91,7 +91,7 @@ class CsvTask extends TaskMaster
      */
     public function createDbAction()
     {
-        $this->logger->info('AudioMetaData LoadTask createDbAction');
+        $this->logger->info('Recordings LoadTask createDbAction');
 
         $recordNames = (new RecordingRecord())->getPublicNames();
         $sqlString   = "CREATE TABLE IF NOT EXISTS main (\n    main_id  INTEGER PRIMARY KEY,\n    ";

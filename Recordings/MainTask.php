@@ -1,6 +1,6 @@
 <?php
 
-namespace AudioMetaData;
+namespace Recordings;
 
 use Application\TaskMaster;
 
@@ -59,7 +59,7 @@ class MainTask extends TaskMaster
      */
     public function mainAction(...$params)
     {
-        $this->logger->info('AudioMetaData MainTask mainAction');
+        $this->logger->info('Recordings MainTask mainAction');
 
         if (count($params) < 1) {
             $this->helpAction();
@@ -135,7 +135,7 @@ class MainTask extends TaskMaster
 
     public function checkAction()
     {
-        $this->logger->info('AudioMetaData MainTask checkAction');
+        $this->logger->info('Recordings MainTask checkAction');
 
         $db   = new RecordingProjectsAccess();
         $data = $db->getWhere(1); // get all
