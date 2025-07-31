@@ -46,7 +46,7 @@ class LoggerFactory
 			case 'critical':
 			case 'emergency':
 			case 'error':
-//			case 'debug':
+			case 'debug':
 				fwrite(STDERR, $params[0] . PHP_EOL);
 		}
 		$this->_logger->$level($params[0]);
