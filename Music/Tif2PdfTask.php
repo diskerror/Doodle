@@ -18,11 +18,8 @@ class Tif2PdfTask extends TaskMaster
      * @return int
      * @throws ErrorException
      */
-    public function mainAction()
+    public function mainAction(...$args)
     {
-        $args = $this->inputParams->arguments;
-        array_shift($args);
-
         if (count($args) != 1) {
             $this->helpAction();
             return;
@@ -34,15 +31,15 @@ class Tif2PdfTask extends TaskMaster
         // Some ImageMagick functions do not like spaces in file names
         // so with this we can avoid spaces in the parent directories.
         // A bug report needs to be filed with ImageMagick.
-        $workingDir = $args[0]->arg;
+        $workingDir = $args[0];
         chdir($workingDir);
         $fNames = glob('*.tif', GLOB_ERR);
         natsort($fNames); //  so numbers don't need leading zeros
 
-        // Turn file names into ImageFileInfo objects.
+        // Turn file names into TiffFileInfo objects.
         $tifFiles = [];
         foreach ($fNames as $fName) {
-            $tifFiles[] = new ImageFileInfo($fName);
+            $tifFiles[] = new TiffFileInfo($fName);
         }
 
         $averageWidth = 0;
@@ -91,7 +88,7 @@ CMD;
         $cmdArray       = [];
         $outputFileArr2 = [];
         for ($f = 0; $f < count($tifFiles); $f++) {
-            $info               = new ImageFileInfo('tmp/' . basename($tifFiles[$f]->name));
+            $info               = new TiffFileInfo('tmp/' . basename($tifFiles[$f]->name));
             $outputFileArr2[$f] = escapeshellarg('tmp2/' . basename($info->name));
 
             $resize       = round(($averageWidth / $info->width) * 100.0, 1);

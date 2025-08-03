@@ -3,6 +3,7 @@
 namespace Library;
 
 use Library\Exception\RuntimeException;
+use Library\Json;
 
 class StdIo
 {
@@ -30,7 +31,7 @@ class StdIo
 
 	static function jsonOut($o)
 	{
-		self::outln(json_encode($o, JSON_PRETTY_PRINT));
+		self::outln(Json::encode($o));
 	}
 
 	static function err($s)

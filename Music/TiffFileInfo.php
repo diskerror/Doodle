@@ -4,7 +4,7 @@ namespace Music;
 
 use RuntimeException;
 
-class ImageFileInfo
+class TiffFileInfo
 {
     public readonly string $name;
     public readonly string $escName;
@@ -20,8 +20,20 @@ class ImageFileInfo
             echo $fname, PHP_EOL;
             throw new RuntimeException('Not a file.' . PHP_EOL . '  ' . $fname);
         }
+        $pathinfo = pathinfo($fname);
+        $extension = strtolower((string)$pathinfo['extension']);
+        if ($extension !== 'tif' && $extension !== 'tiff') {
+            throw new RuntimeException('Not a TIFF file.' . PHP_EOL . '  ' . $fname);
+        }
+
         $this->name    = $fname;
         $this->escName = escapeshellarg($fname);
+
+        // TODO:
+        //  PDF: pdfimages -list (flattened table)
+        //  TIFF: magick identify -format '%w ' (numbers with spaces)
+        //  TIFF: tiffinfo (text block for each frame)
+        //  "exiftool -j -struct -g " only gives the largest frame
 
         $this->widths     = explode(' ', exec('magick identify -format "%w " ' . $this->escName));
         $this->frameCount = count($this->widths);

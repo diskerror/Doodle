@@ -18,11 +18,8 @@ class ApplyMetaTask extends TaskMaster
      * @return int
      * @throws ErrorException
      */
-    public function mainAction()
+    public function mainAction(...$files)
     {
-        $files = $this->inputParams->arguments;
-        array_shift($files);
-
         if (count($files) === 0) {
             $this->helpAction();
             return;
@@ -31,8 +28,7 @@ class ApplyMetaTask extends TaskMaster
         $db = new SQLite3(__DIR__ . '/music.sqlite');
         $db->enableExceptions(true);
 
-        foreach ($files as $fileArg) {
-            $file = $fileArg->arg;
+        foreach ($files as $file) {
 
             if (!is_file($file)) {
                 throw new BadFileException('Not a file.' . PHP_EOL . '  ' . $file . PHP_EOL);
