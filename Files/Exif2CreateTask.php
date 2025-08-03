@@ -3,6 +3,7 @@
 namespace Files;
 
 use Application\TaskMaster;
+use Library\Json;
 
 class Exif2CreateTask extends TaskMaster
 {
@@ -32,9 +33,7 @@ class Exif2CreateTask extends TaskMaster
             }
 
             $escFile = escapeshellarg($param);
-            $info    = json_decode(
-                shell_exec('exiftool -j -DateTimeOriginal -CreateDate ' . $escFile),
-                null, 512, JSON_OBJECT_AS_ARRAY | JSON_THROW_ON_ERROR);
+            $info    = Json::decode(shell_exec('exiftool -j -DateTimeOriginal -CreateDate ' . $escFile));
 
             if (array_key_exists('DateTimeOriginal', $info[0])) {
                 $field = 'DateTimeOriginal';
