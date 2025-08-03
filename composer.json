@@ -33,7 +33,8 @@
     "corneltek/getoptionkit": "^2.7.3",
     "diskerror/autoload": "dev-main",
     "diskerror/typed": "dev-master",
-    "laminas/laminas-server": "^2.18"
+    "laminas/laminas-server": "^2.18",
+    "smalot/pdfparser": "*"
   },
   "require-dev": {
     "phalcon/phalcon": "v6.0.x-dev",
