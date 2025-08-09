@@ -2,15 +2,16 @@
 
 namespace Library;
 
-/**
- * Behaves like var_export() but uses "[]" notation instead of "array()".
- *
- * @param        $in
- * @param bool   $return false
- * @param string $indentStr '   ' (three spaces)
- * @return string
- */
 if (!function_exists('Library\\var_export')) {
+
+    /**
+     * Behaves like var_export() but uses "[]" notation instead of "array()".
+     *
+     * @param        $in
+     * @param bool   $return false
+     * @param string $indentStr '   ' (three spaces)
+     * @return string
+     */
     function var_export($in, bool $return = false, $indentStr = '   '): string
     {
         static $indent = 0;
@@ -56,4 +57,5 @@ if (!function_exists('Library\\var_export')) {
         echo $returnStr, PHP_EOL;
         return '';
     }
+
 };

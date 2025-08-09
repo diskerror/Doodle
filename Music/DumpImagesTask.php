@@ -5,6 +5,7 @@ namespace Music;
 use Application\TaskMaster;
 use DateTime;
 use ErrorException;
+use Library\escapeshellarg;
 use Library\ProcessRunner;
 
 
@@ -37,9 +38,9 @@ class DumpImagesTask extends TaskMaster
                 throw new ErrorException($arg . ' is not a PDF file');
             }
 
-            $destDir = $this->escapeShellArg($pathinfo['dirname'] . '/' . $pathinfo['filename']);
+            $destDir = escapeshellarg($pathinfo['dirname'] . '/' . $pathinfo['filename']);
 
-            $arg        = $this->escapeShellArg($arg);
+            $arg        = escapeshellarg($arg);
             $cmdArray[] = <<<CMD
 mkdir -p $destDir
 pdfimages -tiff $arg {$destDir}/image

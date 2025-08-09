@@ -5,10 +5,9 @@ namespace Music;
 use Application\TaskMaster;
 use Diskerror\Typed\DateTime;
 use ErrorException;
+use Library\escapeshellarg;
 use Library\ProcessRunner;
 use Library\StdIo;
-
-include 'lib/var_export.php';
 
 
 class ImslpTask extends TaskMaster
@@ -47,7 +46,7 @@ class ImslpTask extends TaskMaster
         StdIo::outln('Deskewing...');
         $cmdArray = [];
         foreach (glob('image-[0-9][0-9][0-9].tif', GLOB_ERR) as $fName) {
-            $fName = $this->escapeShellArg($fName);
+            $fName = escapeshellarg($fName);
 
             $cmdArray[] = <<<CMD
                 magick $fName \
@@ -69,7 +68,7 @@ class ImslpTask extends TaskMaster
         //  Trim each input file separately
         StdIo::outln('Trimming...');
         foreach (glob("image-[0-9][0-9][0-9]$tmpSuffix", GLOB_ERR) as $fName) {
-            $fName = $this->escapeShellArg($fName);
+            $fName = escapeshellarg($fName);
 
             $cmdArray[] = <<<CMD
                 magick $fName \
@@ -107,7 +106,7 @@ class ImslpTask extends TaskMaster
         /////////////////////////////////////////////////////////////
         //  Resize the images to the average width
         foreach (glob("image-[0-9][0-9][0-9]$tmpSuffix", GLOB_ERR) as $fName) {
-            $fName = $this->escapeShellArg($fName);
+            $fName = escapeshellarg($fName);
 
             $cmdArray[] = <<<CMD
                 magick $fName \
