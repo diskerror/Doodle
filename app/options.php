@@ -7,7 +7,7 @@ return [
     [
         "spec" => "h|help",
         "desc" => "Show this help.",
-        'type' => 'boolean',
+        'isa' => 'boolean',
         'defaultValue' => false,
     ],
     [
@@ -24,7 +24,7 @@ return [
     [
         'spec' => 'debug',
         'desc' => 'Show debug information.',
-        'type' => 'boolean',
-        'defaultValue' => 0,
+        'isa' => 'boolean',
+        'defaultValue' => false,
     ],
 ];
