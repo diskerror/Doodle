@@ -3,39 +3,41 @@
 namespace Music;
 
 use Application\TaskMaster;
-use Smalot\PdfParser\Parser;
+use Diskerror\PdfParser\Parser;
+use Library\StdIo;
 
 class FixPdfTask extends TaskMaster
 {
-    function mainAction(...$params)
+    private const array ESC_ARR = [
+        ' ' => '\\ ',
+        "'" => '\\\'',
+        '"' => '\\"',
+        '(' => '\\(',
+        ')' => '\\)',
+        '[' => '\\[',
+        ']' => '\\]',
+        '{' => '\\{',
+        '}' => '\\}',
+        '*' => '\\*',
+        '?' => '\\?',
+        '\\' => '\\\\',
+    ];
+
+    public function mainAction(string ...$params): void
     {
-//        if (count($params) < 2) {
-//            StdIo::outln('needs file[s] and output directory');
-//            $this->helpAction();
-//            return;
-//        }
+        if (count($params) < 2) {
+            StdIo::outln('needs file[s] and output directory');
+            $this->helpAction();
+            return;
+        }
 
         $outputDir = array_pop($params);
-//        if (!is_dir($outputDir)) {
-//            throw new RuntimeException('output dir ' . $outputDir . ' does not exist');
-//        }
+        if (!is_dir($outputDir)) {
+            throw new RuntimeException('output dir ' . $outputDir . ' does not exist');
+        }
 
         ini_set('memory_limit', -1);
         $exec = $this->inputParams->print ? 'Library\StdIo::outln' : 'exec';
-
-        $escArr = [
-            ' ' => '\\ ',
-            "'" => '\\\'',
-            '(' => '\\(',
-            ')' => '\\)',
-            '[' => '\\[',
-            ']' => '\\]',
-            '{' => '\\{',
-            '}' => '\\}',
-            '*' => '\\*',
-            '?' => '\\?',
-            '\\' => '\\\\'
-        ];
 
         foreach ($params as $file) {
             $pdf      = (new Parser())->parseFile($file);
@@ -75,8 +77,8 @@ class FixPdfTask extends TaskMaster
                 }
             }
 
-            $inputFile  = strtr($file, $escArr);
-            $outputFile = strtr($outputDir . '/XXXX' . basename($file), $escArr);
+            $inputFile  = strtr($file, self::ESC_ARR);
+            $outputFile = strtr($outputDir . '/' . basename($file), self::ESC_ARR);
 
             $cmdArray = [];
             $cmd      = "
@@ -99,6 +101,66 @@ magick -density {$fileInfo[0]['resolution']} -units pixelsperinch \
             call_user_func($exec, $cmd);
         }
 
+    }
+
+    public function structAction(...$params): void
+    {
+        $this->logger->info('FixPdfTask structAction');
+
+        if (count($params) !== 1) {
+            StdIo::outln('One at a time please. Output is large.');
+            $this->helpAction();
+            return;
+        }
+
+        ini_set('memory_limit', -1);
+
+        $pdf      = (new Parser())->parseFile($params[0]);
+        $fileInfo = $this->getAllPdf($pdf);
+        // 'metadata', 'dictionary', 'details', 'objects', 'pages', 'trailer'
+//        foreach ($pdf as $key => $object) {
+//            if (is_a($object, PdfObject::class)) {
+//                $fileInfo[$key . '_'] = $object->getDetails();
+//            }
+//            else {
+//                $fileInfo[$key . '_'] = $object;
+//            }
+//
+//        }
+//        foreach ($pdf->getPages() as $key => $page) {
+//            $fileInfo[$key . '_'] = array_merge($page->getDetails(),
+//                                                ['objects' => [], 'xobjects' => [], 'cropRes' => []]);
+//            foreach ($page->getXObjects() as $k => $v) {
+//                $fileInfo[$key . '_']['xobjects'][$k] = $v->getDetails();
+//            }
+//            $fileInfo[$key . '_']['cropRes']    =
+//                array_map(
+//                    function ($v) {
+//                        return round($v * 9.5, 2);
+//                    }, $fileInfo[$key . '_']['CropBox']);
+//            $fileInfo[$key . '_']['cropRes'][2] -= $fileInfo[$key . '_']['cropRes'][0];
+//            $fileInfo[$key . '_']['cropRes'][3] -= $fileInfo[$key . '_']['cropRes'][1];
+//        }
+        StdIo::phpOut($fileInfo);
+    }
+
+    protected function getAllPdf(iterable $pdfObject): array
+    {
+        $retrunvalue = [];
+
+        foreach ($pdfObject as $k => $v) {
+            if (is_iterable($v)) {
+                $retrunvalue[$k] = $this->getAllPdf($v);
+                if (is_int($k) && !array_is_list($retrunvalue[$k])) {
+                    $retrunvalue[$k] = array_merge(['_i' => $k], $retrunvalue[$k]);
+                }
+            }
+            else {
+                $retrunvalue[$k] = $v;
+            }
+        }
+
+        return $retrunvalue;
     }
 
 }
