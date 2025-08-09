@@ -88,6 +88,60 @@
             "install-path": "../diskerror/autoload"
         },
         {
+            "name": "diskerror/pdfparser",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "../pdfparser",
+                "reference": "d7c14d6b56b4fdc0e7a8c3454e430fd997c6ed8b"
+            },
+            "require": {
+                "ext-iconv": "*",
+                "ext-zlib": "*",
+                "php": ">=7.3",
+                "symfony/polyfill-mbstring": "^1.18"
+            },
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Diskerror\\PdfParser\\": "src/Smalot/PdfParser/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "PerformanceTests\\": "tests/Performance/",
+                    "PHPUnitTests\\": "tests/PHPUnit/"
+                }
+            },
+            "license": [
+                "LGPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastien MALOT",
+                    "email": "sebastien@malot.fr"
+                }
+            ],
+            "description": "Pdf parser library. Can read and extract information from pdf file.",
+            "homepage": "https://www.pdfparser.org",
+            "keywords": [
+                "PDF",
+                "extract",
+                "parse",
+                "parser",
+                "text"
+            ],
+            "support": {
+                "issues": "https://github.com/smalot/pdfparser/issues"
+            },
+            "transport-options": {
+                "relative": true
+            },
+            "install-path": "../diskerror/pdfparser"
+        },
+        {
             "name": "diskerror/typed",
             "version": "dev-master",
             "version_normalized": "dev-master",
@@ -630,12 +684,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phalcon/phalcon.git",
-                "reference": "a76224b2b3516ce2094c531cb7e1a9a19ee0aa84"
+                "reference": "5d2c9c374bb22e016a710284b0eb085e890bbb8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phalcon/phalcon/zipball/a76224b2b3516ce2094c531cb7e1a9a19ee0aa84",
-                "reference": "a76224b2b3516ce2094c531cb7e1a9a19ee0aa84",
+                "url": "https://api.github.com/repos/phalcon/phalcon/zipball/5d2c9c374bb22e016a710284b0eb085e890bbb8e",
+                "reference": "5d2c9c374bb22e016a710284b0eb085e890bbb8e",
                 "shasum": ""
             },
             "require": {
@@ -675,7 +729,7 @@
                 "ext-redis": "to use Cache\\Adapter\\Redis, Session\\Adapter\\Redis, Storage\\Adapter\\Redis",
                 "ext-yaml": "to use Config\\Adapter\\Yaml"
             },
-            "time": "2025-08-02T19:59:34+00:00",
+            "time": "2025-08-04T10:43:48+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -1307,17 +1361,17 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.48",
-            "version_normalized": "10.5.48.0",
+            "version": "10.5.49",
+            "version_normalized": "10.5.49.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "6e0a2bc39f6fae7617989d690d76c48e6d2eb541"
+                "reference": "e2571b0e6e372de90f0b147b0cb9379bb105c124"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6e0a2bc39f6fae7617989d690d76c48e6d2eb541",
-                "reference": "6e0a2bc39f6fae7617989d690d76c48e6d2eb541",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e2571b0e6e372de90f0b147b0cb9379bb105c124",
+                "reference": "e2571b0e6e372de90f0b147b0cb9379bb105c124",
                 "shasum": ""
             },
             "require": {
@@ -1327,7 +1381,7 @@
                 "ext-mbstring": "*",
                 "ext-xml": "*",
                 "ext-xmlwriter": "*",
-                "myclabs/deep-copy": "^1.13.3",
+                "myclabs/deep-copy": "^1.13.4",
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.1",
@@ -1351,7 +1405,7 @@
             "suggest": {
                 "ext-soap": "To be able to generate mocks based on WSDL files"
             },
-            "time": "2025-07-11T04:07:17+00:00",
+            "time": "2025-08-09T07:08:00+00:00",
             "bin": [
                 "phpunit"
             ],
@@ -1391,7 +1445,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.48"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.49"
             },
             "funding": [
                 {
@@ -2540,60 +2594,6 @@
                 }
             ],
             "install-path": "../sebastian/version"
-        },
-        {
-            "name": "smalot/pdfparser",
-            "version": "v2.12.0",
-            "version_normalized": "2.12.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/smalot/pdfparser.git",
-                "reference": "8440edbf58c8596074e78ada38dcb0bd041a5948"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/smalot/pdfparser/zipball/8440edbf58c8596074e78ada38dcb0bd041a5948",
-                "reference": "8440edbf58c8596074e78ada38dcb0bd041a5948",
-                "shasum": ""
-            },
-            "require": {
-                "ext-iconv": "*",
-                "ext-zlib": "*",
-                "php": ">=7.1",
-                "symfony/polyfill-mbstring": "^1.18"
-            },
-            "time": "2025-03-31T13:16:09+00:00",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-0": {
-                    "Smalot\\PdfParser\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Sebastien MALOT",
-                    "email": "sebastien@malot.fr"
-                }
-            ],
-            "description": "Pdf parser library. Can read and extract information from pdf file.",
-            "homepage": "https://www.pdfparser.org",
-            "keywords": [
-                "extract",
-                "parse",
-                "parser",
-                "pdf",
-                "text"
-            ],
-            "support": {
-                "issues": "https://github.com/smalot/pdfparser/issues",
-                "source": "https://github.com/smalot/pdfparser/tree/v2.12.0"
-            },
-            "install-path": "../smalot/pdfparser"
         },
         {
             "name": "symfony/polyfill-mbstring",

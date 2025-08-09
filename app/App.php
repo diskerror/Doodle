@@ -4,6 +4,7 @@ namespace Application;
 
 use Application\Structure\Config;
 use ErrorException;
+use Exception;
 use GetOptionKit\Option;
 use GetOptionKit\OptionCollection;
 use GetOptionKit\OptionParser;
@@ -32,7 +33,7 @@ final class App
     public static function _exceptionHandler(Throwable $t)
     {
         fprintf(STDERR, '%s' . PHP_EOL, $t->getMessage());
-        if(isset($GLOBALS['doodle_debug']) && $GLOBALS['doodle_debug']) {
+        if (isset($GLOBALS['doodle_debug']) && $GLOBALS['doodle_debug']) {
             fprintf(STDERR, '%s' . PHP_EOL, $t->getTraceAsString());
         }
         exit($t->getCode());
@@ -47,6 +48,29 @@ final class App
         }
     }
 
+    public static function _signalHandler(int $signo, mixed $siginfo)
+    {
+        fprintf(STDERR, 'Received signal: %d' . PHP_EOL, $signo);
+        fprintf(STDERR, '%s' . PHP_EOL, var_export($siginfo, true));
+
+        $lastError = pcntl_get_last_error();
+        if ($lastError !== null) {
+            fprintf(STDERR, 'Received error %d with message: %s' . PHP_EOL, $lastError, pcntl_strerror($lastError));
+        }
+
+        exec('
+  local PID
+  for PID in $CHILD_PID; do
+    if [[$(kill -0 $PID) < = /dev/null]]; then
+      kill -SIGKILL $PID
+    fi
+  done
+  pkill -P $$
+');
+
+        exit($signo);
+    }
+
     /**
      * App constructor.
      * Set up the environment.
@@ -59,6 +83,16 @@ final class App
         set_error_handler([self::class, '_errorHandler']);
         set_exception_handler([self::class, '_exceptionHandler']);
         register_shutdown_function([self::class, '_shutdownHandler']);
+        foreach ([SIGINT, SIGTERM, SIGHUP, SIGQUIT, SIGTSTP] as $signal) {
+            try {
+                pcntl_signal($signal, [self::class, '_signalHandler']);
+            }
+            catch (Exception $e) {
+                //  Ignore.
+            }
+        }
+        pcntl_async_signals();
+
 
         setlocale(LC_CTYPE, 'en_US.UTF-8');
         mb_internal_encoding('UTF-8');
@@ -149,19 +183,6 @@ final class App
         }
     }
 
-    public function showOptions(): void
-    {
-
-    }
-
-    public function parseArgv(array $argv): OptionResult
-    {
-        if (!isset($this->inputParams)) {
-        }
-
-        return $this->inputParams;
-    }
-
     public function run(array $argv): void
     {
         $this->inputParams = (new OptionParser($this->possibleOptions))->parse($argv);
@@ -174,7 +195,7 @@ final class App
         $GLOBALS['doodle_debug'] = (bool)$this->inputParams->debug;
 
         $parsedParams = $this->inputParams->getArguments();
-        $paramCt = count($parsedParams);
+        $paramCt      = count($parsedParams);
 
         //  Set new source of parsed options.
         unset($this->inputParams->arguments);

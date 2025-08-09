@@ -1,58 +1,64 @@
 {
-  "name": "diskerror/doodle",
-  "description": "A place for my stuff",
-  "license": "MIT",
-  "type": "project",
-  "homepage": "https://rawsound.com",
+  "name":          "diskerror/doodle",
+  "description":   "A place for my stuff",
+  "license":       "MIT",
+  "type":          "project",
+  "homepage":      "https://rawsound.com",
   "prefer-stable": true,
-  "repositories": [
+  "repositories":  [
     {
-      "type": "path",
-      "url": "../Typed",
+      "type":      "path",
+      "url":       "../Typed",
       "canonical": false
     },
     {
-      "type": "vcs",
-      "url": "../Autoload",
+      "type":      "vcs",
+      "url":       "../Autoload",
       "canonical": false
     },
     {
       "type":      "vcs",
       "url":       "https://github.com/phalcon/phalcon-devtools",
       "canonical": false
+    },
+    {
+      "type":      "path",
+      "url":       "../pdfparser",
+      "canonical": false
     }
   ],
-  "require": {
-    "php": ">=8.3",
-    "ext-iconv": "*",
-    "ext-mbstring": "*",
-    "ext-pdo": "*",
-    "ext-phalcon": "^5.8",
-    "ext-sqlite3": "*",
-    "php-ds/php-ds": "^1.7",
-    "corneltek/getoptionkit": "^2.7.3",
-    "diskerror/autoload": "dev-main",
-    "diskerror/typed": "dev-master",
+  "require":       {
+    "php":                    ">=8.3",
+    "ext-iconv":              "*",
+    "ext-mbstring":           "*",
+    "ext-pcntl":              "*",
+    "ext-pdo":                "*",
+    "ext-phalcon":            "^5.8",
+    "ext-sqlite3":            "*",
+    "php-ds/php-ds":          "^1.7",
+    "corneltek/getoptionkit": "2.7.3",
+    "diskerror/autoload":     "dev-main",
+    "diskerror/typed":        "dev-master",
     "laminas/laminas-server": "^2.18",
-    "smalot/pdfparser": "*"
+    "diskerror/pdfparser":    "dev-master"
   },
-  "require-dev": {
+  "require-dev":   {
     "phalcon/phalcon": "v6.0.x-dev",
     "phpunit/phpunit": "^10.5.48"
   },
-  "suggest": {
-    "ext-ds": "^1.5",
+  "suggest":       {
+    "ext-ds":      "^1.5",
     "ext-phalcon": "^5.9"
   },
-  "config": {
+  "config":        {
     "optimize-autoloader": true
   },
-  "autoload": {
+  "autoload":      {
     "psr-4": {
-      "Application\\": "app/",
+      "Application\\":            "app/",
       "Application\\Structure\\": "app/struct/",
-      "Library\\": "lib/",
-      "": "./"
+      "Library\\":                "lib/",
+      "":                         "./"
     }
   }
 }

@@ -25,6 +25,7 @@ return array(
     'GetOptionKit\\' => array($vendorDir . '/corneltek/getoptionkit/src'),
     'Ds\\' => array($vendorDir . '/php-ds/php-ds/src'),
     'Diskerror\\Typed\\' => array($vendorDir . '/diskerror/typed/src'),
+    'Diskerror\\PdfParser\\' => array($vendorDir . '/diskerror/pdfparser/src/Smalot/PdfParser'),
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
     'Application\\Structure\\' => array($baseDir . '/app/struct'),
     'Application\\' => array($baseDir . '/app'),

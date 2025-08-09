@@ -9,8 +9,12 @@ $GLOBALS ['options'] = [
     [
         'spec' => 'p|print',
         'desc' => 'Echo or print command rather than executing.',
-        'type' => 'boolean',
         'defaultValue' => false,
+    ],
+    [
+        'spec' => 'r|resolution',
+        'desc' => 'Set alternate resolution (density) for PDF. Default is 600.',
+		'defaultValue' => 600
     ],
 ];
 
