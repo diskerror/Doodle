@@ -44,13 +44,11 @@ class Tif2PdfTask extends TaskMaster
 
         $averageWidth = 0;
         for ($f = 0; $f < count($tifFiles); $f++) {
-            $averageWidth += $tifFiles[$f]->width;  //  widest image
+            $averageWidth += $tifFiles[$f]->width;  //  from widest frame
         }
         $averageWidth = round($averageWidth / count($tifFiles));
-        $averageWidth = min($averageWidth, 4500);
+//        $averageWidth = min($averageWidth, 4500); // 5400?
 
-        // Get resize resolution froms first file.
-        $finalResolution = $tifFiles[0]->resolution > 720 ? 720 : $tifFiles[0]->resolution;
 
         if (!file_exists('tmp')) {
             mkdir('tmp');
@@ -72,13 +70,13 @@ magick \
   -despeckle \
   -background white \
   -deskew 80% \
-  -blur 0x1.1 \
   -threshold 50% \
   -define trim:percent-background=99.1% \
   -trim +repage \
   {$outputFileArr[$f]}
 CMD;
         }
+//  -blur 0x1.1 \
 
         //  Process each input file separately
         $runner = new ProcessRunner($cmdArray, $workingDir);
@@ -98,25 +96,27 @@ CMD;
 magick \
   {$outputFileArr[$f]} \
   {$resizeOption} \
-  -blur 0x1.6 \
   -threshold 50% \
   -bordercolor white -border 0.2% \
   -depth 1 \
   -compress Group4 \
   {$outputFileArr2[$f]};
-rm {$outputFileArr[$f]}
+#rm {$outputFileArr[$f]}
 CMD;
+            echo $cmdArray[$f], PHP_EOL;
         }
-
+//  -blur 0x1.6 \
         $runner = new ProcessRunner($cmdArray, $workingDir);
-        $runner->run(); //  Returns when all processes are finished
+        $runner->run();
+        $runner->wait();
 
 
+        $resolution = $this->inputParams->resolution ?? 600;
         chdir($workingDir);
         exec('magick ' . implode(' ', $outputFileArr2) .
-            " -density {$finalResolution}x{$finalResolution} -units pixelsperinch output.pdf");
+            " -density $resolution -units pixelsperinch output.pdf");
 
-        exec('rm -rf tmp tmp2');
+//        exec('rm -rf tmp tmp2');
 
         echo 'runtime: ', $startTime->diff(new DateTime())->format('%h:%I:%S'), PHP_EOL;
     }
