@@ -31,11 +31,14 @@ class CmdBuffer
     public function __destruct()
     {
         if (isset($this->procRes)) {
+            if ($this->isRunning()) {
+                proc_terminate($this->procRes);
+            }
+
             foreach ($this->pipes as $pipe) {
                 fclose($pipe);
             }
 
-            proc_terminate($this->procRes);
             proc_close($this->procRes);
         }
     }
@@ -67,26 +70,26 @@ class CmdBuffer
 
     public function getPID(): int
     {
-        return proc_get_status($this->procRes)['pid'];
+        return $this->getStatus()['pid'];
     }
 
     public function isRunning(): bool
     {
-        return proc_get_status($this->procRes)['running'];
+        return $this->getStatus()['running'];
     }
 
     public function wasSignaled(): bool
     {
-        return proc_get_status($this->procRes)['signaled'];
+        return $this->getStatus()['signaled'];
     }
 
     public function wasStopped(): bool
     {
-        return proc_get_status($this->procRes)['stopped'];
+        return $this->getStatus()['stopped'];
     }
 
     public function exitCode(): int
     {
-        return proc_get_status($this->procRes)['exitcode'];
+        return $this->getStatus()['exitcode'];
     }
 }

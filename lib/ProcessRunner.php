@@ -21,7 +21,7 @@ class ProcessRunner
      */
     public function __construct(array $commands, ?string $cwd = null)
     {
-        // Get the maximum number of level-zero, or performance, processors available
+        // Get the maximum number of level-zero processors, or performance processors available
         $maxProcs       = (int)('0' . exec('sysctl -n hw.perflevel0.physicalcpu 2>/dev/null'));
         $this->maxProcs = $maxProcs === 0 ? self::MAX_PROCS : $maxProcs;
 
@@ -55,6 +55,10 @@ class ProcessRunner
 //            echo "\r", $this->runningString();
         }
 
+    }
+
+    public function wait(): void
+    {
         // Wait for all processes to finish
         do {
             usleep(100000);
@@ -76,6 +80,15 @@ class ProcessRunner
             $str .= $process->isRunning() ? '1' : '0';
         }
         return $str;
+    }
+
+    public function __destruct()
+    {
+        foreach ($this->processes as $process) {
+            if(isset($process)) {
+                unset($process);
+            }
+        }
     }
 
 }
