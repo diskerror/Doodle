@@ -58,7 +58,7 @@ class StdIo
 	static function phpOut($o)
 	{
 		if (function_exists('var_representation')) {
-			self::out(var_representation($o));
+			self::outln(var_representation($o));
 			return;
 		}
 
@@ -97,7 +97,7 @@ class StdIo
 			$i += $cnt;
 		}
 
-		self::out(implode(PHP_EOL, $arr));
+		self::outln(implode(PHP_EOL, $arr));
 	}
 
 }
