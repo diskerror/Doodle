@@ -13,6 +13,7 @@ class DumpImagesTask extends TaskMaster
 {
     /**
      * Exports images from a PDF file.
+     * Shell for-loop gaurentees the images have no more detail than 8-bit grayscale.
      *
      * @return int
      * @throws ErrorException
