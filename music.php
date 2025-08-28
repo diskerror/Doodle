@@ -12,9 +12,18 @@ $GLOBALS ['options'] = [
         'defaultValue' => false,
     ],
     [
-        'spec' => 'r|resolution',
-        'desc' => 'Set alternate resolution (density) for PDF. Default is 600.',
-		'defaultValue' => 600
+        'spec' => 'r|resolution:=number',
+        'desc' => 'Set alternate resolution (density) for PDF.',
+        'defaultValue' => 600,
+    ],
+    [
+        'spec' => 'b|blank',
+        'desc' => 'Add a blank page to the head of the PDF.',
+        'defaultValue' => false,
+    ],
+    [
+        'spec' => 't|toc:=file',
+        'desc' => 'File with new TOC. (TocTask)',
     ],
 ];
 

@@ -3,7 +3,7 @@
 namespace Music;
 
 use Diskerror\Typed\TypedArray;
-use Library\Exception;
+use Library\Exceptions\RuntimeException;
 use SQLite3;
 
 class PdfMetaDataList extends TypedArray
@@ -36,11 +36,11 @@ class PdfMetaDataList extends TypedArray
 
 	public function offsetSet(mixed $offset, mixed $value): void
 	{
-		throw new Exception('can\'t set value here');
+		throw new RuntimeException('can\'t set value here');
 	}
 
 	public function offsetUnset(mixed $offset): void
 	{
-		throw new Exception('can\'t unset value here');
+		throw new RuntimeException('can\'t unset value here');
 	}
 }

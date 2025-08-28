@@ -4,8 +4,8 @@ namespace Music;
 
 use Application\TaskMaster;
 use Diskerror\Typed\DateTime;
+use Ds\Vector;
 use ErrorException;
-use Library\escapeshellarg;
 use Library\ProcessRunner;
 use Library\StdIo;
 
@@ -26,13 +26,12 @@ class ImslpTask extends TaskMaster
             $this->helpAction();
             return;
         }
-
         $startTime = new DateTime();
 
         $tmpSuffix = '_TMP.tif';
 
         // Set trim parameters
-        $frac = round(0.02 / 100.0, 4);  // '.02%' trim margin remainder fraction (percent to fraction)
+        $frac = round(0.2 / 100.0, 6);  // '.4%' trim margin remainder fraction (percent to fraction)
         $size = $frac + 1.0;
 
 
@@ -41,25 +40,49 @@ class ImslpTask extends TaskMaster
         // A bug report needs to be filed with ImageMagick.
         chdir($args[0]);
 
+        $origFiles   = new Vector(glob('*[0-9].tif', GLOB_ERR));
+        $tmpFiles    = $origFiles->map(function ($fName) use ($tmpSuffix) {
+            $pi = pathinfo($fName);
+            if ($pi['dirname'] === '.') {
+                return $pi['filename'] . $tmpSuffix;
+            }
+            return $pi['dirname'] . '/' . $pi['filename'] . $tmpSuffix;
+        });
+        $tmpFilesEsc = $tmpFiles->map('Library\\escapeshellarg');
+        $origFiles   = $origFiles->map('Library\\escapeshellarg');
+
+        $commands = new Vector();
+
+
         /////////////////////////////////////////////////////////////
         //  Deskew each input file separately
         StdIo::outln('Deskewing...');
-        $cmdArray = [];
-        foreach (glob('image-[0-9][0-9][0-9].tif', GLOB_ERR) as $fName) {
-            $fName = escapeshellarg($fName);
+        foreach ($origFiles as $fName) {
+            $resolution = exec('magick identify -format "%x" ' . $fName);
+            $resizeStr  = $resolution > 600 ? ('-adaptive-resize ' . (60000.0 / $resolution) . '%') : '';
 
-            $cmdArray[] = <<<CMD
+            $commands->push(
+                <<<CMD
                 magick $fName \
                     -alpha off -colorspace gray -depth 8 \
+                    $resizeStr \
                     -virtual-pixel white -background white \
                     -deskew 80% +repage \
                     -set filename:fname "%t{$tmpSuffix}" \
                     '%[filename:fname]'
-                CMD;
+                CMD
+            );
         }
+//        for($i = 0; $i < $origFiles->count(); $i++) {
+//            $commands->push(
+//                <<<CMD
+//                cp $origFiles[$i] $tmpFiles[$i]
+//                CMD
+//            );
+//        }
 
         //  Process each input file separately
-        $runner = new ProcessRunner($cmdArray);
+        $runner = new ProcessRunner($commands);
         $runner->run();
         StdIo::outln('progress time: ' . $startTime->diff(new DateTime())->format('%h:%I:%S'));
 
@@ -67,29 +90,31 @@ class ImslpTask extends TaskMaster
         /////////////////////////////////////////////////////////////
         //  Trim each input file separately
         StdIo::outln('Trimming...');
-        foreach (glob("image-[0-9][0-9][0-9]$tmpSuffix", GLOB_ERR) as $fName) {
-            $fName = escapeshellarg($fName);
-
-            $cmdArray[] = <<<CMD
+        $commands->clear();
+        foreach ($tmpFilesEsc as $fName) {
+            $commands->push(
+                <<<CMD
                 magick $fName \
                     -crop \
-                    $(magick $fName -virtual-pixel white -blur 0x'%[fx:round(w*0.01)]' -fuzz 5% \
-                      -define trim:percent-background=97% -trim \
+                    $(magick $fName -virtual-pixel white -blur 0x'%[fx:round(w*0.001)]' -fuzz 3% \
+                      -define trim:percent-background=99.6% -trim \
                       -format \
                       '%[fx:round(w*$size)]x%[fx:round(h*$size)]+%[fx:round(page.x-(w*$frac))]+%[fx:round(page.y-(h*$frac))]' \
                       info:) \
                     +repage \
                     -set filename:fname "%f" \
                     '%[filename:fname]'
-                CMD;
+                CMD
+            );
         }
 
-        //  Wait for the previous batch to finish
+        //  Wait for the first batch to finish
         $runner->wait();
 
         //  Process new batch
-        $runner = new ProcessRunner($cmdArray);
+        $runner = new ProcessRunner($commands);
         $runner->run();
+        $runner->wait();
         StdIo::outln('progress time: ' . $startTime->diff(new DateTime())->format('%h:%I:%S'));
 
 
@@ -97,49 +122,48 @@ class ImslpTask extends TaskMaster
         //  Find the average width of the images
         StdIo::outln('Finding and applying average width...');
         $averageWidth = 0;
-        $files        = glob("image-[0-9][0-9][0-9]$tmpSuffix", GLOB_ERR);
-        foreach ($files as $fName) {
-            $averageWidth += (new TiffFileInfo($fName))->width;
+        foreach ($tmpFiles as $fName) {
+            $averageWidth += explode(' ', exec('magick identify -format "%w " ' . $fName))[0];
         }
-        $averageWidth = round($averageWidth / count($files));
+        $averageWidth = round($averageWidth / count($tmpFiles));
 
         /////////////////////////////////////////////////////////////
         //  Resize the images to the average width
-        foreach (glob("image-[0-9][0-9][0-9]$tmpSuffix", GLOB_ERR) as $fName) {
-            $fName = escapeshellarg($fName);
-
-            $cmdArray[] = <<<CMD
+        $commands->clear();
+        foreach ($tmpFilesEsc as $fName) {
+            $commands->push(
+                <<<CMD
                 magick $fName \
                     -adaptive-resize '%[fx:round(($averageWidth/w)*100)]'% \
                     -set filename:fname "%f" \
                     '%[filename:fname]'
-                CMD;
+                CMD
+            );
         }
-        StdIo::outln('progress time: ' . $startTime->diff(new DateTime())->format('%h:%I:%S'));
-
-        //  Wait for the previous batch to finish
-        $runner->wait();
 
         //  Process new batch
-        $runner = new ProcessRunner($cmdArray);
+        $runner = new ProcessRunner($commands);
         $runner->run();
         $runner->wait();
+        StdIo::outln('progress time: ' . $startTime->diff(new DateTime())->format('%h:%I:%S'));
 
 
         /////////////////////////////////////////////////////////////
         //  Combine the images into a single PDF
-        StdIo::outln('Combining images...');
-        $cmd = <<<CMD
-            magick image-[0-9][0-9][0-9]$tmpSuffix \
+        $blankOpt = $this->options->blank ? __DIR__ . '/blank.pdf ' : '';
+        StdIo::outln('Combining and compressing images...');
+        exec(
+            <<<CMD
+            magick {$blankOpt}*[0-9]$tmpSuffix \
                 -threshold 50% -depth 1 \
                 -compress Group4 \
-                -density {$this->inputParams->resolution} -units pixelsperinch \
+                -density {$this->options->resolution} -units pixelsperinch \
                 1output.pdf
-            CMD;
+            CMD
+        );
+        // $this->options->resolution == 600 ? 480 ? 360 ? 240
 
-        StdIo::outln($cmd);
-        exec($cmd);
-        exec("rm image-[0-9][0-9][0-9]{$tmpSuffix}");
+        exec("rm *[0-9]{$tmpSuffix}");
 
         StdIo::outln('Total runtime: ' . $startTime->diff(new DateTime())->format('%h:%I:%S'));
     }

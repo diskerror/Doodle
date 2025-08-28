@@ -25,6 +25,6 @@ return [
         'spec' => 'debug',
         'desc' => 'Show debug information.',
         'isa' => 'boolean',
-        'defaultValue' => false,
+        'defaultValue' => true,
     ],
 ];

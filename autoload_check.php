@@ -27,9 +27,9 @@ if (exec('which composer') !== '') {
     if ($taskfile_time > $autoload_time) {
         $current_dir = getcwd();
         chdir(__DIR__);
-        exec('composer dump-autoload --optimize --no-cache --strict-ambiguous -n -q');
+        exec('composer dump-autoload --optimize --no-cache --strict-ambiguous -n -q --apcu');
         chdir($current_dir);
     }
 }
 
-require_once 'vendor/diskerror/autoload/autoload.php';
+require_once __DIR__ . '/vendor/diskerror/autoload/autoload.php';

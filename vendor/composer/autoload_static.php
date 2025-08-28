@@ -10,6 +10,8 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
+        '2b3a05817505e4b1f206b6ec6f73127c' => __DIR__ . '/../..' . '/lib/escapeshellarg.php',
+        'f8e67d1f6e87a3fa2c2bcd509926f945' => __DIR__ . '/../..' . '/lib/var_export.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -487,15 +489,17 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'MatthiasMullie\\PathConverter\\Converter' => __DIR__ . '/..' . '/matthiasmullie/path-converter/src/Converter.php',
         'MatthiasMullie\\PathConverter\\ConverterInterface' => __DIR__ . '/..' . '/matthiasmullie/path-converter/src/ConverterInterface.php',
         'MatthiasMullie\\PathConverter\\NoConverter' => __DIR__ . '/..' . '/matthiasmullie/path-converter/src/NoConverter.php',
-        'Music\\ApplyMetaTask' => __DIR__ . '/../..' . '/Music/ApplyMetaTask.php',
+        'Music\\DataTask' => __DIR__ . '/../..' . '/Music/DataTask.php',
         'Music\\DumpImagesTask' => __DIR__ . '/../..' . '/Music/DumpImagesTask.php',
         'Music\\FixPdfTask' => __DIR__ . '/../..' . '/Music/FixPdfTask.php',
         'Music\\ImslpTask' => __DIR__ . '/../..' . '/Music/ImslpTask.php',
         'Music\\MainTask' => __DIR__ . '/../..' . '/Music/MainTask.php',
         'Music\\PdfMetaData' => __DIR__ . '/../..' . '/Music/PdfMetaData.php',
         'Music\\PdfMetaDataList' => __DIR__ . '/../..' . '/Music/PdfMetaDataList.php',
+        'Music\\TKeywords' => __DIR__ . '/../..' . '/Music/TKeywords.php',
         'Music\\Tif2PdfTask' => __DIR__ . '/../..' . '/Music/Tif2PdfTask.php',
         'Music\\TiffFileInfo' => __DIR__ . '/../..' . '/Music/TiffFileInfo.php',
+        'Music\\TocTask' => __DIR__ . '/../..' . '/Music/TocTask.php',
         'PHPUnit\\Event\\Application\\Finished' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/Finished.php',
         'PHPUnit\\Event\\Application\\FinishedSubscriber' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/FinishedSubscriber.php',
         'PHPUnit\\Event\\Application\\Started' => __DIR__ . '/..' . '/phpunit/phpunit/src/Event/Events/Application/Started.php',

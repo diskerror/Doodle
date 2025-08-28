@@ -33,7 +33,7 @@
     "ext-mbstring":           "*",
     "ext-pcntl":              "*",
     "ext-pdo":                "*",
-    "ext-phalcon":            "^5.8",
+    "ext-posix":              "*",
     "ext-sqlite3":            "*",
     "php-ds/php-ds":          "^1.7",
     "corneltek/getoptionkit": "2.7.3",
@@ -47,7 +47,7 @@
     "phpunit/phpunit": "^10.5.48"
   },
   "suggest":       {
-    "ext-ds":      "^1.5",
+    "ext-ds":      "^1.6",
     "ext-phalcon": "^5.9"
   },
   "config":        {
@@ -59,6 +59,10 @@
       "Application\\Structure\\": "app/struct/",
       "Library\\":                "lib/",
       "":                         "./"
-    }
+    },
+    "files": [
+      "lib/escapeshellarg.php",
+      "lib/var_export.php"
+    ]
   }
 }

@@ -2,24 +2,23 @@
 
 namespace Library;
 
-use Library\CmdBuffer;
-
 class ProcessRunner
 {
     const int MAX_PROCS = 4;
 
-    public readonly int      $maxProcs;
-    private readonly array   $commands;
-    private readonly ?string $cwd;
-    private array            $processes = [];
+    public readonly int       $maxProcs;
+    private readonly iterable $commands;
+    private readonly ?string  $cwd;
+    private array             $processes = [];
 
 
     /**
      * ProcessRunner constructor.
      *
-     * @param array $commands
+     * @param iterable    $commands
+     * @param string|null $cwd
      */
-    public function __construct(array $commands, ?string $cwd = null)
+    public function __construct(iterable $commands, ?string $cwd = null)
     {
         // Get the maximum number of level-zero processors, or performance processors available
         $maxProcs       = (int)('0' . exec('sysctl -n hw.perflevel0.physicalcpu 2>/dev/null'));
@@ -85,7 +84,7 @@ class ProcessRunner
     public function __destruct()
     {
         foreach ($this->processes as $process) {
-            if(isset($process)) {
+            if (isset($process)) {
                 unset($process);
             }
         }

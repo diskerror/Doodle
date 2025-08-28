@@ -27,7 +27,7 @@ class DumpImagesTask extends TaskMaster
 
         $startTime = new DateTime();
 
-        $cmdArray = [];
+        $cmds = [];
 
         foreach ($args as $arg) {
             if (!is_file($arg)) {
@@ -40,11 +40,10 @@ class DumpImagesTask extends TaskMaster
             }
 
             $destDir = escapeshellarg($pathinfo['dirname'] . '/' . $pathinfo['filename']);
-
-            $arg        = escapeshellarg($arg);
-            $cmdArray[] = <<<CMD
+            $arg     = escapeshellarg($arg);
+            $cmds[]  = <<<CMD
 mkdir -p $destDir
-pdfimages -tiff $arg {$destDir}/image
+pdfimages -tiff $arg $destDir/image
 cd $destDir
 for fn in *.tif; do
   tv="\$(magick identify -format "%z %r" "\$fn")";
@@ -56,7 +55,7 @@ CMD;
         }
 
         //  Process each input file separately
-        $runner = new ProcessRunner($cmdArray);
+        $runner = new ProcessRunner($cmds);
         $runner->run();
         $runner->wait();
 

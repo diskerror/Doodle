@@ -28,14 +28,14 @@ if (!function_exists('Library\\escapeshellarg')) {
         ];
 
         if (is_string($in)) {
-            return strtr($string, $escPairs);
+            return strtr($in, $escPairs);
         }
 
-        $returnArray = [];
-        foreach ($in as $key => $value) {
-            $returnArray[$key] = strtr((string)$value, $escPairs);
-        }
-        return $returnArray;
+        return array_map(
+            function ($v) use ($escPairs) {
+                return strtr((string)$v, $escPairs);
+            },
+            (array)$in);
     }
-    
+
 };

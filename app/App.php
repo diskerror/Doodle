@@ -34,6 +34,8 @@ final class App
     {
         fprintf(STDERR, '%s' . PHP_EOL, $t->getMessage());
         if (isset($GLOBALS['doodle_debug']) && $GLOBALS['doodle_debug']) {
+            fprintf(STDERR, '-> %s' . PHP_EOL, $t->getMessage());
+            fprintf(STDERR, 'Line: %d' . PHP_EOL, $t->getLine());
             fprintf(STDERR, '%s' . PHP_EOL, $t->getTraceAsString());
         }
         exit($t->getCode());
@@ -58,15 +60,7 @@ final class App
             fprintf(STDERR, 'Received error %d with message: %s' . PHP_EOL, $lastError, pcntl_strerror($lastError));
         }
 
-        exec('
-  local PID
-  for PID in $CHILD_PID; do
-    if [[$(kill -0 $PID) < = /dev/null]]; then
-      kill -SIGKILL $PID
-    fi
-  done
-  pkill -P $$
-');
+        exec('pkill -P ' . posix_getpid());
 
         exit($signo);
     }
@@ -79,6 +73,9 @@ final class App
      */
     public function __construct()
     {
+        setlocale(LC_CTYPE, 'en_US.UTF-8');
+        mb_internal_encoding('UTF-8');
+
         ini_set('error_reporting', E_ALL);
         set_error_handler([self::class, '_errorHandler']);
         set_exception_handler([self::class, '_exceptionHandler']);
@@ -94,12 +91,9 @@ final class App
         pcntl_async_signals();
 
 
-        setlocale(LC_CTYPE, 'en_US.UTF-8');
-        mb_internal_encoding('UTF-8');
-
         $this->di = $di = new FdCli();
         $self     = $this;
-        $basePath = realpath(__DIR__ . '/..'); //	Relative to this file, ~/Doodle/.
+        $basePath = realpath(__DIR__ . '/..'); //	Relative to this file.
 
         //	Setup shared resources and services.
         $this->di->setShared('basePath', function () use ($basePath) {
@@ -176,7 +170,7 @@ final class App
             unset($opt['spec']);
 
             foreach ($opt as $optKey => $optValue) {
-                $option->$optKey = $optValue;
+                $option->$optKey($optValue);
             }
 
             $this->possibleOptions->addOption($option);

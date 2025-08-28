@@ -7,7 +7,7 @@ use DateTime;
 use ErrorException;
 use Library\ProcessRunner;
 
-include 'lib/var_export.php';
+include __DIR__ . '/../lib/var_export.php';
 
 
 class Tif2PdfTask extends TaskMaster
@@ -114,7 +114,7 @@ CMD;
         $resolution = $this->inputParams->resolution ?? 600;
         chdir($workingDir);
         exec('magick ' . implode(' ', $outputFileArr2) .
-            " -density $resolution -units pixelsperinch output.pdf");
+             " -density $resolution -units pixelsperinch output.pdf");
 
 //        exec('rm -rf tmp tmp2');
 
