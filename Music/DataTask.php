@@ -50,7 +50,7 @@ class DataTask extends TaskMaster
                 }
                 $file = escapeshellarg($file);
 
-                $cmd = 'exiftool -overwrite_original ' .
+                $cmd = 'exiftool -overwrite_original -Creator="Reid Woodbury Jr." ' .
                     "-Title=$m->title -Author=$m->author -Subject=$m->subject -Keywords=$m->keywords $file";
 
 //        StdIo::outln($cmd);

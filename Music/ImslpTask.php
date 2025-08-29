@@ -40,7 +40,7 @@ class ImslpTask extends TaskMaster
         // A bug report needs to be filed with ImageMagick.
         chdir($args[0]);
 
-        $origFiles   = new Vector(glob('*[0-9].tif', GLOB_ERR));
+        $origFiles   = new Vector(glob('*.tif', GLOB_ERR));
         $tmpFiles    = $origFiles->map(function ($fName) use ($tmpSuffix) {
             $pi = pathinfo($fName);
             if ($pi['dirname'] === '.') {
@@ -154,8 +154,8 @@ class ImslpTask extends TaskMaster
         StdIo::outln('Combining and compressing images...');
         exec(
             <<<CMD
-            magick {$blankOpt}*[0-9]$tmpSuffix \
-                -threshold 50% -depth 1 \
+            magick {$blankOpt}*$tmpSuffix \
+                -threshold 60% -depth 1 \
                 -compress Group4 \
                 -density {$this->options->resolution} -units pixelsperinch \
                 1output.pdf
@@ -163,7 +163,7 @@ class ImslpTask extends TaskMaster
         );
         // $this->options->resolution == 600 ? 480 ? 360 ? 240
 
-        exec("rm *[0-9]{$tmpSuffix}");
+        exec("rm *{$tmpSuffix}");
 
         StdIo::outln('Total runtime: ' . $startTime->diff(new DateTime())->format('%h:%I:%S'));
     }
