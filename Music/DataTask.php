@@ -71,9 +71,16 @@ class DataTask extends TaskMaster
         }
     }
 
-    public function setDbTask()
+    public function setDbAction()
     {
-//    disabled    $db = new SQLite3(__DIR__ . '/music.sqlite');
+        StdIo::outln('WARNING: This will delete the and existing database!');
+        StdIo::out('Continue? (y/n)');
+        $response = StdIo::in();
+        if (trim($response) !== 'y') {
+            return;
+        }
+
+        $db = new SQLite3(__DIR__ . '/music.sqlite');
         $db->exec('DROP TABLE if EXISTS meta');
         $db->exec('
 CREATE TABLE meta (
