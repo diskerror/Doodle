@@ -104,19 +104,38 @@ CREATE TABLE meta (
 
     }
 
-    public function exportAction(...$params)
+    /**
+     * Exports the database to a CSV file.
+     * If the file name ends in .tsv, the separator will be a tab.
+     * Otherwise, the separator will be a comma.
+     *
+     * @param ...$args
+     * @return void
+     */
+    public function exportAction(...$args)
     {
+        if (count($args) !== 1) {
+            StdIo::outln('needs output file name');
+            $this->helpAction();
+            return;
+        }
+
+        $separator = ',';
+        if (strtolower(pathinfo($args[0], PATHINFO_EXTENSION)) === 'tsv') {
+            $separator = "\t";
+        }
+
         $db  = new SQLite3(__DIR__ . '/music.sqlite');
         $res = $db->query('SELECT * FROM meta ORDER BY meta_id');
 
         $row = $res->fetchArray(SQLITE3_ASSOC);
 
-        $fp = fopen($params[0], 'wb');
-        fputcsv($fp, array_keys($row));
-        fputcsv($fp, $row);
+        $fp = fopen($args[0], 'wb');
+        fputcsv($fp, array_keys($row), $separator);
+        fputcsv($fp, $row, $separator);
 
         while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
-            fputcsv($fp, $row);
+            fputcsv($fp, $row, $separator);
         }
 
         $db->close();
@@ -131,8 +150,11 @@ CREATE TABLE meta (
         $res = $db->query('SELECT * FROM meta WHERE keywords != "" ORDER BY meta_id DESC');
 
         while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
-            $db->exec('UPDATE meta SET keywords = "' . preg_replace('/,\s*/', ', ',
-                                                                    $row['keywords']) . '" WHERE filename = "' . $row['filename'] . '"');
+            $db->exec(
+                'UPDATE meta SET keywords = "' .
+                preg_replace('/,\s*/', ', ', $row['keywords']) .
+                '" WHERE filename = "' . $row['filename'] . '"'
+            );
         }
         $db->close();
     }
