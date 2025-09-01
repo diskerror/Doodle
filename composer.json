@@ -40,7 +40,8 @@
     "diskerror/autoload":     "dev-main",
     "diskerror/typed":        "dev-master",
     "laminas/laminas-server": "^2.18",
-    "diskerror/pdfparser":    "dev-master"
+    "diskerror/pdfparser":    "dev-master",
+    "shuchkin/simplexlsx": "^1.1"
   },
   "require-dev":   {
     "phalcon/phalcon": "v6.0.x-dev",

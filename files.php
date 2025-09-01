@@ -9,7 +9,7 @@ $GLOBALS ['options'] = [
     [
         'spec' => 'p|print',
         'desc' => 'Echo or print command rather than executing.',
-        'type' => 'boolean',
+        'isa' => 'boolean',
         'defaultValue' => false,
     ],
 ];
