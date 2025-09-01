@@ -20,7 +20,7 @@ class TaskMaster extends Task
     /**
      * By default, describes the items in this command.
      */
-    public function mainAction()
+    public function mainAction(...$args)
     {
         $this->helpAction();
     }
