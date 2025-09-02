@@ -7,7 +7,9 @@ use ErrorException;
 use Library\Exceptions\BadFileException;
 use Library\Exceptions\RuntimeException;
 use Library\StdIo;
-use SQLite3;
+use Library\SQLite3;
+use Shuchkin\SimpleXLSX;
+use SplFileObject;
 
 
 class DataTask extends TaskMaster
@@ -120,8 +122,9 @@ CREATE TABLE meta (
             return;
         }
 
+        $fo        = new SplFileObject($args[0], 'wb');
         $separator = ',';
-        if (strtolower(pathinfo($args[0], PATHINFO_EXTENSION)) === 'tsv') {
+        if (strtolower($fo->getExtension()) === 'tsv') {
             $separator = "\t";
         }
 
@@ -129,17 +132,12 @@ CREATE TABLE meta (
         $res = $db->query('SELECT * FROM meta ORDER BY meta_id');
 
         $row = $res->fetchArray(SQLITE3_ASSOC);
-
-        $fp = fopen($args[0], 'wb');
-        fputcsv($fp, array_keys($row), $separator);
-        fputcsv($fp, $row, $separator);
+        $fo->fputcsv(array_keys($row), $separator);
+        $fo->fputcsv($row, $separator);
 
         while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
-            fputcsv($fp, $row, $separator);
+            $fo->fputcsv($row, $separator);
         }
-
-        $db->close();
-        fclose($fp);
     }
 
     public function fixAction()
@@ -157,6 +155,7 @@ CREATE TABLE meta (
             );
         }
         $db->close();
+    }
     }
 
 }
