@@ -10,7 +10,7 @@ use Library\ProcessRunner;
 use Library\StdIo;
 
 
-class ImslpTask extends TaskMaster
+class BuildPDFTask extends TaskMaster
 {
     /**
      * Converts all '.tif' files in a directory to a single '.pdf'.
@@ -20,7 +20,7 @@ class ImslpTask extends TaskMaster
      */
     public function mainAction(...$args)
     {
-        $this->logger->info('Music ImslpTask mainAction');
+        $this->logger->info('Music BuildPDFTask mainAction');
 
         if (count($args) != 1) {
             $this->helpAction();
@@ -31,7 +31,7 @@ class ImslpTask extends TaskMaster
         $tmpSuffix = '_TMP.tif';
 
         // Set trim parameters
-        $frac = round(0.2 / 100.0, 6);  // '.4%' trim margin remainder fraction (percent to fraction)
+        $frac = 0.009;  // '.9%' trim margin remainder fraction (percent to fraction)
         $size = $frac + 1.0;
 
 
@@ -65,6 +65,7 @@ class ImslpTask extends TaskMaster
                 <<<CMD
                 magick $fName \
                     -alpha off -colorspace gray -depth 8 \
+                    -despeckle \
                     $resizeStr \
                     -virtual-pixel white -background white \
                     -deskew 80% +repage \
@@ -166,6 +167,13 @@ class ImslpTask extends TaskMaster
         exec("rm *{$tmpSuffix}");
 
         StdIo::outln('Total runtime: ' . $startTime->diff(new DateTime())->format('%h:%I:%S'));
+    }
+
+    public function testAction()
+    {
+//        $runner = new ProcessRunner(['sleep 5', 'sleep 6', 'sleep 4', 'sleep 8', 'sleep 2', 'sleep 5', 'sleep 15', 'sleep 5', 'sleep 20', 'sleep 5', 'sleep 1', 'sleep 5']);
+//        $runner->run();
+
     }
 
 }
