@@ -8,39 +8,59 @@ use Ds\Vector;
 use ErrorException;
 use Library\ProcessRunner;
 use Library\StdIo;
+use function Library\escapeshellarg;
 
 
-class BuildPDFTask extends TaskMaster
+class BuildPdfTask extends TaskMaster
 {
     /**
-     * Converts all '.tif' files in a directory to a single '.pdf'.
+     * mainAction
+     *
+     * Gathers and fixes a list of image files and wraps them into a single '.pdf'.
+     *
+     * All input files must be in the same directory.
+     *
+     * `music.php build-pdf <image-file> <image-file> ... <destination-pdf>`
+     *
+     * Creates destination directory if it does not exist.
      *
      * @return int
      * @throws ErrorException
      */
     public function mainAction(...$args)
     {
-        $this->logger->info('Music BuildPDFTask mainAction');
+        $this->logger->info('Music BuildPdfTask mainAction');
 
-        if (count($args) != 1) {
+        if (count($args) < 2) {
             $this->helpAction();
             return;
         }
+
         $startTime = new DateTime();
 
-        $tmpSuffix = '_TMP.tif';
+        $pInfo = pathinfo(array_pop($args));
 
-        // Set trim parameters
-        $frac = 0.009;  // '.9%' trim margin remainder fraction (percent to fraction)
-        $size = $frac + 1.0;
+        if (!file_exists($pInfo['dirname'])) {
+            mkdir($pInfo['dirname'], 0755, true);
+        }
+
+        $dirname  = realpath($pInfo['dirname']);
+        $basename = strtolower($pInfo['extension'] === 'pdf' ? $pInfo['basename'] : ($pInfo['filename'] . '.pdf'));
+        $destFile = escapeshellarg($dirname . '/' . $basename);
+
+        $tmpSuffix = '_TMP.tif';
 
 
         // Some ImageMagick functions do not like spaces in file names
         // so with this we can avoid spaces in the parent directories.
         // A bug report needs to be filed with ImageMagick.
-        chdir($args[0]);
+        chdir(dirname($args[0]));
 
-        $origFiles   = new Vector(glob('*.tif', GLOB_ERR));
+        $origFiles = new Vector($args);
+        $origFiles = $origFiles->map(function ($fName) {
+            return pathinfo($fName, PATHINFO_BASENAME);
+        });
+
         $tmpFiles    = $origFiles->map(function ($fName) use ($tmpSuffix) {
             $pi = pathinfo($fName);
             if ($pi['dirname'] === '.') {
@@ -50,6 +70,11 @@ class BuildPDFTask extends TaskMaster
         });
         $tmpFilesEsc = $tmpFiles->map('Library\\escapeshellarg');
         $origFiles   = $origFiles->map('Library\\escapeshellarg');
+
+
+        // Set trim parameters
+        $frac = 0.008;  // '0.8%' trim margin remainder fraction (percent to fraction)
+        $size = ($frac * 2.0) + 1.0;
 
         $commands = new Vector();
 
@@ -96,6 +121,7 @@ class BuildPDFTask extends TaskMaster
             $commands->push(
                 <<<CMD
                 magick $fName \
+                    -virtual-pixel white -background white \
                     -crop \
                     $(magick $fName -virtual-pixel white -blur 0x'%[fx:round(w*0.001)]' -fuzz 3% \
                       -define trim:percent-background=99.6% -trim \
@@ -159,7 +185,7 @@ class BuildPDFTask extends TaskMaster
                 -threshold 60% -depth 1 \
                 -compress Group4 \
                 -density {$this->options->resolution} -units pixelsperinch \
-                1output.pdf
+                $destFile
             CMD
         );
         // $this->options->resolution == 600 ? 480 ? 360 ? 240

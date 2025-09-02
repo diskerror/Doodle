@@ -8,17 +8,17 @@ include __DIR__ . '/autoload_check.php';
 $GLOBALS ['options'] = [
     [
         'spec' => 'p|print',
-        'desc' => 'Echo or print command rather than executing.',
+        'desc' => 'Echo or print command string rather than executing.',
         'defaultValue' => false,
     ],
     [
         'spec' => 'r|resolution:=number',
-        'desc' => 'Set alternate resolution (density) for PDF.',
+        'desc' => 'Set alternate resolution (density) for PDF. (BuildPdfTask)',
         'defaultValue' => 600,
     ],
     [
         'spec' => 'b|blank',
-        'desc' => 'Add a blank page to the head of the PDF.',
+        'desc' => 'Add a blank page to the head of the PDF. (BuildPdfTask)',
         'defaultValue' => false,
     ],
     [
