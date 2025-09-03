@@ -16,10 +16,10 @@ class TocTask extends TaskMaster
      * Adds Table Of Contents to a PDF file.
      *
      * Format of TOC source file:
-     * <tab>1<tab>Page One Level One
-     * <tab><tab>5<tab>Page Five Level Two
-     * <tab><tab>7<tab>Page Seven Level Two
-     * <tab><tab><tab>8<tab>Page Eight Level Three
+     * 1<tab>Page One Level One
+     * 5<tab><tab>Page Five Level Two
+     * 7<tab><tab>Page Seven Level Two
+     * 8<tab><tab><tab>Page Eight Level Three
      *
      * Numbering start with physical page one (1).
      *
@@ -41,13 +41,13 @@ class TocTask extends TaskMaster
         foreach ($toc as $entry) {
             try {
                 $parts = [];
-                if (!preg_match('/^(\\t+)(\d+)\\t(.+)$/', $entry, $parts)) {
+                if (!preg_match('/^(\d+)(\\t+)(.+)$/', $entry, $parts)) {
                     continue;
                 }
                 $tocData .= "BookmarkBegin\n";
                 $tocData .= 'BookmarkTitle: ' . $parts[3] . "\n";
-                $tocData .= 'BookmarkLevel: ' . strlen($parts[1]) . "\n";
-                $tocData .= 'BookmarkPageNumber: ' . $parts[2] . "\n";
+                $tocData .= 'BookmarkLevel: ' . strlen($parts[2]) . "\n";
+                $tocData .= 'BookmarkPageNumber: ' . $parts[1] . "\n";
             }
             catch (ErrorException) {
             }

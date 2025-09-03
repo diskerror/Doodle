@@ -71,7 +71,6 @@ class BuildPdfTask extends TaskMaster
         $tmpFilesEsc = $tmpFiles->map('Library\\escapeshellarg');
         $origFiles   = $origFiles->map('Library\\escapeshellarg');
 
-
         // Set trim parameters
         $frac = 0.008;  // '0.8%' trim margin remainder fraction (percent to fraction)
         $size = ($frac * 2.0) + 1.0;
@@ -149,7 +148,7 @@ class BuildPdfTask extends TaskMaster
         //  Find the average width of the images
         StdIo::outln('Finding and applying average width...');
         $averageWidth = 0;
-        foreach ($tmpFiles as $fName) {
+        foreach ($tmpFilesEsc as $fName) {
             $averageWidth += explode(' ', exec('magick identify -format "%w " ' . $fName))[0];
         }
         $averageWidth = round($averageWidth / count($tmpFiles));
@@ -177,11 +176,12 @@ class BuildPdfTask extends TaskMaster
 
         /////////////////////////////////////////////////////////////
         //  Combine the images into a single PDF
-        $blankOpt = $this->options->blank ? __DIR__ . '/blank.pdf ' : '';
         StdIo::outln('Combining and compressing images...');
+        $blankOpt = $this->options->blank ? __DIR__ . '/blank.pdf ' : '';
+        $allTempFiles = $tmpFilesEsc->join(' ');
         exec(
             <<<CMD
-            magick {$blankOpt}*$tmpSuffix \
+            magick {$blankOpt}*$allTempFiles \
                 -threshold 60% -depth 1 \
                 -compress Group4 \
                 -density {$this->options->resolution} -units pixelsperinch \
