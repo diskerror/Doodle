@@ -19,8 +19,9 @@ class TaskMaster extends Task
 {
     /**
      * By default, describes the items in this command.
+     * @return void
      */
-    public function mainAction(...$args)
+    public function mainAction(...$args): void
     {
         $this->helpAction();
     }

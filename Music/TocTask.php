@@ -11,6 +11,8 @@ use Library\StdIo;
 class TocTask extends TaskMaster
 {
     /**
+     * mainAction
+     *
      * Adds Table Of Contents to a PDF file.
      *
      * Format of TOC source file:
@@ -21,10 +23,10 @@ class TocTask extends TaskMaster
      *
      * Numbering start with physical page one (1).
      *
-     * @return int
+     * @return void
      * @throws ErrorException
      */
-    public function mainAction(...$args)
+    public function mainAction(...$args): void
     {
         $this->logger->info('Music TocTask mainAction');
 

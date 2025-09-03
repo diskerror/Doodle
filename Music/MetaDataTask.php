@@ -12,20 +12,17 @@ use Shuchkin\SimpleXLSX;
 use SplFileObject;
 
 
-/**
- * DataTask
- *
- * Manages the database of music meta-data.
- */
-class DataTask extends TaskMaster
+class MetaDataTask extends TaskMaster
 {
     /**
+     * mainAction
+     *
      * Applies meta-data to PDF file by file name.
      *
-     * @return int
+     * @return void
      * @throws ErrorException
      */
-    public function applyAction(...$files)
+    public function mainAction(...$files): void
     {
         if (count($files) === 0) {
             $this->helpAction();
@@ -79,8 +76,11 @@ class DataTask extends TaskMaster
     }
 
     /**
+     * setDbAction
+     *
      * Initializes the database.
      * WARNING: This will delete the and existing database!
+     *
      * @return void
      */
     public function setDbAction()
@@ -117,6 +117,8 @@ CREATE TABLE meta (
     }
 
     /**
+     * exportAction
+     *
      * Exports the database to a CSV file.
      * If the file name ends in .tsv, the separator will be a tab.
      * Otherwise, the separator will be a comma.

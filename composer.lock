@@ -61,7 +61,7 @@
             "source": {
                 "type": "git",
                 "url": "../Autoload",
-                "reference": "e0310686651e69d1c7b53f3328d5c3ab5cadf0af"
+                "reference": "1660dbd42a39117cdbb9e4dea91ccdc623577f75"
             },
             "require": {
                 "ext-ds": "^1.5",
@@ -85,7 +85,7 @@
             ],
             "description": "An autoloader using the Composer generated autoload files and the Ds data structures.",
             "homepage": "https://github.com/diskerror/Autoload",
-            "time": "2025-08-10T05:50:55+00:00"
+            "time": "2025-09-03T01:39:01+00:00"
         },
         {
             "name": "diskerror/pdfparser",

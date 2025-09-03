@@ -3,7 +3,7 @@
         'name' => 'diskerror/doodle',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'e5ee38e8f22d130363a407cf15abcac9da399f2a',
+        'reference' => 'f6b865226b5f52dcbc69df28156403174d9d9f22',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -22,7 +22,7 @@
         'diskerror/autoload' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'e0310686651e69d1c7b53f3328d5c3ab5cadf0af',
+            'reference' => '1660dbd42a39117cdbb9e4dea91ccdc623577f75',
             'type' => 'library',
             'install_path' => __DIR__ . '/../diskerror/autoload',
             'aliases' => array(
@@ -33,7 +33,7 @@
         'diskerror/doodle' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'e5ee38e8f22d130363a407cf15abcac9da399f2a',
+            'reference' => 'f6b865226b5f52dcbc69df28156403174d9d9f22',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

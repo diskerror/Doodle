@@ -12,7 +12,7 @@ class FixPdfTask extends TaskMaster
     /**
      * mainAction
      * This takes a list of input PDF files, fixes them,
-     *      and the repaired copy to the output directory.
+     * and the repaired copy to the output directory.
      *
      * @param ...$params
      * @return void

@@ -24,10 +24,10 @@ class BuildPdfTask extends TaskMaster
      *
      * Creates destination directory if it does not exist.
      *
-     * @return int
+     * @return void
      * @throws ErrorException
      */
-    public function mainAction(...$args)
+    public function mainAction(...$args): void
     {
         $this->logger->info('Music BuildPdfTask mainAction');
 

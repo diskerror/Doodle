@@ -12,13 +12,15 @@ use Library\ProcessRunner;
 class DumpImagesTask extends TaskMaster
 {
     /**
+     * dumpImagesAction
+     *
      * Exports images from a PDF file.
      * Shell for-loop gaurentees the images have no more detail than 8-bit grayscale.
      *
-     * @return int
+     * @return void
      * @throws ErrorException
      */
-    public function mainAction(...$args)
+    public function mainAction(...$args): void
     {
         if (count($args) < 1) {
             $this->helpAction();
@@ -43,7 +45,7 @@ class DumpImagesTask extends TaskMaster
             $arg     = escapeshellarg($arg);
             $cmds[]  = <<<CMD
 mkdir -p $destDir
-pdfimages -tiff $arg $destDir/image
+pdfimages -tiff $arg $destDir/{$pathinfo['filename']}
 cd $destDir
 for fn in *.tif; do
   tv="\$(magick identify -format "%z %r" "\$fn")";
