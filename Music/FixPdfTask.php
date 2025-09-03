@@ -5,25 +5,19 @@ namespace Music;
 use Application\TaskMaster;
 use Diskerror\PdfParser\Parser;
 use Library\StdIo;
+use function Library\escapeshellarg;
 
 class FixPdfTask extends TaskMaster
 {
-    private const array ESC_ARR = [
-        ' ' => '\\ ',
-        "'" => '\\\'',
-        '"' => '\\"',
-        '(' => '\\(',
-        ')' => '\\)',
-        '[' => '\\[',
-        ']' => '\\]',
-        '{' => '\\{',
-        '}' => '\\}',
-        '*' => '\\*',
-        '?' => '\\?',
-        '\\' => '\\\\',
-    ];
-
-    public function mainAction(string ...$params): void
+    /**
+     * mainAction
+     * This takes a list of input PDF files, fixes them,
+     *      and the repaired copy to the output directory.
+     *
+     * @param ...$params
+     * @return void
+     */
+    public function mainAction(...$params): void
     {
         if (count($params) < 2) {
             StdIo::outln('needs file[s] and output directory');
@@ -77,8 +71,8 @@ class FixPdfTask extends TaskMaster
                 }
             }
 
-            $inputFile  = strtr($file, self::ESC_ARR);
-            $outputFile = strtr($outputDir . '/' . basename($file), self::ESC_ARR);
+            $inputFile  = escapeshellarg($file);
+            $outputFile = escapeshellarg($outputDir . '/' . basename($file));
 
             $cmdArray = [];
             $cmd      = "

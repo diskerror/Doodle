@@ -195,11 +195,11 @@ class BuildPdfTask extends TaskMaster
         StdIo::outln('Total runtime: ' . $startTime->diff(new DateTime())->format('%h:%I:%S'));
     }
 
-    public function testAction()
-    {
+//    public function testAction()
+//    {
 //        $runner = new ProcessRunner(['sleep 5', 'sleep 6', 'sleep 4', 'sleep 8', 'sleep 2', 'sleep 5', 'sleep 15', 'sleep 5', 'sleep 20', 'sleep 5', 'sleep 1', 'sleep 5']);
 //        $runner->run();
-
-    }
+//
+//    }
 
 }

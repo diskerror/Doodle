@@ -12,10 +12,15 @@ use Shuchkin\SimpleXLSX;
 use SplFileObject;
 
 
+/**
+ * DataTask
+ *
+ * Manages the database of music meta-data.
+ */
 class DataTask extends TaskMaster
 {
     /**
-     * Applies forScore meta-data to PDF file by file name.
+     * Applies meta-data to PDF file by file name.
      *
      * @return int
      * @throws ErrorException
@@ -73,6 +78,11 @@ class DataTask extends TaskMaster
         }
     }
 
+    /**
+     * Initializes the database.
+     * WARNING: This will delete the and existing database!
+     * @return void
+     */
     public function setDbAction()
     {
         StdIo::outln('WARNING: This will delete the and existing database!');
@@ -140,6 +150,11 @@ CREATE TABLE meta (
         }
     }
 
+    /**
+     * fixAction
+     * Fixes the database by removing extra spaces from the keywords, reporting fields that are too long, etc.
+     * @return void
+     */
     public function fixAction()
     {
         ini_set('memory_limit', -1);
