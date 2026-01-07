@@ -17,7 +17,7 @@ foreach ($argv as $fName) {
 		continue;
 	}
 
-	exec("(nice magick \"$fName\" -threshold 50% -depth 1 -compress Group4 \"$fName\")&");
+	exec("(nice magick '$fName' -threshold 50% -depth 1 -compress Group4 '$fName')&");
 }
 
 echo PHP_EOL;
