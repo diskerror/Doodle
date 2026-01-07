@@ -1,0 +1,28 @@
+{
+  "name": "sibche/plist",
+  "description": "Library for reading and writing Apple's CFPropertyList (plist) files in XML as well as binary format.",
+  "keywords": [
+    "plist"
+  ],
+  "type": "library",
+  "homepage": "https://github.com/sibche/CFPropertyList",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.3"
+  },
+  "authors": [
+    {
+      "name": "Mahdi Youseftabar",
+      "email": "roboticsexpert@gmail.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/roboticsexpert/CFPropertyList/issues",
+    "source": "https://github.com/roboticsexpert/CFPropertyList"
+  },
+  "autoload": {
+    "psr-0": {
+      "CFPropertyList": "classes\/"
+    }
+  }
+}

@@ -15,11 +15,11 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
     );
 
     public static $prefixLengthsPsr4 = array (
-        'S' => 
+        'S' =>
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
         ),
-        'P' => 
+        'P' =>
         array (
             'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
@@ -31,30 +31,30 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
             'Phalcon\\' => 8,
             'PayloadInterop\\' => 15,
         ),
-        'M' => 
+        'M' =>
         array (
             'MatthiasMullie\\PathConverter\\' => 29,
             'MatthiasMullie\\Minify\\' => 22,
         ),
-        'L' => 
+        'L' =>
         array (
             'Library\\' => 8,
             'Laminas\\Stdlib\\' => 15,
             'Laminas\\Server\\' => 15,
             'Laminas\\Code\\' => 13,
         ),
-        'G' => 
+        'G' =>
         array (
             'GetOptionKit\\' => 13,
         ),
-        'D' => 
+        'D' =>
         array (
             'Ds\\' => 3,
             'Diskerror\\Typed\\' => 16,
             'Diskerror\\PdfParser\\' => 20,
             'DeepCopy\\' => 9,
         ),
-        'A' => 
+        'A' =>
         array (
             'Application\\Structure\\' => 22,
             'Application\\' => 12,
@@ -62,95 +62,95 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
     );
 
     public static $prefixDirsPsr4 = array (
-        'Symfony\\Polyfill\\Mbstring\\' => 
+        'Symfony\\Polyfill\\Mbstring\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Psr\\SimpleCache\\' => 
+        'Psr\\SimpleCache\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
-        'Psr\\Log\\' => 
+        'Psr\\Log\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/log/src',
         ),
-        'Psr\\Container\\' => 
+        'Psr\\Container\\' =>
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
-        'PhpParser\\' => 
+        'PhpParser\\' =>
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
-        'Phalcon\\Traits\\' => 
+        'Phalcon\\Traits\\' =>
         array (
             0 => __DIR__ . '/..' . '/phalcon/traits/src',
         ),
-        'Phalcon\\Tests\\Unit\\' => 
+        'Phalcon\\Tests\\Unit\\' =>
         array (
             0 => __DIR__ . '/..' . '/phalcon/traits/tests/unit',
         ),
-        'Phalcon\\Tests\\Fixtures\\' => 
+        'Phalcon\\Tests\\Fixtures\\' =>
         array (
             0 => __DIR__ . '/..' . '/phalcon/traits/tests/support/fixtures',
         ),
-        'Phalcon\\' => 
+        'Phalcon\\' =>
         array (
             0 => __DIR__ . '/..' . '/phalcon/phalcon/src',
         ),
-        'PayloadInterop\\' => 
+        'PayloadInterop\\' =>
         array (
             0 => __DIR__ . '/..' . '/payload-interop/payload-interop/src',
         ),
-        'MatthiasMullie\\PathConverter\\' => 
+        'MatthiasMullie\\PathConverter\\' =>
         array (
             0 => __DIR__ . '/..' . '/matthiasmullie/path-converter/src',
         ),
-        'MatthiasMullie\\Minify\\' => 
+        'MatthiasMullie\\Minify\\' =>
         array (
             0 => __DIR__ . '/..' . '/matthiasmullie/minify/src',
         ),
-        'Library\\' => 
+        'Library\\' =>
         array (
             0 => __DIR__ . '/../..' . '/lib',
         ),
-        'Laminas\\Stdlib\\' => 
+        'Laminas\\Stdlib\\' =>
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-stdlib/src',
         ),
-        'Laminas\\Server\\' => 
+        'Laminas\\Server\\' =>
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-server/src',
         ),
-        'Laminas\\Code\\' => 
+        'Laminas\\Code\\' =>
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-code/src',
         ),
-        'GetOptionKit\\' => 
+        'GetOptionKit\\' =>
         array (
             0 => __DIR__ . '/..' . '/corneltek/getoptionkit/src',
         ),
-        'Ds\\' => 
+        'Ds\\' =>
         array (
             0 => __DIR__ . '/..' . '/php-ds/php-ds/src',
         ),
-        'Diskerror\\Typed\\' => 
+        'Diskerror\\Typed\\' =>
         array (
             0 => __DIR__ . '/..' . '/diskerror/typed/src',
         ),
-        'Diskerror\\PdfParser\\' => 
+        'Diskerror\\PdfParser\\' =>
         array (
             0 => __DIR__ . '/..' . '/diskerror/pdfparser/src/Smalot/PdfParser',
         ),
-        'DeepCopy\\' => 
+        'DeepCopy\\' =>
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
         ),
-        'Application\\Structure\\' => 
+        'Application\\Structure\\' =>
         array (
             0 => __DIR__ . '/../..' . '/app/struct',
         ),
-        'Application\\' => 
+        'Application\\' =>
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
@@ -160,9 +160,18 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         0 => __DIR__ . '/../..' . '/',
     );
 
+    public static $prefixesPsr0 = array (
+        'C' =>
+        array (
+            'CFPropertyList' =>
+            array (
+                0 => __DIR__ . '/..' . '/sibche/plist/classes',
+            ),
+        ),
+    );
+
     public static $classMap = array (
         'Application\\App' => __DIR__ . '/../..' . '/app/App.php',
-        'Application\\Command' => __DIR__ . '/../..' . '/app/Command.php',
         'Application\\Console' => __DIR__ . '/../..' . '/app/Console.php',
         'Application\\LoggerFactory' => __DIR__ . '/../..' . '/app/LoggerFactory.php',
         'Application\\MainTask' => __DIR__ . '/../..' . '/app/MainTask.php',
@@ -170,6 +179,12 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'Application\\Structure\\Config' => __DIR__ . '/../..' . '/app/struct/Config.php',
         'Application\\Structure\\Config\\Process' => __DIR__ . '/../..' . '/app/struct/Config/Process.php',
         'Application\\TaskMaster' => __DIR__ . '/../..' . '/app/TaskMaster.php',
+        'CFPropertyList\\CFBinaryPropertyList' => __DIR__ . '/..' . '/sibche/plist/classes/CFPropertyList/CFBinaryPropertyList.php',
+        'CFPropertyList\\CFPropertyList' => __DIR__ . '/..' . '/sibche/plist/classes/CFPropertyList/CFPropertyList.php',
+        'CFPropertyList\\CFType' => __DIR__ . '/..' . '/sibche/plist/classes/CFPropertyList/CFType.php',
+        'CFPropertyList\\CFTypeDetector' => __DIR__ . '/..' . '/sibche/plist/classes/CFPropertyList/CFTypeDetector.php',
+        'CFPropertyList\\IOException' => __DIR__ . '/..' . '/sibche/plist/classes/CFPropertyList/IOException.php',
+        'CFPropertyList\\PListException' => __DIR__ . '/..' . '/sibche/plist/classes/CFPropertyList/PListException.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'DeepCopy\\DeepCopy' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
         'DeepCopy\\Exception\\CloneException' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Exception/CloneException.php',
@@ -244,6 +259,7 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'Diskerror\\PdfParser\\TraversableTrait' => __DIR__ . '/..' . '/diskerror/pdfparser/src/Smalot/PdfParser/TraversableTrait.php',
         'Diskerror\\PdfParser\\XObject\\Form' => __DIR__ . '/..' . '/diskerror/pdfparser/src/Smalot/PdfParser/XObject/Form.php',
         'Diskerror\\PdfParser\\XObject\\Image' => __DIR__ . '/..' . '/diskerror/pdfparser/src/Smalot/PdfParser/XObject/Image.php',
+        'Diskerror\\Typed\\AtMap' => __DIR__ . '/..' . '/diskerror/typed/src/AtMap.php',
         'Diskerror\\Typed\\AtomicInterface' => __DIR__ . '/..' . '/diskerror/typed/src/AtomicInterface.php',
         'Diskerror\\Typed\\BSON\\Date' => __DIR__ . '/..' . '/diskerror/typed/src/BSON/Date.php',
         'Diskerror\\Typed\\BSON\\DateTime' => __DIR__ . '/..' . '/diskerror/typed/src/BSON/DateTime.php',
@@ -283,7 +299,6 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'Ds\\Traits\\GenericSequence' => __DIR__ . '/..' . '/php-ds/php-ds/src/Traits/GenericSequence.php',
         'Ds\\Traits\\SquaredCapacity' => __DIR__ . '/..' . '/php-ds/php-ds/src/Traits/SquaredCapacity.php',
         'Ds\\Vector' => __DIR__ . '/..' . '/php-ds/php-ds/src/Vector.php',
-        'Files\\Excel2CsvTask' => __DIR__ . '/../..' . '/Files/Excel2CsvTask.php',
         'Files\\Exif2CreateTask' => __DIR__ . '/../..' . '/Files/Exif2CreateTask.php',
         'Forensics\\CombineGraphsTask' => __DIR__ . '/../..' . '/Forensics/CombineGraphsTask.php',
         'Forensics\\DumpSQLiteTask' => __DIR__ . '/../..' . '/Forensics/DumpSQLiteTask.php',
@@ -318,6 +333,8 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'GetOptionKit\\ValueType\\RegexType' => __DIR__ . '/..' . '/corneltek/getoptionkit/src/ValueType/RegexType.php',
         'GetOptionKit\\ValueType\\StringType' => __DIR__ . '/..' . '/corneltek/getoptionkit/src/ValueType/StringType.php',
         'GetOptionKit\\ValueType\\UrlType' => __DIR__ . '/..' . '/corneltek/getoptionkit/src/ValueType/UrlType.php',
+        'Image\\G4InPlaceTask' => __DIR__ . '/../..' . '/Image/G4InPlaceTask.php',
+        'Image\\MainTask' => __DIR__ . '/../..' . '/Image/MainTask.php',
         'Laminas\\Code\\DeclareStatement' => __DIR__ . '/..' . '/laminas/laminas-code/src/DeclareStatement.php',
         'Laminas\\Code\\Exception\\BadMethodCallException' => __DIR__ . '/..' . '/laminas/laminas-code/src/Exception/BadMethodCallException.php',
         'Laminas\\Code\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/laminas/laminas-code/src/Exception/ExceptionInterface.php',
@@ -2759,6 +2776,9 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'TheSeer\\Tokenizer\\TokenCollectionException' => __DIR__ . '/..' . '/theseer/tokenizer/src/TokenCollectionException.php',
         'TheSeer\\Tokenizer\\Tokenizer' => __DIR__ . '/..' . '/theseer/tokenizer/src/Tokenizer.php',
         'TheSeer\\Tokenizer\\XMLSerializer' => __DIR__ . '/..' . '/theseer/tokenizer/src/XMLSerializer.php',
+        'Xml\\DumpExcelTask' => __DIR__ . '/../..' . '/Xml/DumpExcelTask.php',
+        'Xml\\MainTask' => __DIR__ . '/../..' . '/Xml/MainTask.php',
+        'Xml\\XmlTask' => __DIR__ . '/../..' . '/Xml/XmlTask.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -2767,6 +2787,7 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
             $loader->prefixLengthsPsr4 = ComposerStaticInitc741ea2452ed991d38b37ca862333390::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitc741ea2452ed991d38b37ca862333390::$prefixDirsPsr4;
             $loader->fallbackDirsPsr4 = ComposerStaticInitc741ea2452ed991d38b37ca862333390::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitc741ea2452ed991d38b37ca862333390::$prefixesPsr0;
             $loader->classMap = ComposerStaticInitc741ea2452ed991d38b37ca862333390::$classMap;
 
         }, null, ClassLoader::class);
