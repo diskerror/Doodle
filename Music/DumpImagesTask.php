@@ -45,9 +45,9 @@ class DumpImagesTask extends TaskMaster
             $arg     = escapeshellarg($arg);
             $cmds[]  = <<<CMD
 mkdir -p $destDir
-pdfimages -tiff $arg $destDir/{$pathinfo['filename']}
+pdfimages $arg $destDir/{$pathinfo['filename']}
 cd $destDir
-for fn in *.tif; do
+for fn in *; do
   tv="\$(magick identify -format "%z %r" "\$fn")";
   if [[ \${tv:0:2} -gt 8 || \${tv: -4:3} == 'RGB' ]]; then
     magick "\$fn" -colorspace gray -depth 8 "\$fn"

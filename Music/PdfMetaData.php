@@ -11,14 +11,17 @@ use Diskerror\Typed\TypedClass;
  */
 class PdfMetaData extends TypedClass
 {
-	protected TStringTrim $filename;
-	protected TStringTrim $title;
-	protected TStringTrim $author;               //	Composer, One or more comma&space-separated values
-	protected TStringTrim $subject;              //	Genres, One or more comma&space-separated values
-	protected TStringTrim $keywords;             //	Tags, One or more comma&space-separated values
-	protected ?int        $rating = null;        //	Rating	Whole number between 0 and 5
-	protected ?int        $difficulty = null;    //	Difficulty	Whole number between 0 and 3
-	protected ?int        $duration = null;      //	Duration	Non-negative whole number (in seconds)
-	protected ?int        $keysf = null;         //	Key	A whole number between -7 and 7
-	protected ?int        $keymi = null;         //	Key	0 (major) or 1 (minor)
+    protected array $_map = [
+        'File Name'=> 'filename',
+        'Title'=> 'title',
+        'Composer'=> 'author',
+        'Ensemble'=> 'subject',
+        'Keywords'=> 'keywords'
+    ];
+
+    protected TStringTrim $filename;
+    protected TStringTrim $title;
+    protected TStringTrim $author;      //	Composer, One or more comma & space-separated values
+    protected TStringTrim $subject;     //	Genres or Ensemble, One or more comma & space-separated values
+    protected TKeywords   $keywords;    //	Array to become a list of comma&space-separated values
 }

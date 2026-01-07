@@ -45,7 +45,7 @@ class BuildPdfTask extends TaskMaster
         }
 
         $dirname  = realpath($pInfo['dirname']);
-        $basename = strtolower($pInfo['extension'] === 'pdf' ? $pInfo['basename'] : ($pInfo['filename'] . '.pdf'));
+        $basename = strtolower($pInfo['extension']) === 'pdf' ? $pInfo['basename'] : ($pInfo['filename'] . '.pdf');
         $destFile = escapeshellarg($dirname . '/' . $basename);
 
         $tmpSuffix = '_TMP.tif';
@@ -72,11 +72,13 @@ class BuildPdfTask extends TaskMaster
         $origFiles   = $origFiles->map('Library\\escapeshellarg');
 
         // Set trim parameters
-        $frac = 0.008;  // '0.8%' trim margin remainder fraction (percent to fraction)
+        $frac = 0.004;  // '0.8%' trim margin remainder fraction (percent to fraction)
         $size = ($frac * 2.0) + 1.0;
 
         $commands = new Vector();
 
+		//	magick <filepath> -set filename:0 "%[t]" \
+		//		-format png -bordercolor #288647 -border 108x47 "/<dirpath>/%[filename:0].png"
 
         /////////////////////////////////////////////////////////////
         //  Deskew each input file separately
@@ -122,8 +124,9 @@ class BuildPdfTask extends TaskMaster
                 magick $fName \
                     -virtual-pixel white -background white \
                     -crop \
-                    $(magick $fName -virtual-pixel white -blur 0x'%[fx:round(w*0.001)]' -fuzz 3% \
-                      -define trim:percent-background=99.6% -trim \
+                    $(magick $fName -virtual-pixel white \
+                      -blur 0x'%[fx:round(w*0.004)]' -fuzz 4% \
+                      -define trim:percent-background=99% -trim \
                       -format \
                       '%[fx:round(w*$size)]x%[fx:round(h*$size)]+%[fx:round(page.x-(w*$frac))]+%[fx:round(page.y-(h*$frac))]' \
                       info:) \
