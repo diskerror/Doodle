@@ -32,4 +32,4 @@ if (exec('which composer') !== '') {
     }
 }
 
-require_once __DIR__ . '/vendor/diskerror/autoload/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';

@@ -37,7 +37,6 @@
     "ext-sqlite3":            ">=3.50",
     "php-ds/php-ds":          "^1.7",
     "corneltek/getoptionkit": "2.7.3",
-    "diskerror/autoload":     "dev-main",
     "diskerror/typed":        "dev-master",
     "laminas/laminas-server": "^2.18",
     "diskerror/pdfparser":    "dev-master",

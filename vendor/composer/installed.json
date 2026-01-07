@@ -53,41 +53,6 @@
             "install-path": "../corneltek/getoptionkit"
         },
         {
-            "name": "diskerror/autoload",
-            "version": "dev-main",
-            "version_normalized": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "../Autoload",
-                "reference": "1660dbd42a39117cdbb9e4dea91ccdc623577f75"
-            },
-            "require": {
-                "ext-ds": "^1.5",
-                "php": ">=7.4"
-            },
-            "require-dev": {
-                "php-ds/php-ds": "^1.5"
-            },
-            "time": "2025-09-03T01:39:01+00:00",
-            "default-branch": true,
-            "type": "library",
-            "installation-source": "source",
-            "license": [
-                "AGPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Reid Woodbury Jr",
-                    "email": "reid@rawsound.com",
-                    "homepage": "http://www.rawsound.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "An autoloader using the Composer generated autoload files and the Ds data structures.",
-            "homepage": "https://github.com/diskerror/Autoload",
-            "install-path": "../diskerror/autoload"
-        },
-        {
             "name": "diskerror/pdfparser",
             "version": "dev-master",
             "version_normalized": "dev-master",

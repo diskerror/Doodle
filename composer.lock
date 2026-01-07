@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "787c5d38538e2a23788841458e870d7b",
+    "content-hash": "8cb497353137a5cd6c3d575f8c61b896",
     "packages": [
         {
             "name": "corneltek/getoptionkit",
@@ -54,38 +54,6 @@
                 "source": "https://github.com/c9s/GetOptionKit/tree/2.7.3"
             },
             "time": "2024-12-18T10:10:51+00:00"
-        },
-        {
-            "name": "diskerror/autoload",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "../Autoload",
-                "reference": "1660dbd42a39117cdbb9e4dea91ccdc623577f75"
-            },
-            "require": {
-                "ext-ds": "^1.5",
-                "php": ">=7.4"
-            },
-            "require-dev": {
-                "php-ds/php-ds": "^1.5"
-            },
-            "default-branch": true,
-            "type": "library",
-            "license": [
-                "AGPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Reid Woodbury Jr",
-                    "email": "reid@rawsound.com",
-                    "homepage": "http://www.rawsound.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "An autoloader using the Composer generated autoload files and the Ds data structures.",
-            "homepage": "https://github.com/diskerror/Autoload",
-            "time": "2025-09-03T01:39:01+00:00"
         },
         {
             "name": "diskerror/pdfparser",
@@ -2754,7 +2722,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "diskerror/autoload": 20,
         "diskerror/pdfparser": 20,
         "diskerror/typed": 20,
         "phalcon/phalcon": 20
