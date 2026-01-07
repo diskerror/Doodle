@@ -16,7 +16,7 @@ class CombineGraphsTask extends TaskMaster
      *
      * @return int
      */
-    public function mainAction(): int
+    public function mainAction(...$args): void
     {
         $searchDir = $this->options->arguments[0]->arg;
         //	$outName   = 'Inherit Graph';

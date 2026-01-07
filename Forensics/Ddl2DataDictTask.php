@@ -10,18 +10,18 @@ class Ddl2DataDictTask extends TaskMaster
      * @return int
      * @throws ErrorException
      */
-    public function mainAction(): int
+    public function mainAction(...$args): void
 	{
 		$fileStr = $this->options->arguments[0]->arg;
 
 		if (!file_exists($fileStr)) {
 			echo "File not found: $fileStr\n";
-			return 1;
+			return;
 		}
 
 		if (!is_file($fileStr)) {
 			echo "Not a file: $fileStr\n";
-			return 1;
+			return;
 		}
 
 		$ddlLines = preg_split('/[\r\n]+/', file_get_contents($fileStr));
@@ -42,7 +42,6 @@ class Ddl2DataDictTask extends TaskMaster
 				}
 			}
 		}
-        return 0;
 	}
 
 	/**

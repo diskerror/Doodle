@@ -14,12 +14,12 @@ class DumpSQLiteTask extends TaskMaster
 	 * @return int
 	 * @throws ErrorException
 	 */
-	public function mainAction(): int
+	public function mainAction(...$args): void
 	{
 		if (count($this->inputParams->arguments) === 0) {
 			StdIo::outln('Requires path to SQLite file.');
 			$this->help();
-			return 0;
+			return;
 		}
 
 		if (!is_file($this->inputParams->arguments[0]->arg)) {
@@ -45,7 +45,5 @@ class DumpSQLiteTask extends TaskMaster
 		}
 
 		echo json_encode($output, JSON_PRETTY_PRINT);
-
-		return 0;
 	}
 }

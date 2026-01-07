@@ -7,7 +7,7 @@ use Recordings\DataStruct\RecordingRecord;
 
 class CheckTask extends TaskMaster
 {
-    public function mainAction()
+    public function mainAction(...$args): void
     {
         $this->logger->info('Recordings MainTask checkAction');
 

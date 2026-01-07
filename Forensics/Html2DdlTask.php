@@ -7,7 +7,7 @@ use Library\DomDocParser;
 
 class Html2DdlTask extends TaskMaster
 {
-	public function mainAction(): int
+	public function mainAction(...$args): void
 	{
 		$fName = '';
 
@@ -146,10 +146,7 @@ class Html2DdlTask extends TaskMaster
 		catch (Throwable $t) {
 			fprintf(STDERR, "\n\n%s", $fName);
 			fprintf(STDERR, "\n\n%s\n\n", $t);
-			return 1;
 		}
-
-		return 0;
 	}
 
 

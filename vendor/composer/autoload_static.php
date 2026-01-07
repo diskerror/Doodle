@@ -304,6 +304,7 @@ class ComposerStaticInitc741ea2452ed991d38b37ca862333390
         'Forensics\\DumpSQLiteTask' => __DIR__ . '/../..' . '/Forensics/DumpSQLiteTask.php',
         'Forensics\\Html2DdlTask' => __DIR__ . '/../..' . '/Forensics/Html2DdlTask.php',
         'Forensics\\MainTask' => __DIR__ . '/../..' . '/Forensics/MainTask.php',
+        'Generator\\MainTask' => __DIR__ . '/../..' . '/Generator/MainTask.php',
         'GetOptionKit\\Argument' => __DIR__ . '/..' . '/corneltek/getoptionkit/src/Argument.php',
         'GetOptionKit\\ContinuousOptionParser' => __DIR__ . '/..' . '/corneltek/getoptionkit/src/ContinuousOptionParser.php',
         'GetOptionKit\\Exception\\InvalidOptionException' => __DIR__ . '/..' . '/corneltek/getoptionkit/src/Exception/InvalidOptionException.php',

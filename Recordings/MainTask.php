@@ -57,7 +57,7 @@ class MainTask extends TaskMaster
      *
      * @return void
      */
-    public function mainAction(...$params)
+    public function mainAction(...$params): void
     {
         $this->logger->info('Recordings MainTask mainAction');
 

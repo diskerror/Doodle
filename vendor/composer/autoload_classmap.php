@@ -139,6 +139,7 @@ return array(
     'Forensics\\DumpSQLiteTask' => $baseDir . '/Forensics/DumpSQLiteTask.php',
     'Forensics\\Html2DdlTask' => $baseDir . '/Forensics/Html2DdlTask.php',
     'Forensics\\MainTask' => $baseDir . '/Forensics/MainTask.php',
+    'Generator\\MainTask' => $baseDir . '/Generator/MainTask.php',
     'GetOptionKit\\Argument' => $vendorDir . '/corneltek/getoptionkit/src/Argument.php',
     'GetOptionKit\\ContinuousOptionParser' => $vendorDir . '/corneltek/getoptionkit/src/ContinuousOptionParser.php',
     'GetOptionKit\\Exception\\InvalidOptionException' => $vendorDir . '/corneltek/getoptionkit/src/Exception/InvalidOptionException.php',
