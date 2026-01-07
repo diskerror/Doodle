@@ -12,7 +12,6 @@ use GetOptionKit\OptionResult;
 use Library\StdIo;
 use Phalcon\Cli\Dispatcher\Exception as DispatcherException;
 use Phalcon\Di\FactoryDefault\Cli as FdCli;
-use Phalcon\Events\Manager;
 use Throwable;
 
 final class App
@@ -33,9 +32,8 @@ final class App
     public static function _exceptionHandler(Throwable $t)
     {
         fprintf(STDERR, '%s' . PHP_EOL, $t->getMessage());
+        fprintf(STDERR, '%s (Line: %d)' . PHP_EOL, $t->getFile(), $t->getLine());
         if (isset($GLOBALS['doodle_debug']) && $GLOBALS['doodle_debug']) {
-            fprintf(STDERR, '-> %s' . PHP_EOL, $t->getMessage());
-            fprintf(STDERR, 'Line: %d' . PHP_EOL, $t->getLine());
             fprintf(STDERR, '%s' . PHP_EOL, $t->getTraceAsString());
         }
         exit($t->getCode());
@@ -102,7 +100,7 @@ final class App
 
 
         //	File must exist and be in this directory.
-        $this->config = new Config(require 'config.php');
+        $this->config = new Config(require __DIR__ . '/config.php');
 
         if (isset($GLOBALS['config'])) {
             $this->config->replace($GLOBALS['config']);
@@ -137,14 +135,6 @@ final class App
                 );
             }
             return $logger;
-        });
-
-        $this->di->setShared('eventsManager', function () {
-            static $eventsManager;
-            if (!isset($eventsManager)) {
-                $eventsManager = new Manager();
-            }
-            return $eventsManager;
         });
 
         $this->di->setShared('pidHandler', function () use ($di) {

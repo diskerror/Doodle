@@ -7,6 +7,41 @@ use Library\Json;
 
 class StdIo
 {
+    private const COLORS = [
+        'success' => "\033[0;32m",
+        'warn'    => "\033[1;33m",
+        'fail'    => "\033[0;31m",
+        'info'    => "\033[0;36m",
+        'reset'   => "\033[0m",
+    ];
+
+    private static function colorize(string $s, string $color): string
+    {
+        if (posix_isatty(STDOUT)) {
+            return self::COLORS[$color] . $s . self::COLORS['reset'];
+        }
+        return $s;
+    }
+
+    public static function success(string $s): void
+    {
+        self::outln(self::colorize($s, 'success'));
+    }
+
+    public static function warn(string $s): void
+    {
+        self::outln(self::colorize($s, 'warn'));
+    }
+
+    public static function fail(string $s): void
+    {
+        self::err(self::colorize($s, 'fail'));
+    }
+
+    public static function info(string $s): void
+    {
+        self::outln(self::colorize($s, 'info'));
+    }
 
 	static function in(int $length = 80)
 	{

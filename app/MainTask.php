@@ -3,13 +3,17 @@
 namespace Application;
 
 use Library\StdIo;
-use ReflectionMethod;
 
 /**
  * Displays help from all projects.
  */
 final class MainTask extends TaskMaster
 {
+    public function mainAction(...$args): void
+    {
+        $this->helpAction();
+    }
+
     /**
      * Displays help from all projects.
      */
