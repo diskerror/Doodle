@@ -35,7 +35,7 @@ Converts a singledirectory of TIFF files into a single PDF file. It handles sour
 number of performance cores available. It then assembles the pages into a single PDF file. Files are converted to 1-bit
 black and white.
 
-### ApplyMeta[data]
+### MetaData
 
 Applies title, composer, and other metadata to a PDF by its filename from data save in an SQLite database 'music.db'.
 
