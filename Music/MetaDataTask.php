@@ -18,7 +18,8 @@ use function Library\escapeshellarg;
 class MetaDataTask extends TaskMaster
 {
 	const string MUSIC_DB        = __DIR__ . '/music.sqlite';
-	const string EXCEL_META_DATA = '/Music/Music Meta Data.xlsx';
+	const string EXCEL_META_DATA = '/Music/Music Meta Data.xlsm';
+	const string META_4S_FILE    = '/Desktop/4sMeta.csv';
 
 	const KEY_XLATE = [
 		'Cb' => [-7, 0],
@@ -76,9 +77,9 @@ class MetaDataTask extends TaskMaster
 
 		$db = new SQLite3(self::MUSIC_DB);
 		$db->enableExceptions(true);
+		$stmt = $db->prepare("SELECT title, author, subject, keywords FROM meta WHERE filename = :bname");
 
 		foreach ($files as $file) {
-
 			if (!is_file($file)) {
 				throw new BadFileException('Not a file.' . PHP_EOL . '  ' . $file . PHP_EOL);
 			}
@@ -87,18 +88,17 @@ class MetaDataTask extends TaskMaster
 			$result_code = 0;
 			$bname       = basename($file);
 
-			$pmd = new PdfMetaData(
-				$db->querySingle("SELECT title, author, subject, keywords FROM meta WHERE filename = '$bname'", true)
-			);
+			$stmt->bindValue(':bname', $bname, SQLITE3_TEXT);
+			$pmd = new PdfMetaData($stmt->execute()->fetchArray(SQLITE3_ASSOC));
 
 			if ($pmd->title !== '') {
 				$file     = escapeshellarg($file);
 				$title    = escapeshellarg($pmd->title);
 				$author   = escapeshellarg($pmd->author);
 				$subject  = escapeshellarg($pmd->subject);
-				$keywords = escapeshellarg($pmd->keywords);
+				$keywords = "'" . strtr($pmd->keywords, ["'" => "\\'"]) . "'";
 
-				$cmd = 'exiftool -overwrite_original -Creator="Reid Woodbury Jr." ' .
+				$cmd = 'exiftool -overwrite_original -Creator=Reid\\ Woodbury\\ Jr. ' .
 					"-Title=$title -Author=$author -Subject=$subject -Keywords=$keywords $file";
 
 //                StdIo::outln($cmd);
@@ -201,6 +201,139 @@ CREATE TABLE meta (
 	}
 
 	/**
+	 * to4sCsvAction
+	 *
+	 * Exports the database to a CSV file in forScore's metadata import format.
+	 * Keyword pairs (arranger:, text:, publisher:, year:, etc.) are extracted
+	 * from the keywords column and placed in the appropriate CSV columns.
+	 *
+	 * @param ...$args
+	 * @return void
+	 */
+	public function to4sCsvAction(...$args): void {
+		$outFile = $args[0] ?? getenv('HOME') . self::META_4S_FILE;
+
+		if (file_exists($outFile)) {
+			StdIo::out("File '$outFile' already exists. Overwrite? (y/n) ");
+			$response = StdIo::in();
+			if (trim($response) !== 'y') {
+				StdIo::outln('Aborted.');
+				return;
+			}
+		}
+
+		// load Excel file if newer than local DB
+		$real_excel = realpath(getenv('HOME') . self::EXCEL_META_DATA);
+		if (file_exists($real_excel) && filemtime($real_excel) > filemtime(self::MUSIC_DB)) {
+			$this->doSetDb();
+			$this->loadExcelAction($real_excel);
+		}
+
+		$db  = new SQLite3(self::MUSIC_DB);
+		$res = $db->query('SELECT filename, title, author, subject, keywords FROM meta ORDER BY filename');
+
+		$header = [
+			'Filename', 'Title', 'Start Page (Bookmark)', 'End Page (Bookmark)',
+			'Composers', 'Genres', 'Tags', 'Publisher', 'Arranger',
+			'Rating', 'Difficulty', 'Minutes', 'Seconds', 'keysf', 'keymi',
+		];
+
+		$fo = new SplFileObject($outFile, 'wb');
+		$fo->fputcsv($header);
+
+		while ($row = $res->fetchArray(SQLITE3_ASSOC)) {
+			$keywords = $row['keywords'] ?? '';
+
+			// Parse keyword pairs
+			$arrangers  = [];
+			$texts      = [];
+			$publisher  = '';
+			$year       = '';
+			$plate      = '';
+			$rating     = 0;
+			$difficulty = 0;
+			$keysf      = '';
+			$keymi      = '';
+			$duration   = 0;
+			$tags       = [];
+
+			foreach (array_map('trim', explode(',', $keywords)) as $part) {
+				if ($part === '') {
+					continue;
+				}
+
+				if (preg_match('/^arranger:(.+)$/', $part, $m)) {
+					$arrangers[] = trim($m[1]);
+				} elseif (preg_match('/^text:(.+)$/', $part, $m)) {
+					$texts[] = trim($m[1]);
+				} elseif (preg_match('/^publisher:(.+)$/', $part, $m)) {
+					$publisher = trim($m[1]);
+				} elseif (preg_match('/^year:(\d+)$/', $part, $m)) {
+					$year = $m[1];
+				} elseif (preg_match('/^plate:(.+)$/', $part, $m)) {
+					$plate = trim($m[1]);
+				} elseif (preg_match('/^rating:(\d+)$/', $part, $m)) {
+					$rating = (int)$m[1];
+				} elseif (preg_match('/^difficulty:(\d+)$/', $part, $m)) {
+					$difficulty = (int)$m[1];
+				} elseif (preg_match('/^keysf:(-?\d+)$/', $part, $m)) {
+					$keysf = $m[1];
+				} elseif (preg_match('/^keymi:(\d+)$/', $part, $m)) {
+					$keymi = $m[1];
+				} elseif (preg_match('/^duration:(\d+)$/', $part, $m)) {
+					$duration = (int)$m[1];
+				} else {
+					// Remaining tags (instrument:, source:, editor:, etc.)
+					$tags[] = $part;
+				}
+			}
+
+			// Duration is stored in seconds; forScore wants minutes and seconds
+			$minutes = (int)floor($duration / 60);
+			$seconds = $duration % 60;
+			// If duration was 0, leave blank
+			if ($duration === 0) {
+				$minutes = '';
+				$seconds = '';
+			}
+
+			// Rebuild tags: include text and plate as keyword pairs since
+			// forScore has no dedicated columns for them
+			foreach ($texts as $t) {
+				$tags[] = 'text:' . $t;
+			}
+			if ($plate !== '') {
+				$tags[] = 'plate:' . $plate;
+			}
+			if ($year !== '') {
+				$tags[] = 'year:' . $year;
+			}
+
+			$csvRow = [
+				$row['filename'],                    // Filename
+				$row['title'],                       // Title
+				'',                                  // Start Page (Bookmark)
+				'',                                  // End Page (Bookmark)
+				$row['author'],                      // Composers
+				$row['subject'],                     // Genres
+				implode(', ', $tags),       // Tags
+				$publisher,                          // Publisher
+				implode(', ', $arrangers),  // Arranger
+				$rating,                             // Rating
+				$difficulty,                         // Difficulty
+				$minutes,                            // Minutes
+				$seconds,                            // Seconds
+				$keysf,                              // keysf
+				$keymi,                              // keymi
+			];
+
+			$fo->fputcsv($csvRow);
+		}
+
+		StdIo::outln('Exported to ' . $outFile);
+	}
+
+	/**
 	 * loadExcelAction
 	 * Loads an Excel file into the database.
 	 * @param ...$args
@@ -214,19 +347,19 @@ CREATE TABLE meta (
 			return;
 		}
 
-		if (pathinfo($args[0], PATHINFO_EXTENSION) !== 'xlsx') {
-			StdIo::outln('needs xlsx file');
+		if (pathinfo($args[0], PATHINFO_EXTENSION) !== 'xlsm') {
+			StdIo::outln('needs xlsm file');
 			$this->helpAction();
 			return;
 		}
 
 		StdIo::outln('loading Excel file');
-		$xlsx = SimpleXLSX::parsefile($args[0]);
-		if (!$xlsx) {
+		$xls = SimpleXLSX::parsefile($args[0]);
+		if (!$xls) {
 			throw new RuntimeException('error parsing Excel file');
 		}
 
-		$data   = $xlsx->rows();
+		$data   = $xls->rows();
 		$header = array_shift($data);
 
 		$data = array_map(function ($row) use ($header) {
@@ -251,17 +384,25 @@ CREATE TABLE meta (
 
 				switch ($key) {
 					case 'Start Page':
-						$newRow->keywords = 'p:' . $value;
+						$newRow->keywords = 's_page:' . $value;
 					break;
 
 					case 'Arranger':
-						$value            = preg_replace('/\s+/', ' ', $value);
-						$newRow->keywords = 'arranger:' . $value;
+						foreach (explode(',', $value) as $name) {
+							$name = preg_replace('/\s+/', ' ', trim($name));
+							if ($name !== '') {
+								$newRow->keywords = 'arranger:' . $name;
+							}
+						}
 					break;
 
 					case 'Text':
-						$value            = preg_replace('/\s+/', ' ', $value);
-						$newRow->keywords = 'text:' . $value;
+						foreach (explode(',', $value) as $name) {
+							$name = preg_replace('/\s+/', ' ', trim($name));
+							if ($name !== '') {
+								$newRow->keywords = 'text:' . $name;
+							}
+						}
 					break;
 
 					case 'Key':
