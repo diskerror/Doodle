@@ -11,9 +11,18 @@ use function Library\escapeshellarg;
 
 class G4InPlaceTask extends TaskMaster
 {
-    public function mainAction(...$args): void
+	/**
+	 * G4 In Place main action
+	 *
+	 * Compresses images or pdfs with images with one-bit Group 4 compression.
+	 * Compresses in place!!
+	 *
+	 * @param ...$args
+	 * @return void
+	 */
+	public function mainAction(...$args): void
     {
-        if (count($args) < 2) {
+        if (count($args) < 1) {
             echo 'need input';
             exit;
         }
