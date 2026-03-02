@@ -384,7 +384,7 @@ CREATE TABLE meta (
 
 				switch ($key) {
 					case 'Start Page':
-						$newRow->keywords = 's_page:' . $value;
+						$newRow->keywords = 'page:' . $value;
 					break;
 
 					case 'Arranger':

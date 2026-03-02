@@ -31,7 +31,7 @@ class ComposerAutoloaderInitc741ea2452ed991d38b37ca862333390
         require __DIR__ . '/autoload_static.php';
         call_user_func(\Composer\Autoload\ComposerStaticInitc741ea2452ed991d38b37ca862333390::getInitializer($loader));
 
-        $loader->setApcuPrefix('889bdd133ab2029157a9');
+        $loader->setApcuPrefix('61a84dd61c272c7c5ea6');
         $loader->register(true);
 
         $filesToLoad = \Composer\Autoload\ComposerStaticInitc741ea2452ed991d38b37ca862333390::$files;
