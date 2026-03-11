@@ -4,25 +4,55 @@ namespace Application;
 
 use GetOptionKit\OptionPrinter\ConsoleOptionPrinter;
 use Library\StdIo;
-use Phalcon\Cli\Task;
 use ReflectionMethod;
 
 /**
- * Class TaskMaster
+ * Base class for all Doodle CLI tasks.
  *
- * @property $config
- * @property $eventsManager
- * @property $logger
- * @property $pidHandler
+ * Provides option access, output helpers, and auto-generated help
+ * via docblock reflection. No framework dependency.
+ *
+ * @property-read string $basePath
+ * @property-read object $options
+ * @property-read object $logger
+ * @property-read object $config
  */
-class TaskMaster extends Task
+class TaskMaster
 {
+    /** Per-task CLI options (override in subclasses). */
+    protected static array $taskOptions = [];
+
+    /** Get per-task options (for App registration). */
+    public static function getTaskOptions(): array
+    {
+        return static::$taskOptions;
+    }
+
+    /** Shared service container (set by App before dispatch). */
+    private array $_services = [];
+
+    /**
+     * Inject a named service (called by App during bootstrap).
+     */
+    public function setService(string $name, mixed $value): void
+    {
+        $this->_services[$name] = $value;
+    }
+
+    /**
+     * Magic getter — provides $this->basePath, $this->options, $this->logger, etc.
+     */
+    public function __get(string $name): mixed
+    {
+        return $this->_services[$name] ?? null;
+    }
+
     /**
      * Get a parsed option value or a default if not set.
      */
     protected function getOption(string $name, mixed $default = null): mixed
     {
-        return $this->options->$name ?? $default;
+        return $this->_services['options']->$name ?? $default;
     }
 
     /**
@@ -30,7 +60,7 @@ class TaskMaster extends Task
      */
     protected function hasOption(string $name): bool
     {
-        return isset($this->options->$name);
+        return isset($this->_services['options']->$name);
     }
 
     /**
@@ -82,8 +112,7 @@ class TaskMaster extends Task
     }
 
     /**
-     * By default, describes the items in this command.
-     * @return void
+     * Default action — shows help.
      */
     public function mainAction(...$args): void
     {
@@ -98,17 +127,16 @@ class TaskMaster extends Task
         $calledClass = get_called_class();
         $this->doReflection($calledClass);
 
-        // If child class is MainTask the show all project's tasks.
+        // If child class is MainTask, show all project's tasks.
         if (str_ends_with($calledClass, 'MainTask')) {
             $classExplode = explode('\\', $calledClass);
-            foreach (glob($this->basePath . '/' . $classExplode[0] . '/*Task.php') as $taskFile) {
+            $basePath     = $this->_services['basePath'] ?? __DIR__ . '/..';
+            foreach (glob($basePath . '/' . $classExplode[0] . '/*Task.php') as $taskFile) {
                 $taskName  = basename($taskFile, 'Task.php');
-//                $taskName  = preg_replace('/(?<!\ )[A-Z]/', '-$0', $taskName);
-//                $taskName  = substr($taskName, 0, 1) === '-' ? substr($taskName, 1) : $taskName;
-//                $taskName  = strtolower($taskName);
                 $className = $classExplode[0] . '\\' . basename($taskFile, '.php');
                 if ($className !== $calledClass) {
-                    StdIo::outln('    ' . /*($taskName === 'main' ? '[default]' :*/ $taskName/*)*/);
+                    StdIo::outln('');
+                    StdIo::outln('    ' . $taskName);
                     $this->doReflection($className);
                 }
             }
@@ -129,15 +157,14 @@ class TaskMaster extends Task
         foreach ($reflector->getFormattedDescriptions() as $description) {
             StdIo::outln("\t" . $description);
         }
-
-        return;
     }
 
     protected function doOptions(): void
     {
-        if ($this->possibleOptions->count()) {
+        $possibleOptions = $this->_services['possibleOptions'] ?? null;
+        if ($possibleOptions !== null && $possibleOptions->count()) {
             StdIo::outln("\tOption[s]:");
-            StdIo::outln((new ConsoleOptionPrinter())->render($this->possibleOptions));
+            StdIo::outln((new ConsoleOptionPrinter())->render($possibleOptions));
         }
     }
 }

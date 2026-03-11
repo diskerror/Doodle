@@ -5,15 +5,15 @@
 
 return [
     [
-        "spec" => "h|help",
-        "desc" => "Show this help.",
+        'spec' => 'h|help',
+        'desc' => 'Show this help.',
         'isa' => 'boolean',
         'defaultValue' => false,
     ],
     [
-        "spec" => "v|verbose",
-        "desc" => "Verbose output (if implemented).",
-        "incremental" => true,
+        'spec' => 'v|verbose',
+        'desc' => 'Verbose output (if implemented).',
+        'incremental' => true,
         'defaultValue' => 0,
     ],
     [

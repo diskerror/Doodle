@@ -9,7 +9,6 @@
 namespace Application;
 
 use Laminas\Server\Reflection;
-use Library\StdIo;
 
 /**
  * Class Reflector
@@ -59,18 +58,13 @@ class Reflector
 		foreach ($this->_reflectedClass->getMethods() as $method) {
 			$methodName = $method->getName();
 
-			switch ($methodName) {
-                case '':
-                case 'setDI':
-                case 'getDI':
-                case 'getEventsManager':
-                case 'setEventsManager':
-                continue 2;
+			if (!str_ends_with($methodName, 'Action')) {
+				continue;
 			}
 
 			$desc = $method->getDescription();
 
-            $cmdDesc[substr($methodName, 0, -6)] =
+			$cmdDesc[substr($methodName, 0, -6)] =
 				$methodName === $desc ?
 					'' :
 					wordwrap($desc, 72, PHP_EOL . str_repeat(' ', 24));

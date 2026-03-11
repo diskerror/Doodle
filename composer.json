@@ -12,16 +12,6 @@
       "canonical": false
     },
     {
-      "type":      "vcs",
-      "url":       "../Autoload",
-      "canonical": false
-    },
-    {
-      "type":      "vcs",
-      "url":       "https://github.com/phalcon/phalcon-devtools",
-      "canonical": false
-    },
-    {
       "type":      "path",
       "url":       "../pdfparser",
       "canonical": false
@@ -38,18 +28,17 @@
     "php-ds/php-ds":          "^1.7",
     "corneltek/getoptionkit": "2.7.3",
     "diskerror/typed":        "dev-master",
-    "laminas/laminas-server": "^2.18",
+    "laminas/laminas-server": "^2.19",
     "diskerror/pdfparser":    "dev-master",
     "shuchkin/simplexlsx":    "^1.1",
-    "sibche/plist":           "^4.0.0"
+    "sibche/plist":           "^4.0.0",
+    "symfony/console": "^7.4"
   },
   "require-dev":   {
-    "phalcon/phalcon": "v6.0.x-dev",
     "phpunit/phpunit": "^10.5.48"
   },
   "suggest":       {
-    "ext-ds":      "^1.6",
-    "ext-phalcon": "^5.9"
+    "ext-ds":      "^1.6"
   },
   "config":        {
     "optimize-autoloader": true
