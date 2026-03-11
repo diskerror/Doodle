@@ -10,6 +10,10 @@ use Library\StdIo;
 
 class TocTask extends TaskMaster
 {
+    protected static array $taskOptions = [
+        ['spec' => 't|toc:=file', 'desc' => 'File with new TOC.'],
+    ];
+
     /**
      * mainAction
      *

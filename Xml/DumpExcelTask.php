@@ -9,6 +9,8 @@ use Shuchkin\SimpleXLSX;
 class DumpExcelTask extends TaskMaster
 {
     /**
+	 * Dump Excel file to CSV.
+	 *
      * @return void
      */
     public function mainAction(...$args): void
@@ -24,7 +26,6 @@ class DumpExcelTask extends TaskMaster
                 StdIo::outln(implode(', ', $row));
             }
         }
-
     }
 
 }

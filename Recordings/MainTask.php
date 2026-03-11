@@ -6,6 +6,10 @@ use Application\TaskMaster;
 
 class MainTask extends TaskMaster
 {
+    protected static array $taskOptions = [
+        ['spec' => 'p|print', 'desc' => 'Echo or print command rather than executing.', 'defaultValue' => false],
+    ];
+
     private const string ME_MYSELF = "'Reid Woodbury Jr.'";
 
     //  me - tape - performers - file

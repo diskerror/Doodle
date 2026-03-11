@@ -7,6 +7,10 @@ use Library\Json;
 
 class Exif2CreateTask extends TaskMaster
 {
+    protected static array $taskOptions = [
+        ['spec' => 'p|print', 'desc' => 'Echo or print command string rather than executing.', 'defaultValue' => false],
+    ];
+
     /**
      * Read file's EXIF DateTimeOriginal or CreateDate tags and write to its file system creation date.
      *

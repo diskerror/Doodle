@@ -13,6 +13,11 @@ use function Library\escapeshellarg;
 
 class BuildPdfTask extends TaskMaster
 {
+	protected static array $taskOptions = [
+		['spec' => 'r|resolution:=number', 'desc' => 'Set alternate resolution (density) for PDF.', 'defaultValue' => 600],
+		['spec' => 'b|blank', 'desc' => 'Add a blank page to the head of the PDF.', 'defaultValue' => false],
+	];
+
 	/**
 	 * mainAction
 	 *

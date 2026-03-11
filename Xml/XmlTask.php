@@ -9,7 +9,14 @@ use Library\XmlParser;
 
 class XmlTask extends TaskMaster
 {
-    function ToJsonAction(string $fileName)
+	/**
+	 * Convert XML to JSON.
+	 *
+	 * @param string $fileName
+	 * @return void
+	 * @throws \JsonException
+	 */
+	function ToJsonAction(string $fileName)
     {
         mb_internal_encoding('UTF-8');
 //		ini_set('memory_limit', 0);
@@ -19,7 +26,13 @@ class XmlTask extends TaskMaster
         StdIo::jsonOut($xmlObject->array);
     }
 
-    function ToPhpAction(string $fileName)
+	/**
+	 * Convert XML to PHP in var_export() form.
+	 *
+	 * @param string $fileName
+	 * @return void
+	 */
+	function ToPhpAction(string $fileName)
     {
         mb_internal_encoding('UTF-8');
 //		ini_set('memory_limit', 0);
@@ -41,7 +54,14 @@ class XmlTask extends TaskMaster
 //        }
     }
 
-    function PListToJsonAction(string $fileName)
+	/**
+	 * Converts plist style XML to JSON.
+	 *
+	 * @param string $fileName
+	 * @return void
+	 * @throws \CFPropertyList\IOException
+	 */
+	function PListToJsonAction(string $fileName)
     {
         mb_internal_encoding('UTF-8');
 

@@ -9,6 +9,10 @@ use function Library\escapeshellarg;
 
 class FixPdfTask extends TaskMaster
 {
+    protected static array $taskOptions = [
+        ['spec' => 'p|print', 'desc' => 'Echo or print command string rather than executing.', 'defaultValue' => false],
+    ];
+
     /**
      * mainAction
      * This takes a list of input PDF files, fixes them,
