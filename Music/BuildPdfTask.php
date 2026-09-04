@@ -27,8 +27,6 @@ class BuildPdfTask extends TaskMaster
 	 *
 	 * `music.php build-pdf <image-file> <image-file> ... <destination-pdf>`
 	 *
-	 * Creates destination directory if it does not exist.
-	 *
 	 * @return void
 	 * @throws ErrorException
 	 */

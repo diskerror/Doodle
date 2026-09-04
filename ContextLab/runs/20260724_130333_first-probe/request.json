@@ -1,0 +1,108 @@
+{
+    "model": "claude-sonnet-5",
+    "max_tokens": 100,
+    "system": [
+        {
+            "type": "text",
+            "text": "You are a helpful assistant in a controlled context-caching experiment.",
+            "cache_control": {
+                "type": "ephemeral"
+            }
+        }
+    ],
+    "messages": [
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Hi Claude! Could you plan a development roadmap? If you need more information from me, ask me 1-2 key questions right away. If you think I should upload any documents that would help you do a better job, let me know. You can use the tools you have access to \u2014 like Google Drive, web search, etc. \u2014 if they\u2019ll help you better accomplish this task. Do not use analysis tool. Please keep your responses friendly, brief and conversational. \n\nPlease execute the task as soon as you can - an artifact would be great if it makes sense. If using an artifact, consider what kind of artifact (interactive, visual, checklist, etc.) might be most helpful for this specific task. Thanks for your help!"
+                }
+            ]
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "I'd be happy to help you plan a development roadmap! To create something useful for you, I need to understand a bit more:\n\n1. **What are you building?** (e.g., a mobile app, web platform, internal tool, AI feature, etc.)\n2. **What's your timeline and team size?** (e.g., 3 months with 2 developers, 1 year with a full team, etc.)\n\nAlso, if you have any existing documents like:\n- Product requirements or feature lists\n- Technical specs or architecture docs\n- Team capacity or resource planning docs\n\n...those would be super helpful! I can search your Google Drive if you'd like, or you can just upload them directly.\n\nOnce I know more, I'll create an interactive roadmap artifact you can actually use and update as things progress!"
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "I would like to code in my IDE (CLion) but I keep getting sent here and don't get a code to paste into the CLI."
+                }
+            ]
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Ah, I see the confusion! It sounds like you're trying to use **Claude Code** (our command-line coding tool) but you're ending up in the chat interface instead.\n\nHere's how to get Claude Code set up:\n\n1. **Install Claude Code** via your terminal:\n   ```bash\n   npm install -g @anthropic-ai/claude-code\n   ```\n\n2. **Run it** in your project directory:\n   ```bash\n   claude-code\n   ```\n\n3. **Authenticate** - it should give you a code to enter or a link to follow for authentication\n\nIf you're not getting the authentication flow, you might need to:\n- Make sure you have Node.js installed\n- Check if you have an API key set up in your Anthropic account settings\n- Try running `claude-code --login` explicitly\n\nAre you getting stuck at a specific step, or not seeing the CLI tool at all when you try to install it? Let me know what's happening and I can help troubleshoot!"
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "The problem was that the URL given has had new-line characters inserted by the CLI."
+                }
+            ]
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Ah, that's a frustrating bug! The URL is getting wrapped/broken by line breaks in the terminal output, which makes it invalid.\n\n**Quick fix:** When you see the URL in your terminal, try to:\n1. Carefully copy the URL and remove any line breaks/spaces that got inserted\n2. Or look for the authentication code itself (not the full URL) and enter that instead\n\n**Better workaround:** You can try:\n```bash\nclaude-code --login 2>&1 | cat\n```\n\nThis might prevent the line wrapping issue.\n\nIf you're still having trouble, you could also authenticate via the API key method instead - you can generate an API key at `console.anthropic.com` and set it as an environment variable.\n\nSince this seems like a bug in Claude Code's CLI output, you might want to report it to Anthropic (there's usually a GitHub issues page for the tool, or you can use the feedback option in your account). Would you like help with the API key authentication method instead?"
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Let's set up for polishing an existing C++ project."
+                }
+            ]
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "I'll help you set up for polishing your C++ project. Let me first check what tabs are available and create a workspace for us.\n```\nThis block is not supported on your current device yet.\n```\n\nIt looks like the Chrome extension connection is currently unavailable. That's fine though \u2014 we can absolutely set up for polishing your C++ project using the terminal and file tools instead.\n\nLet me know:\n\n1. **Where is your project?** Is it already uploaded, or do you have a GitHub/GitLab URL I should clone?\n\n2. **What kind of \"polishing\" are you aiming for?** For example:\n   - Code style / formatting (clang-format, etc.)\n   - Static analysis (clang-tidy, cppcheck)\n   - Modernizing to C++11/14/17/20 idioms\n   - Build system cleanup (CMake, Makefile)\n   - Documentation / comments\n   - Performance profiling\n   - All of the above?\n\n3. **What's your current build setup?** (CMake, Make, Meson, etc.)\n\nOnce I know where things stand, I can help you get linters, formatters, and analysis tools configured \u2014 and walk you through the C++ idiomatic patterns as we encounter them."
+                }
+            ]
+        },
+        {
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "It's local at: ~/CLionProjects/RawSound",
+                    "cache_control": {
+                        "type": "ephemeral"
+                    }
+                }
+            ]
+        },
+        {
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Let me take a look at your project structure.\n```\nThis block is not supported on your current device yet.\n```\n\nThe path with `~` expands differently. Let me check the actual home directory:\n```\nThis block is not supported on your current device yet.\n```\n\nThe project isn't in my container's filesystem yet. Could you upload the project files? You can either:\n\n1. **Zip and upload** \u2014 compress the `RawSound` folder and drag it into the chat\n2. **Upload key files** \u2014 if it's small, just drag the folder contents directly\n\nAlternatively, if it's in a git repo somewhere, share the URL and I'll clone it.\n\nOnce I have the files, I can assess:\n- Your build setup (CMakeLists.txt, etc.)\n- Code structure and style\n- Opportunities for modern C++ idioms\n- Static analysis findings"
+                }
+            ]
+        }
+    ]
+}

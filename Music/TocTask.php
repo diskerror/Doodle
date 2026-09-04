@@ -57,7 +57,7 @@ class TocTask extends TaskMaster
             }
         }
 
-        $pdfInName        = \Library\escapeshellarg($args[0]);
+        $pdfInName        = \escapeshellarg($args[0]);
         $pathinfo         = pathinfo($args[0]);
         $infoTempFileName = $pathinfo['dirname'] . '/' . $pathinfo['basename'] . '_TMP.txt';
 
@@ -79,9 +79,9 @@ class TocTask extends TaskMaster
         fclose($newFile);
 
 
-        $infoTempFileEsc = \Library\escapeshellarg($infoTempFileName);
+        $infoTempFileEsc = \escapeshellarg($infoTempFileName);
         $pdfOutName      =
-            \Library\escapeshellarg($pathinfo['dirname'] . '/' . substr($pathinfo['basename'], 0, -4) . '_NEW.pdf');
+            \escapeshellarg($pathinfo['dirname'] . '/' . substr($pathinfo['basename'], 0, -4) . '_NEW.pdf');
 
         exec("pdftk $pdfInName update_info_utf8 $infoTempFileEsc output $pdfOutName");
         unlink($infoTempFileName);

@@ -89,7 +89,7 @@ PHP;
      * Create a new task within an existing project.
      * Usage: ./generator.php task [ProjectName] [TaskName]
      */
-    public function taskAction(array $params): void
+    public function taskAction(...$params): void
     {
         if (count($params) < 2) {
             $this->fail("Usage: task [ProjectName] [TaskName]");

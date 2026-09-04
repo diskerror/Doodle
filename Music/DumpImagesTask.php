@@ -7,6 +7,7 @@ use DateTime;
 use ErrorException;
 use Library\escapeshellarg;
 use Library\ProcessRunner;
+use Library\StdIo;
 
 
 class DumpImagesTask extends TaskMaster
@@ -41,20 +42,26 @@ class DumpImagesTask extends TaskMaster
                 throw new ErrorException($arg . ' is not a PDF file');
             }
 
-            $destDir = escapeshellarg($pathinfo['dirname'] . '/' . $pathinfo['filename']);
-            $arg     = escapeshellarg($arg);
+            //  Use PHP-native escapeshellarg to wrap each shell arg in single quotes.
+            //  The custom Library\escapeshellarg backslash-escapes without wrapping,
+            //  which breaks when the value is embedded inside a quoted heredoc and
+            //  later expanded by the shell as "$var" — the escaped \' becomes a raw '.
+            $destDir = \escapeshellarg($pathinfo['dirname'] . '/' . $pathinfo['filename']);
+
+            $arg     = \escapeshellarg($arg);
             $cmds[]  = <<<CMD
 mkdir -p $destDir
-pdfimages $arg $destDir/{$pathinfo['filename']}
+pdfimages $arg $destDir/images
 cd $destDir
 for fn in *; do
-  tv="\$(magick identify -format "%z %r" "\$fn")";
+  tv=\$(magick identify -format "%z %r" "\$fn");
   if [[ \${tv:0:2} -gt 8 || \${tv: -4:3} == 'RGB' ]]; then
     magick "\$fn" -colorspace gray -depth 8 "\$fn"
   fi
 done
 CMD;
         }
+		//StdIo::outln($cmds[0]);exit;
 
         //  Process each input file separately
         $runner = new ProcessRunner($cmds);

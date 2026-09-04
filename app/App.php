@@ -65,7 +65,7 @@ final class App
      */
     public function __construct()
     {
-        setlocale(LC_CTYPE, 'en_US.UTF-8');
+        setlocale(LC_ALL, 'en_US.UTF-8');
         mb_internal_encoding('UTF-8');
 
         ini_set('error_reporting', E_ALL);
