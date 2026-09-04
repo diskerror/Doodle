@@ -3,3 +3,4 @@
 .codebuddy
 *.log
 autoload.cache
+ContextLab/runs
